@@ -1,0 +1,9 @@
+{
+  "name": "@aonde-tem/config",
+  "version": "0.1.0",
+  "private": true,
+  "files": [
+    "jest",
+    "tsconfig"
+  ]
+}
