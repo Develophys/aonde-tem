@@ -10,7 +10,7 @@ nearby in Brazil, and at what price. Core entity: a **Report** (item / where / h
 freshness). Users both *seek* items and *report* sightings. "Waze for product availability & prices."
 
 Read first for non-trivial work: `docs/PRODUCT.en.md` (vision), `ROADMAP.md` (epics),
-`docs/backlog/BACKLOG.en.md` (work items), `ARCHITECTURE.md` (design).
+`docs/backlog/BACKLOG.en.md` (work items), `ARCHITECTURE.md` (design), `docs/PERFORMANCE.md` (perf budgets).
 
 ## Stack
 pnpm + Turborepo monorepo · React + Vite PWA + **Tailwind v4** · **Zustand** (client state) +
@@ -33,6 +33,9 @@ pnpm + Turborepo monorepo · React + Vite PWA + **Tailwind v4** · **Zustand** (
   `api/` holds TanStack Query hooks + Zod-validated fetchers.
 - **Never store server data in Zustand** — TanStack Query owns the server cache.
 
+## ⚡ Performance (a pillar)
+Target users are on **low-end Android over slow/intermittent connections**. Honor the budgets in `docs/PERFORMANCE.md`: lazy-load MapLibre (never in the initial bundle), keep initial route JS ≤150KB gzip, small API payloads, `Save-Data`-aware, images compressed + lazy. A blown budget blocks merge.
+
 ## Conventions
 - **Conventional Commits** (`feat:`, `fix:`, `chore:` …). Small, single-responsibility changes.
 - Keep/extend tests for domain logic (Jest). Verify `pnpm lint typecheck test build` passes.
@@ -42,4 +45,4 @@ pnpm + Turborepo monorepo · React + Vite PWA + **Tailwind v4** · **Zustand** (
 
 ## Definition of done
 Code merged · types pass · relevant tests pass · lint clean · runs in `docker compose up` ·
-respects the dependency rule and the frontend design system.
+respects the dependency rule, the frontend design system, **and the performance budgets** (`docs/PERFORMANCE.md`).

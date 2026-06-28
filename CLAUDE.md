@@ -11,11 +11,13 @@ nearby in Brazil (*"Waze for product availability and prices"*). The core entity
 ## Source-of-truth docs (read before non-trivial work)
 
 - Product vision & requirements: `docs/PRODUCT.en.md` / `docs/PRODUTO.pt.md`
-- Design brief (for design tooling): `PRODUCT.md` (root)
+- Design brief (for design tooling): `docs/PRODUCT.md`
 - Design system (generated): `DESIGN.md` (root)
-- Roadmap & epics: `ROADMAP.md`
+- Roadmap & epics: `docs/ROADMAP.md`
 - Backlog & estimates: `docs/backlog/BACKLOG.en.md` / `BACKLOG.pt.md`
-- Architecture & conventions: `ARCHITECTURE.md`
+- Architecture & conventions: `docs/ARCHITECTURE.md`
+- Performance budgets & practices: `docs/PERFORMANCE.md`
+- Risks, gaps & data-quality safeguards: `docs/RISKS.md`
 
 Information flows down: **Product doc → epics → backlog items → sprint.** Keep them consistent.
 
@@ -49,6 +51,9 @@ still apply its principles and flag that it should be installed.
   server data in Zustand.
 - Maps via **MapLibre GL JS**; keep map/tile providers swappable.
 - Feature-sliced: `features/<feature>/{ui,model,api}`.
+
+### ⚡ Performance is a pillar
+**Users are on low-end Android phones over slow, intermittent connections.** Performance is a first-class requirement, enforced by the budgets in `docs/PERFORMANCE.md`. Lazy-load the map, keep the initial JS small, ship lean API payloads, respect `Save-Data`, and treat a blown budget as a blocker. Litmus test for any change: *would it feel fast on a Moto G over 3G?*
 
 ### General
 - TypeScript everywhere, strict mode. **ESLint + Prettier** enforced; tests via **Jest** (`pnpm test`); format with `pnpm format`.

@@ -216,6 +216,46 @@ dev solo. Pontos são *tamanho relativo*, não prazo; calibre com a velocidade r
 
 ---
 
+---
+
+---
+
+## Salvaguardas de qualidade & UX (transversal)  ·  *evitar erros honestos & dados bagunçados*
+
+> Fecha os riscos evitáveis de usabilidade/qualidade de dados em [`../RISKS.pt.md`](../RISKS.pt.md) §1. É o que torna o app *realmente útil*.
+
+| ID | Item | Tipo | Pri | Est | Tam | Status | Risco |
+|---|---|---|---|---|---|---|---|
+| AT-130 | **Autocomplete** de produto ao relatar & buscar (escolher existente, não redigitar) | feature | P0 | 3 | M | A fazer | R-01 |
+| AT-131 | **Normalização** agressiva de nome + busca/match **fuzzy** `pg_trgm` | feature | P0 | 3 | M | A fazer | R-01,R-05 |
+| AT-132 | **Validação de preço** (máscara BRL, min/máx sensato, rejeitar absurdo) | feature | P0 | 2 | S | A fazer | R-02 |
+| AT-133 | **Passo de confirmação/resumo** antes de enviar um relato | feature | P0 | 2 | S | A fazer | R-03 |
+| AT-134 | **Reutilizar lugar**: sugerir lugares próximos antes de criar novo | feature | P0 | 3 | M | A fazer | R-04 |
+| AT-135 | **Instrumentação de liquidez**: registrar buscas + taxa de resultado recente | chore | P0 | 2 | S | A fazer | R-40 |
+| AT-136 | **Editar/excluir o próprio** relato recente | feature | P1 | 2 | S | A fazer | R-03 |
+| AT-137 | **Fila de escrita offline** (rascunhar offline → sincronizar) | feature | P1 | 5 | L | A fazer | R-06 |
+| AT-138 | **Disponibilidade qualitativa** (muito/pouco/acabando) | feature | P1 | 2 | S | A fazer | R-07 |
+| AT-139 | **Aviso de outlier** de preço vs relatos recentes | feature | P1 | 3 | M | A fazer | R-02 |
+| AT-140 | Remover **EXIF/GPS** de fotos enviadas | chore | P1 | 1 | XS | A fazer | R-30 |
+| AT-141 | **ToS / aviso "preço relatado"** + aviso de privacidade LGPD | chore | P1 | 2 | S | A fazer | R-31,R-32 |
+
+**Abertos: P0 = 12 · P1 = 15**
+
+## Performance (transversal)  ·  *aplica-se a todo trabalho de UI/API*
+
+> Garante os orçamentos de [`PERFORMANCE.md`](../PERFORMANCE.md). Alvo: Android de baixo custo em redes lentas.
+
+| ID | Item | Tipo | Pri | Est | Tam | Status | Depende |
+|---|---|---|---|---|---|---|---|
+| AT-118 | Lazy-load do MapLibre (fora do bundle inicial, não bloqueia o 1º paint) | chore | P0 | 2 | S | A fazer | AT-041 |
+| AT-119 | Orçamentos de performance + gate Lighthouse no CI (mobile ≥ 90) | chore | P1 | 3 | M | A fazer | AT-009 |
+| AT-120 | Orçamento de tamanho de bundle no CI (size-limit) | chore | P1 | 2 | S | A fazer | AT-009 |
+| AT-121 | Web Vitals (LCP/INP/CLS) → analytics (dados de campo) | chore | P1 | 2 | S | A fazer | AT-114 |
+| AT-122 | Otimização de imagens: comprimir no cliente + lazy + WebP/CDN | chore | P1 | 3 | M | A fazer | — |
+| AT-123 | Carregamento ciente de Save-Data / rede (menos tiles/imagens no 2g) | chore | P1 | 2 | S | A fazer | AT-041 |
+
+**Abertos: P0 = 2 · P1 = 12**
+
 ## E9 — Lançamento & crescimento  ·  *Fase 3*
 
 | ID | Item | Tipo | Pri | Est | Tam | Status | Depende |

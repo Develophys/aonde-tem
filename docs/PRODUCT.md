@@ -29,7 +29,7 @@ the two separate.)
 2. **Glanceable Reports.** Price, distance, and freshness shown as clear chips; stale Reports visibly fade.
 3. **Trust signals.** Freshness and community confirmation are first-class visual elements, not afterthoughts.
 4. **Mobile-native, one-handed.** Primary actions reachable by thumb; generous targets; bottom-sheet patterns.
-5. **Fast & calm.** Minimal chrome, strong hierarchy, restraint. Performance is a design feature.
+5. **Fast & calm — performance is a pillar.** Built for low-end Android on slow/intermittent connections. Minimal chrome, lazy-loaded map, tiny payloads, restraint. See `PERFORMANCE.md` for the budgets every screen must meet.
 
 ## Anti-references (slop to avoid)
 - ❌ Purple/indigo gradients, glassmorphism, neon-on-black "dashboard" looks.

@@ -215,6 +215,46 @@
 
 ---
 
+---
+
+---
+
+## Data-quality & UX safeguards (cross-cutting)  ·  *prevent honest mistakes & messy data*
+
+> Closes the preventable usability/data-quality risks in [`../RISKS.md`](../RISKS.md) §1. These make the app *actually useful*.
+
+| ID | Item | Type | Pri | Est | Size | Status | Risk |
+|---|---|---|---|---|---|---|---|
+| AT-130 | Product **autocomplete** on report & search (pick existing, not retype) | feature | P0 | 3 | M | Todo | R-01 |
+| AT-131 | Aggressive name **normalization** + `pg_trgm` **fuzzy** match/search | feature | P0 | 3 | M | Todo | R-01,R-05 |
+| AT-132 | **Price validation** (BRL mask, sane min/max, reject absurd) | feature | P0 | 2 | S | Todo | R-02 |
+| AT-133 | **Confirmation/summary step** before submitting a sighting | feature | P0 | 2 | S | Todo | R-03 |
+| AT-134 | **Place reuse**: suggest nearby existing places before creating new | feature | P0 | 3 | M | Todo | R-04 |
+| AT-135 | **Liquidity instrumentation**: log searches + fresh-result hit-rate | chore | P0 | 2 | S | Todo | R-40 |
+| AT-136 | **Edit/delete your own** recent sighting | feature | P1 | 2 | S | Todo | R-03 |
+| AT-137 | **Offline write-queue** (draft report offline → sync) | feature | P1 | 5 | L | Todo | R-06 |
+| AT-138 | **Qualitative availability** (muito/pouco/acabando) option | feature | P1 | 2 | S | Todo | R-07 |
+| AT-139 | **Price outlier** soft-warning vs recent sightings | feature | P1 | 3 | M | Todo | R-02 |
+| AT-140 | Strip **EXIF/GPS** from uploaded photos | chore | P1 | 1 | XS | Todo | R-30 |
+| AT-141 | **ToS / "preço relatado" disclaimer** + LGPD privacy notice | chore | P1 | 2 | S | Todo | R-31,R-32 |
+
+**Open: P0 = 12 · P1 = 15**
+
+## Performance (cross-cutting)  ·  *applies to all UI/API work*
+
+> Enforces the budgets in [`PERFORMANCE.md`](../PERFORMANCE.md). Target: low-end Android on slow networks.
+
+| ID | Item | Type | Pri | Est | Size | Status | Depends |
+|---|---|---|---|---|---|---|---|
+| AT-118 | Lazy-load MapLibre (out of initial bundle, non-blocking first paint) | chore | P0 | 2 | S | Todo | AT-041 |
+| AT-119 | Performance budgets + Lighthouse CI gate (mobile ≥ 90) | chore | P1 | 3 | M | Todo | AT-009 |
+| AT-120 | Bundle-size budget in CI (size-limit) | chore | P1 | 2 | S | Todo | AT-009 |
+| AT-121 | Web Vitals (LCP/INP/CLS) → analytics (field data) | chore | P1 | 2 | S | Todo | AT-114 |
+| AT-122 | Image optimization: client-side compress + lazy + WebP/CDN | chore | P1 | 3 | M | Todo | — |
+| AT-123 | Save-Data / network-aware loading (fewer tiles/images on 2g) | chore | P1 | 2 | S | Todo | AT-041 |
+
+**Open: P0 = 2 · P1 = 12**
+
 ## E9 — Launch & growth  ·  *Phase 3*
 
 | ID | Item | Type | Pri | Est | Size | Status | Depends |

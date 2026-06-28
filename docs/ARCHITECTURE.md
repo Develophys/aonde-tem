@@ -617,6 +617,8 @@ export default defineConfig({
 });
 ```
 
+> **Performance is a pillar** for this product (low-end Android, slow networks). Lazy-load MapLibre, keep the initial bundle small, and meet the budgets in [`PERFORMANCE.md`](./PERFORMANCE.md).
+
 **PWA checklist:** installable manifest with maskable icons; service worker with a sensible caching strategy (app shell precached, API network-first); offline fallback page; served over HTTPS; Lighthouse PWA audit passing. The frontend imports request/response types straight from `packages/contracts`, so the client and server can never disagree about the API shape.
 
 **Styling — Tailwind CSS v4.** v4 is **CSS-first**: there's no `tailwind.config.js` by default. You install the `@tailwindcss/vite` plugin (added above) and configure everything from your main stylesheet:
