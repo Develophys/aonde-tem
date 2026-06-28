@@ -8,10 +8,7 @@ name: Deploy
 # for ANY host. Fill in the `deploy` job for your provider when you pick one.
 
 on:
-  push:
-    branches: [main]
-    tags: ["v*"]
-  workflow_dispatch: # allow manual runs
+  workflow_dispatch: # disabled until deploy target is configured (AT-110)
 
 env:
   REGISTRY: ghcr.io
