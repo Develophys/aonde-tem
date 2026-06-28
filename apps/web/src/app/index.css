@@ -24,4 +24,13 @@
   --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@theme {
+  --animate-slide-up: slide-up 0.25s ease-out;
+}
+
 html, body, #root { height: 100%; margin: 0; }
