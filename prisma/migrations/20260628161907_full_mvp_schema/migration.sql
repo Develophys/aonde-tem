@@ -127,9 +127,6 @@ ALTER TABLE "discoveries" ADD CONSTRAINT "discoveries_reporterId_fkey" FOREIGN K
 -- AddForeignKey
 ALTER TABLE "flags" ADD CONSTRAINT "flags_reporterId_fkey" FOREIGN KEY ("reporterId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- AddForeignKey
-ALTER TABLE "flags" ADD CONSTRAINT "flag_discovery_fk" FOREIGN KEY ("targetId") REFERENCES "discoveries"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
 -- PostGIS GiST index for spatial queries on places and discoveries
 CREATE INDEX places_location_idx ON places USING GIST (location);
 CREATE INDEX discoveries_location_idx ON discoveries USING GIST (location);
