@@ -5,12 +5,11 @@ generator client {
 
 datasource db {
   provider   = "postgresql"
-  url        = env("DATABASE_URL")
   extensions = [postgis]
 }
 
 model Place {
-  id       String  @id @default(uuid())
+  id       String                                @id @default(uuid())
   name     String
   category String
   address  String?
