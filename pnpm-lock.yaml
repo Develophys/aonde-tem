@@ -11,6 +11,9 @@ importers:
       '@eslint/js':
         specifier: ^9.12.0
         version: 9.39.4
+      '@prisma/client':
+        specifier: ^7.0.0
+        version: 7.8.0(prisma@7.8.0(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(typescript@5.9.3)
       '@types/jest':
         specifier: ^29.5.13
         version: 29.5.14
