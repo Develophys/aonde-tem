@@ -1,8 +1,27 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand: #0f172a;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Brand */
+  --color-brand: #1a5c3a;
+  --color-brand-light: #2d8f5a;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f7f7f5;
+  --color-border: #e5e5e0;
+
+  /* Freshness states */
+  --color-fresh: #1a5c3a;
+  --color-aging: #b45309;
+  --color-stale: #9ca3af;
+
+  /* Text */
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b7280;
+
+  /* Spacing */
+  --radius-card: 0.75rem;
+
+  /* Typography */
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 html, body, #root { height: 100%; margin: 0; }
