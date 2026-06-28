@@ -19,6 +19,7 @@ out cheaply, and similar names collapse to one product via a normalized key.
 ### P0
 - **Create product (free text)** → run **blocklist** check: `block` → reject with reason; `review` → create as `under_review` (hidden publicly); else `active`.
   - *Given* I submit a product whose name matches a `block` term, *when* I save, *then* it's rejected with a clear reason and **not** stored as active.
+- **Status governs visibility of all related discoveries (R-09):** when `product.status` is `blocked` or `under_review`, its discoveries must disappear from `GET /discoveries/nearby` immediately — no cascade of `hiddenAt` is needed. The read query achieves this via `AND p.status = 'active'`. New `POST /discoveries` attempts for a non-active product must be rejected at the application layer.
 - **Dedup:** normalize the name (lowercase/strip accents & punctuation/deburr, collapse units "5kg"="5 kg") → if it matches an existing `normalizedKey`, reuse that Product instead of creating a duplicate.
 - **Autocomplete on type (R-01):** as the user types a product, suggest existing products (trigram/`pg_trgm` match) so they **pick** rather than retype a variant — the single biggest lever against duplicates and missed search.
   - *Given* I start typing "coca", *when* matches exist, *then* I see existing products to pick; choosing one reuses it instead of creating a new product.

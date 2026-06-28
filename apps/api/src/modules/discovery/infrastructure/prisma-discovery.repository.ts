@@ -82,6 +82,7 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
       WHERE
         d."hiddenAt" IS NULL
         AND d."expiresAt" > ${now}
+        AND p.status = 'active'
         AND ST_DWithin(
           d.location,
           ST_MakePoint(${center.lng}, ${center.lat})::geography,

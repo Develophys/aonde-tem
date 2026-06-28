@@ -22,6 +22,62 @@
 
 ---
 
+## DB Safety Rules (mandatory for all agents implementing this plan)
+
+These rules were derived from a query-efficiency code review on Plan B. Every task in this plan that touches the database must comply.
+
+### 1 — No N+1 queries
+
+- Never call a repository method inside a loop over rows. Batch with `findMany({ where: { id: { in: ids } } })` or use a single JOIN/raw query.
+- Use Prisma's `include` / `select` for eager-loading relations that are always needed together. Load only the fields the caller actually reads.
+- In `POST /discoveries`, place lookup and discovery insert must be a **single Prisma transaction** (`this.prisma.$transaction([...])`) — not two separate awaits — so partial-failure leaves no orphan rows.
+
+### 2 — Column name convention: always use camelCase with double-quotes in raw SQL
+
+The schema uses camelCase column names (`"productId"`, `"placeId"`, `"reporterId"`, `"expiresAt"`, `"hiddenAt"`, `"createdAt"`). Raw SQL (`$executeRaw`, `$queryRaw`) must quote them:
+
+```sql
+-- CORRECT
+INSERT INTO discoveries ("id", "productId", "placeId", "price", "quantity", "reporterId", "note", "location", "expiresAt")
+
+-- WRONG — will fail at runtime
+INSERT INTO discoveries (id, product_id, place_id, price, quantity, reporter_id, note, location, expires_at)
+```
+
+### 3 — Always filter by product.status in read queries
+
+Any query that returns discoveries to end-users **must** include `AND p.status = 'active'` (or equivalent) in the `WHERE` clause. Blocking a product does NOT cascade `hiddenAt` onto its discoveries; the status filter is the only guard.
+
+Applies to: `findNearbyWithDetails`, any future list/search queries that join `products`.
+
+### 4 — Reject writes for non-active products
+
+`POST /discoveries` must verify `product.status === 'active'` before inserting. Use `findById` / `findByNormalizedKey` and throw a domain error if the product is `blocked` or `under_review`.
+
+### 5 — Index new filter columns before shipping
+
+Any new column used in a `WHERE` clause of a query expected to run at scale needs an index. Use a standard migration file. Partial indexes (`WHERE "hiddenAt" IS NULL`) are preferred over full indexes when the selective rows are a stable minority.
+
+Existing indexes (already in migrations):
+
+- `discoveries.location` — GIST (spatial)
+- `discoveries."expiresAt" WHERE "hiddenAt" IS NULL` — B-tree partial (active-row filter)
+- `products."normalizedKey"` — GIN trigram (`gin_trgm_ops`) for fuzzy search
+- `places.location` — GIST (spatial)
+
+### 6 — Never re-compute geography points more than needed in one query
+
+`ST_MakePoint(lng, lat)::geography` can be bound once with Prisma's `Prisma.sql` tagged template. For readability and maintainability (not for performance — PostgreSQL folds constants) put repeated point expressions in a CTE:
+
+```sql
+WITH center AS (SELECT ST_MakePoint(${lng}, ${lat})::geography AS geog)
+SELECT ..., ST_Distance(d.location, c.geog) FROM discoveries d, center c
+WHERE ST_DWithin(d.location, c.geog, ${radius})
+ORDER BY d.location <-> c.geog
+```
+
+---
+
 ## File Structure
 
 **New files:**

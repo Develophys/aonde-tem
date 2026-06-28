@@ -24,6 +24,8 @@ core loop and the product's first impression, so it must be **fast on weak phone
 - **Marker card** on tap: product name, price, quantity, freshness (age), place name; action to open the location in the user's maps app.
 - **Freshness**: each result shows its age; expired discoveries are excluded or visibly de-emphasized.
   - *Given* I search "arroz" with location on, *when* fresh results exist in range, *then* matching discoveries appear as markers and a list updates; with none, I see the empty state.
+- **Active-only results (R-08):** the nearby query **must** filter `product.status = 'active'`. Discoveries linked to `blocked` or `under_review` products must never appear in public search results — do not rely solely on `hiddenAt` on the discovery row, because blocking a product does not cascade to its discoveries.
+  - *Implementation note:* add `AND p.status = 'active'` to the `WHERE` clause of any `GET /discoveries/nearby` SQL, not to a post-query JS filter.
 - **Performance (gate):** MapLibre **lazy-loaded** (not in initial bundle, non-blocking first paint); first useful result ≤ 3s on slow 4G; Lighthouse mobile ≥ 90. See [`../PERFORMANCE.md`](../PERFORMANCE.md).
 
 ### P1
