@@ -228,13 +228,13 @@
 | AT-130 | Product **autocomplete** on report & search (pick existing, not retype) | feature | P0 | 3 | M | Todo | R-01 |
 | AT-131 | Aggressive name **normalization** + `pg_trgm` **fuzzy** match/search | feature | P0 | 3 | M | Todo | R-01,R-05 |
 | AT-132 | **Price validation** (BRL mask, sane min/max, reject absurd) | feature | P0 | 2 | S | Todo | R-02 |
-| AT-133 | **Confirmation/summary step** before submitting a sighting | feature | P0 | 2 | S | Todo | R-03 |
+| AT-133 | **Confirmation/summary step** before submitting a discovery | feature | P0 | 2 | S | Todo | R-03 |
 | AT-134 | **Place reuse**: suggest nearby existing places before creating new | feature | P0 | 3 | M | Todo | R-04 |
 | AT-135 | **Liquidity instrumentation**: log searches + fresh-result hit-rate | chore | P0 | 2 | S | Todo | R-40 |
-| AT-136 | **Edit/delete your own** recent sighting | feature | P1 | 2 | S | Todo | R-03 |
+| AT-136 | **Edit/delete your own** recent discovery | feature | P1 | 2 | S | Todo | R-03 |
 | AT-137 | **Offline write-queue** (draft report offline → sync) | feature | P1 | 5 | L | Todo | R-06 |
 | AT-138 | **Qualitative availability** (muito/pouco/acabando) option | feature | P1 | 2 | S | Todo | R-07 |
-| AT-139 | **Price outlier** soft-warning vs recent sightings | feature | P1 | 3 | M | Todo | R-02 |
+| AT-139 | **Price outlier** soft-warning vs recent discoveries | feature | P1 | 3 | M | Todo | R-02 |
 | AT-140 | Strip **EXIF/GPS** from uploaded photos | chore | P1 | 1 | XS | Todo | R-30 |
 | AT-141 | **ToS / "preço relatado" disclaimer** + LGPD privacy notice | chore | P1 | 2 | S | Todo | R-31,R-32 |
 

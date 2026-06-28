@@ -10,7 +10,7 @@ out cheaply, and similar names collapse to one product via a normalized key.
 ## User stories
 - As a contributor, I want to type a product name and have it created (or matched to an existing one) so I don't make duplicates.
 - As a contributor entering a banned product, I want a clear rejection explaining why so I understand it's not allowed.
-- As a visitor, I want a simple product view (name + its active sightings) so I can see where it's available.
+- As a visitor, I want a simple product view (name + its active discoveries) so I can see where it's available.
 - As a contributor, I want to add information to a product (description, photo) so the listing is more useful.
 - As an admin, I want new products screened against a blocklist so banned items never go live.
 
@@ -22,7 +22,7 @@ out cheaply, and similar names collapse to one product via a normalized key.
 - **Dedup:** normalize the name (lowercase/strip accents & punctuation/deburr, collapse units "5kg"="5 kg") → if it matches an existing `normalizedKey`, reuse that Product instead of creating a duplicate.
 - **Autocomplete on type (R-01):** as the user types a product, suggest existing products (trigram/`pg_trgm` match) so they **pick** rather than retype a variant — the single biggest lever against duplicates and missed search.
   - *Given* I start typing "coca", *when* matches exist, *then* I see existing products to pick; choosing one reuses it instead of creating a new product.
-- **Minimal product view:** product name + its active sightings (where/price/qty/freshness).
+- **Minimal product view:** product name + its active discoveries (where/price/qty/freshness).
 - **BlockedTerm** store, enforced at creation (admin-seeded list; UI can be DB-only for v1).
 
 ### P1

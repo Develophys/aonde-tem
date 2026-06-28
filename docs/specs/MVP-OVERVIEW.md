@@ -12,13 +12,13 @@
 
 People in Brazil can't easily find **where a specific item is available right now and for how much** —
 that knowledge lives in people's heads and scattered chats. The MVP must let anyone **search an item
-and see it on a map near them**, and let logged-in users **contribute** sightings, product info, and
+and see it on a map near them**, and let logged-in users **contribute** discoveries, product info, and
 moderation signals — while keeping illegal/inappropriate items out cheaply.
 
 ## 2. Goals
 
 - **G1 — Core loop works:** a visitor can search an item and see fresh, nearby availability on a map without logging in.
-- **G2 — Trusted contribution:** logged-in users can add a sighting (product @ place, price, qty) in under ~30s, and it appears on the map.
+- **G2 — Trusted contribution:** logged-in users can add a discovery (product @ place, price, qty) in under ~30s, and it appears on the map.
 - **G3 — Safe by default:** banned items are blocked at creation; users can flag (denunciar) anything; an admin can remove it. No illegal item stays visible > 24h after a valid flag.
 - **G4 — Low-friction auth:** sign in with Google **or** a magic email code in under 1 minute, no password.
 - **G5 — Fast on weak phones/networks:** usable on a low-end Android over slow 4G — first useful result ≤ 3s, Lighthouse mobile ≥ 90 (see [`../PERFORMANCE.md`](../PERFORMANCE.md)).
@@ -35,7 +35,7 @@ moderation signals — while keeping illegal/inappropriate items out cheaply.
 ## 4. Personas
 
 - **Visitor (não logado):** searches and views availability. No account.
-- **Contributor (logado):** reports sightings, adds product info, comments, flags. Auth via Google or magic code.
+- **Contributor (logado):** reports discoveries, adds product info, comments, flags. Auth via Google or magic code.
 - **Admin:** reviews flags, removes content, manages the blocklist. (Internal, minimal UI for v1.)
 
 ---
@@ -76,7 +76,7 @@ feature spec — **defined here once.**
 | createdBy | User |
 | createdAt | |
 
-### Sighting *(the availability report — was "Report")*
+### Discovery *(the availability report — formerly "Report", then "Sighting")*
 | Field | Notes |
 |---|---|
 | id | uuid |
@@ -88,12 +88,12 @@ feature spec — **defined here once.**
 | createdAt | drives **freshness** |
 | expiresAt | freshness TTL |
 
-> A Sighting answers *"this Product is at this Place for R$X, qty Y, as of time T."*
+> A Discovery answers *"this Product is at this Place for R$X, qty Y, as of time T."*
 
 ### Flag *(denúncia)*
 | Field | Notes |
 |---|---|
-| id | uuid · targetType `product`\|`sighting` · targetId | |
+| id | uuid · targetType `product`\|`discovery` · targetId | |
 | reason | `illegal`\|`inappropriate`\|`spam`\|`wrong_info`\|`other` |
 | comment | optional · reporterId → User |
 | status | `open`\|`actioned`\|`dismissed` · createdAt |
@@ -101,7 +101,7 @@ feature spec — **defined here once.**
 ### Comment *(feedback)*
 | Field | Notes |
 |---|---|
-| id · targetType `product`\|`sighting` · targetId | |
+| id · targetType `product`\|`discovery` · targetId | |
 | body | text · authorId → User · createdAt |
 
 ### BlockedTerm *(admin blocklist)*
@@ -111,14 +111,16 @@ feature spec — **defined here once.**
 | action | `block` (reject) \| `review` (hold) · createdAt |
 
 **More entities?** Not for v1. Deferred (design-for, don't build): `Category`, `ReputationScore`,
-`PriceHistory`, `Watchlist`, `Session` table (use stateless JWT).
+`PriceHistory`, `Session` table (use stateless JWT). `Watchlist` is also post-MVP, but now has its own
+spec — see **Notifications & Watchlist (E11)**: [`NOTIFICATIONS.en.md`](./NOTIFICATIONS.en.md) (`Watch` +
+`PushSubscription` + `Notification` entities).
 
 ---
 
 ## 6. Success metrics
 
-**Leading (days–weeks):** % of searches returning ≥1 fresh sighting (**liquidity — primary**);
-sightings/day; contributor activation; auth completion rate & time; time-to-first-useful-result.
+**Leading (days–weeks):** % of searches returning ≥1 fresh discovery (**liquidity — primary**);
+discoveries/day; contributor activation; auth completion rate & time; time-to-first-useful-result.
 **Lagging (weeks–months):** 7/30-day retention; active contributors per city; flag resolution time;
 duplicate-product rate. *Targets set per pilot city, reviewed monthly.*
 
@@ -128,7 +130,7 @@ duplicate-product rate. *Targets set per pilot city, reviewed monthly.*
 |---|---|---|---|
 | Q1 | **Confirm: login required to contribute?** Supersedes product-doc decision D2 (anonymous reporting). Recommended for accountability/moderation. | Founder/Product | **Yes** |
 | Q3 | Initial **blocklist** contents & who curates it. | Founder/Legal | Yes |
-| Q5 | Pilot **city** + how we seed first sightings (cold-start). | Founder | Yes |
+| Q5 | Pilot **city** + how we seed first discoveries (cold-start). | Founder | Yes |
 | Q7 | **LGPD:** minimal privacy notice & handling for email + location. | Legal/Eng | Yes |
 
 > Feature-specific open questions live in their own specs (e.g., email provider → auth; freshness TTL → report).
@@ -143,19 +145,23 @@ Each is small and independently buildable; they map 1:1 to backlog epics.
 
 | # | Spec | What it covers | Backlog |
 |---|---|---|---|
-| 1 | [`seek-map-search.spec.md`](./seek-map-search.spec.md) | Open initial page: map + search → nearby sightings | E3, E4 |
+| 1 | [`seek-map-search.spec.md`](./seek-map-search.spec.md) | Open initial page: map + search → nearby discoveries | E3, E4 |
 | 2 | [`product-moderation.spec.md`](./product-moderation.spec.md) | Free-text Product + blocklist + dedup + product view | E1, E2, E10 |
-| 3 | [`report-sighting.spec.md`](./report-sighting.spec.md) | Contribute a sighting: product + place(pin/GPS) + price/qty | E1–E4, E10 |
+| 3 | [`report-discovery.spec.md`](./report-discovery.spec.md) | Contribute a discovery: product + place(pin/GPS) + price/qty | E1–E4, E10 |
 | 4 | [`auth.spec.md`](./auth.spec.md) | Magic-code + Google login, sessions, login-gating | E5/E10 |
 | 5 | [`feedback-flags.spec.md`](./feedback-flags.spec.md) | Flags (denúncia) + comments + minimal admin removal | E6, E10 |
+
+### Post-MVP specs (Phase 2+)
+- [`NOTIFICATIONS.en.md`](./NOTIFICATIONS.en.md) / [`NOTIFICACOES.pt.md`](./NOTIFICACOES.pt.md) — **Notifications & Watchlist** (Epic E11). Watch a product, get alerted when a matching `Discovery` is posted **nearby** or **at/below a target price**, via Web Push + in-app inbox. Depends on auth and the `discovery.created` event from [`report-discovery.spec.md`](./report-discovery.spec.md).
 
 ### Phasing
 - **Read first (prove the loop):** seek-map-search over seeded data → then product + report so real data flows in.
 - **Then trust the contributions:** auth (gate contribution) → flags/moderation.
 - **Fast follows (P1):** Google login, comments, product photos, radius/clustering, reverse-geocode.
+- **Phase 2 (post-MVP):** notifications & watchlist (E11), once auth and the discovery event exist.
 
 ### Irreducible MVP
-*Open map + item search showing nearby sightings* **+** *magic-code login* **+** *report a sighting
+*Open map + item search showing nearby discoveries* **+** *magic-code login* **+** *report a discovery
 (product+place+price+qty) with blocklist* **+** *flag → admin hide*. Everything else is deferrable
 without breaking the core loop.
 

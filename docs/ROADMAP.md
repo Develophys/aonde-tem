@@ -25,7 +25,9 @@ That's simpler than one board per epic and keeps the whole product visible at a 
 
 ### Labels
 
-- **Epic labels** (color-coded): `E0 Foundation`, `E1 Domain/Data`, `E2 API`, `E3 Maps/Geo`, `E4 Frontend/PWA`, `E5 Auth`, `E6 Discovery`, `E7 Search`, `E8 Quality`, `E9 Launch`.
+- **Epic labels** (color-coded): `E0 Foundation`, `E1 Domain/Data`, `E2 API`, `E3 Maps/Geo`, `E4 Frontend/PWA`, `E5 Auth`, `E6 Discovery`, `E7 Search`, `E8 Quality`, `E9 Launch`, `E11 Notifications`.
+
+> Note: the MVP spec set ([`specs/MVP-OVERVIEW.md`](./specs/MVP-OVERVIEW.md)) uses `E10` for *Accounts, Products & Moderation*, so Notifications is **E11** to avoid a collision.
 - **Type**: `feature`, `chore`, `bug`, `spike` (research/investigation).
 - **Priority**: `P0 must-have`, `P1 should-have`, `P2 nice-to-have`.
 
@@ -43,8 +45,8 @@ That's simpler than one board per epic and keeps the whole product visible at a 
 |---|---|---|
 | **Phase 0 — Foundation** | Repo runs locally end-to-end | E0, core of E1 |
 | **Phase 1 — MVP** | A user opens the PWA and sees real places near them | E2, E3, E4 |
-| **Phase 2 — Usable product** | Find specific things; have an account | E7, E6 (core), E5 |
-| **Phase 3 — Growth & hardening** | Reviews, quality, launch | E6 (rest), E8, E9 |
+| **Phase 2 — Usable product** | Find specific things; have an account; get alerted | E7, E6 (core), E5, E11 (core) |
+| **Phase 3 — Growth & hardening** | Reviews, quality, launch | E6 (rest), E8, E9, E11 (P1) |
 
 The MVP loop is deliberately tiny: **geolocate → query PostGIS for nearby places → render markers on the map.** Everything else is layered on after that loop works.
 
@@ -146,6 +148,43 @@ The MVP loop is deliberately tiny: **geolocate → query PostGIS for nearby plac
 - [P2] Product analytics (PostHog free tier) for the core funnel
 - [P2] App-install prompt + onboarding
 - [P2] Collect early user feedback (simple in-app form)
+
+### E11 — Notifications & Watchlist  *(Phase 2–3)*
+
+> Full spec: [`specs/NOTIFICATIONS.en.md`](./specs/NOTIFICATIONS.en.md) · [`specs/NOTIFICACOES.pt.md`](./specs/NOTIFICACOES.pt.md).
+> **Hard dependencies:** E5 (Auth — watches require sign-in) and the **`Discovery`** entity + a "discovery
+> created/confirmed" domain event (see [`specs/report-discovery.spec.md`](./specs/report-discovery.spec.md)).
+> There is nothing to match against until Discoveries exist — do not start E11 before that lands. Triggers in
+> v1 are **nearby** and **price-at-or-below-target** only. *(Note: the watchlist is the `Watchlist` entity
+> listed as deferred in [`specs/MVP-OVERVIEW.md`](./specs/MVP-OVERVIEW.md) §5 — this epic builds it.)*
+
+**Foundations (P0)**
+- [P0] `Watch` entity + Zod contract — product ref, `center` `geography(Point)` + `radiusM` (default 2 km), optional `maxPriceCents`, status
+- [P0] `PushSubscription` entity — per-device endpoint, keys, consent metadata; prune on `410 Gone` / revoke
+- [P0] `Notification` (inbox) entity — one record per match (watch, discovery, channel, readAt)
+- [P0] Domain matching logic (pure: discovery + watches → matches) + unit tests; PostGIS `ST_DWithin` (inverted nearby query), GiST index on watch centers
+- [P0] VAPID keys + service-worker `push` + `notificationclick` handlers in `apps/web`
+
+**The loop (P0)**
+- [P0] Create-watch UI — 2 km default radius slider, optional max price; block duplicate watch per item (offer edit)
+- [P0] Contextual push permission + consent flow (rationale before browser prompt; decline still creates inbox-only watch)
+- [P0] Matching on the Discovery created/confirmed event (async; must not block `POST /discoveries`)
+- [P0] **Batched delivery** — per-watch batch window (~10–15 min) collapses matches into one push; inbox gets each entry. *(The single chokepoint for alert volume — build it here, not later.)*
+- [P0] In-app notification inbox (list, read/unread, deep-link to Discovery on map)
+- [P0] Controls: per-user **push channel toggle** + per-watch **pause/resume** + **delete** (inbox keeps recording when push is off)
+- [P0] LGPD: explicit consent record, view/delete watches + push devices, purge subscriptions on revoke/logout/account-delete
+
+**Hardening (P1)**
+- [P1] Quiet hours (hold pushes in a user-set window; inbox updates silently)
+- [P1] Map/search bell toggle — create a watch in one tap from results
+- [P1] Edit a watch (radius/price) without delete-and-recreate
+- [P1] Unread badge on the notification icon
+
+**Future (P2)**
+- [P2] Email channel (separately consented)
+- [P2] Restock / "still there" re-confirmation trigger
+- [P2] Category- or keyword-level watches (depends on item taxonomy, E7)
+- [P2] Smart radius (route / multiple saved areas) and digest mode
 
 ---
 

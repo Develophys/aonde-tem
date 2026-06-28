@@ -6,7 +6,7 @@ Project-level guidance. This file is read automatically when working in this rep
 
 **Aonde Tem** — a community-powered, real-time PWA for finding where a specific item is available
 nearby in Brazil (*"Waze for product availability and prices"*). The core entity is a **Report**
-(item / where / how much / how many / freshness). Users both **seek** items and **report** sightings.
+(item / where / how much / how many / freshness). Users both **seek** items and **report** discoveries.
 
 ## Source-of-truth docs (read before non-trivial work)
 

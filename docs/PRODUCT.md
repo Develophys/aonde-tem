@@ -7,7 +7,7 @@
 ## What it is
 A community-powered, real-time PWA for finding **where a specific item is available nearby** in
 Brazil — and **how much** it costs. Core entity: a **Report** (item / where / how much / how many /
-freshness). Users both *seek* items and *report* sightings. "Waze for product availability & prices."
+freshness). Users both *seek* items and *report* discoveries. "Waze for product availability & prices."
 
 ## Register
 **Product.** This is a working tool, not a marketing site. Design serves the task: find a Report fast,

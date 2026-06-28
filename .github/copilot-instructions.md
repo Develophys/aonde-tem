@@ -7,7 +7,7 @@
 ## What this project is
 **Aonde Tem** — a community-powered, real-time **PWA** for finding where a specific item is available
 nearby in Brazil, and at what price. Core entity: a **Report** (item / where / how much / how many /
-freshness). Users both *seek* items and *report* sightings. "Waze for product availability & prices."
+freshness). Users both *seek* items and *report* discoveries. "Waze for product availability & prices."
 
 Read first for non-trivial work: `docs/PRODUCT.en.md` (vision), `ROADMAP.md` (epics),
 `docs/backlog/BACKLOG.en.md` (work items), `ARCHITECTURE.md` (design), `docs/PERFORMANCE.md` (perf budgets).

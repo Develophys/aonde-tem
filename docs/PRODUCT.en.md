@@ -11,7 +11,7 @@
 
 **Aonde Tem is a community-powered, real-time map that helps people in Brazil find where a specific item is available nearby — and how much it costs.**
 
-Instead of searching for *businesses*, people search for *things*. Anyone can post a sighting —
+Instead of searching for *businesses*, people search for *things*. Anyone can post a discovery —
 **what** the item is, **where** it is, **how much** it costs, and **how many** are available — and
 everyone nearby sees it live on the map. Think **"Waze for product availability and prices."**
 
@@ -67,7 +67,7 @@ Our edge:
 
 ## 5. How it works (the core concept)
 
-The atomic unit of the product is a **Report** — a single community sighting of an item:
+The atomic unit of the product is a **Report** — a single community discovery of an item:
 
 | Field | Meaning | Required? |
 |---|---|---|
@@ -120,7 +120,7 @@ These are **hypotheses with targets**, to validate after launch in the pilot cit
 - As a Seeker, I want to open the location in my maps app so that I can navigate there.
 
 **Reporter**
-- As a Reporter, I want to post a sighting in a few taps (item, price, quantity, location) so that sharing is effortless.
+- As a Reporter, I want to post a discovery in a few taps (item, price, quantity, location) so that sharing is effortless.
 - As a Reporter, I want the app to use my current location so that I don't have to place the pin manually.
 - As a Reporter, I want to optionally add a photo or note so that my Report is more trustworthy.
 
@@ -130,7 +130,8 @@ These are **hypotheses with targets**, to validate after launch in the pilot cit
 
 **Account / power user** *(P1–P2)*
 - As a frequent Reporter, I want an account so that my contributions and reputation are tracked.
-- As a Seeker, I want to be notified when an item I'm looking for appears nearby so that I don't have to keep checking.
+- As a (signed-in) Seeker, I want to watch an item and be notified when it appears nearby or at/below a price I set, so that I don't have to keep checking. *(Full spec: [`specs/NOTIFICATIONS.en.md`](./specs/NOTIFICATIONS.en.md).)*
+- As a user, I want a push on/off toggle and per-watch pause/delete so that I stay in control of notifications.
 
 ---
 
@@ -150,7 +151,7 @@ These are **hypotheses with targets**, to validate after launch in the pilot cit
 - Item autocomplete + categories.
 - User accounts (attribute Reports, enable reputation).
 - Photo/note on a Report.
-- "Notify me when X appears nearby" (watchlist + push).
+- **Item watchlist & notifications** (requires account): watch an item, get alerted when it appears **nearby** or **at/below a target price**, via **Web Push + in-app inbox**, with batched delivery, a push on/off toggle, and LGPD-compliant consent/data controls. *(Epic E11; spec: [`specs/NOTIFICATIONS.en.md`](./specs/NOTIFICATIONS.en.md).)*
 
 ### Could-have / future — P2 (design for, don't build yet)
 - Reporter reputation / trust scores.
@@ -213,14 +214,14 @@ Explicitly avoided early: intrusive ads that would erode trust in community Repo
 Mapped to the epics in [`ROADMAP.md`](../ROADMAP.md):
 
 - **Now (MVP):** the report↔seek loop — post a Report, see nearby Reports on the map, item search, geolocation, PWA. *(Epics E1–E4)*
-- **Next:** community validation, accounts, search/autocomplete, watchlist notifications. *(Epics E5–E7)*
-- **Later:** reputation, price history, business listings, monetization foundations. *(Epics E6 P2, E8–E9)*
+- **Next:** community validation, accounts, search/autocomplete, watchlist notifications. *(Epics E5–E7, E11 core)*
+- **Later:** reputation, price history, business listings, monetization foundations, notification hardening. *(Epics E6 P2, E8–E9, E11 P1)*
 
 ---
 
 ## 14. Glossary
 
-- **Report (Relato):** a single community sighting of an item — what / where / how much / how many.
+- **Report (Relato):** a single community discovery of an item — what / where / how much / how many.
 - **Seeker (Buscador):** a user looking for an item.
 - **Reporter (Relator):** a user who posts a Report.
 - **Liquidity:** the share of searches that return a fresh, useful Report — the core health metric.

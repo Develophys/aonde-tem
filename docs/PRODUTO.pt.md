@@ -133,7 +133,8 @@ São **hipóteses com metas**, a validar após o lançamento na cidade-piloto:
 
 **Conta / usuário avançado** *(P1–P2)*
 - Como Relator frequente, quero uma conta para que minhas contribuições e reputação sejam registradas.
-- Como Buscador, quero ser notificado quando um item que procuro aparecer por perto para não precisar ficar verificando.
+- Como Buscador (logado), quero monitorar um item e ser notificado quando ele aparecer por perto ou por um preço igual/abaixo do que defini, para não precisar ficar verificando. *(Spec completa: [`specs/NOTIFICACOES.pt.md`](./specs/NOTIFICACOES.pt.md).)*
+- Como usuário, quero um interruptor de push (liga/desliga) e pausar/excluir por monitoramento para manter o controle das notificações.
 
 ---
 
@@ -153,7 +154,7 @@ São **hipóteses com metas**, a validar após o lançamento na cidade-piloto:
 - Autocomplete de item + categorias.
 - Contas de usuário (atribuir Relatos, habilitar reputação).
 - Foto/observação no Relato.
-- "Avise-me quando X aparecer por perto" (lista de interesse + push).
+- **Lista de interesse & notificações** (exige conta): monitorar um item e ser avisado quando ele aparecer **por perto** ou **por um preço igual/abaixo de uma meta**, via **Web Push + caixa de avisos no app**, com entrega agrupada, interruptor de push (liga/desliga) e controles de consentimento/dados conforme a LGPD. *(Épico E11; spec: [`specs/NOTIFICACOES.pt.md`](./specs/NOTIFICACOES.pt.md).)*
 
 ### Desejáveis / futuro — P2 (projetar para, mas não construir ainda)
 - Reputação / pontuação de confiança do relator.
@@ -216,8 +217,8 @@ Evitado no início: anúncios invasivos que corroeriam a confiança nos Relatos 
 Mapeado para os épicos em [`ROADMAP.md`](../ROADMAP.md):
 
 - **Agora (MVP):** o ciclo relatar↔buscar — publicar um Relato, ver Relatos por perto no mapa, busca por item, geolocalização, PWA. *(Épicos E1–E4)*
-- **Próximo:** validação pela comunidade, contas, busca/autocomplete, notificações de lista de interesse. *(Épicos E5–E7)*
-- **Depois:** reputação, histórico de preços, registros de estabelecimentos, bases de monetização. *(Épico E6 P2, E8–E9)*
+- **Próximo:** validação pela comunidade, contas, busca/autocomplete, notificações de lista de interesse. *(Épicos E5–E7, E11 núcleo)*
+- **Depois:** reputação, histórico de preços, registros de estabelecimentos, bases de monetização, robustez das notificações. *(Épico E6 P2, E8–E9, E11 P1)*
 
 ---
 

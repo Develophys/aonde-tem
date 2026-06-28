@@ -17,18 +17,18 @@ These are the "make it actually useful and user-friendly" risks. Each is being d
 | # | Risk / gap | Impact | Mitigation (preventive) | Tracked in |
 |---|---|---|---|---|
 | R-01 | **Messy item names** — "coca 2l" vs "Coca-Cola 2L" vs "refri" create duplicate products and make search miss real data. | High — kills perceived liquidity | **Autocomplete from existing products** on report & search (pick, don't retype); aggressive normalization (lowercase, strip accents/punct, collapse units); **fuzzy match** (`pg_trgm`). "Did you mean…". | `product-moderation.spec`, `seek-map-search.spec` |
-| R-02 | **Wrong / absurd prices** — typos ("R$0,01"), wrong unit, trolls. | High — erodes trust instantly | **Validated numeric input** (BRL mask, min/max sane bounds, > 0); **outlier soft-warning** vs recent sightings of same product; label clearly as "preço relatado". | `report-sighting.spec` |
-| R-03 | **Honest mistakes / wrong info** — fat-finger qty, wrong place, posted then noticed. | High | **Confirmation/summary step** before submit; **edit/delete your own recent sighting**; community **"ainda tem? / acabou?"** self-correction; freshness/expiry. | `report-sighting.spec`, `feedback-flags.spec` |
-| R-04 | **Place fragmentation** — same shop pinned twice 20 m apart → splits data. | Medium-High | **Suggest & reuse nearby existing places** (within N m) before creating new; confirm pin/GPS accuracy. | `report-sighting.spec` |
+| R-02 | **Wrong / absurd prices** — typos ("R$0,01"), wrong unit, trolls. | High — erodes trust instantly | **Validated numeric input** (BRL mask, min/max sane bounds, > 0); **outlier soft-warning** vs recent discoveries of same product; label clearly as "preço relatado". | `report-discovery.spec` |
+| R-03 | **Honest mistakes / wrong info** — fat-finger qty, wrong place, posted then noticed. | High | **Confirmation/summary step** before submit; **edit/delete your own recent discovery**; community **"ainda tem? / acabou?"** self-correction; freshness/expiry. | `report-discovery.spec`, `feedback-flags.spec` |
+| R-04 | **Place fragmentation** — same shop pinned twice 20 m apart → splits data. | Medium-High | **Suggest & reuse nearby existing places** (within N m) before creating new; confirm pin/GPS accuracy. | `report-discovery.spec` |
 | R-05 | **Search doesn't find existing data** — exact-match only. | High — looks empty when it isn't | Fuzzy/trigram search + synonyms; "did you mean"; suggest reporting when truly empty. | `seek-map-search.spec` |
-| R-06 | **Contribution lost on bad signal** — user in a store with no bars. | Medium-High (core audience!) | **Offline write-queue**: draft a report offline, sync on reconnect. | `report-sighting.spec`, `PERFORMANCE.md` |
-| R-07 | **Quantity precision is fake** — users guess exact counts. | Medium | Offer a **qualitative availability** option (muito / pouco / acabando) alongside/instead of an exact number. | `report-sighting.spec` |
+| R-06 | **Contribution lost on bad signal** — user in a store with no bars. | Medium-High (core audience!) | **Offline write-queue**: draft a report offline, sync on reconnect. | `report-discovery.spec`, `PERFORMANCE.md` |
+| R-07 | **Quantity precision is fake** — users guess exact counts. | Medium | Offer a **qualitative availability** option (muito / pouco / acabando) alongside/instead of an exact number. | `report-discovery.spec` |
 
 ## 2. Marketplace & liquidity — **accepted bets** (carry, monitor, plan separately)
 
 | # | Risk | Impact | Stance / next step | Status |
 |---|---|---|---|---|
-| R-10 | **Cold-start** — seekers get no value until there are enough sightings. | Existential | Needs a **seeding/go-to-market strategy** (not a feature): one neighborhood, manual seeding, import from encartes/open data. Cheapest test: run the loop in one WhatsApp group for 2 weeks before building more. | `accepted` |
+| R-10 | **Cold-start** — seekers get no value until there are enough discoveries. | Existential | Needs a **seeding/go-to-market strategy** (not a feature): one neighborhood, manual seeding, import from encartes/open data. Cheapest test: run the loop in one WhatsApp group for 2 weeks before building more. | `accepted` |
 | R-11 | **Supply-side motivation** — why would anyone report (unpaid labor)? | Existential | Design the **contributor JTBD / incentive** (recognition "você ajudou N pessoas", reputation, streaks, 1-tap friction). | `accepted` |
 | R-12 | **Retention** — no reason to come back between needs. | High | Re-evaluate **notifications/watchlist** ("avise quando X aparecer") as a core hook, not P2. | `watch` |
 
