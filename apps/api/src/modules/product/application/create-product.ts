@@ -1,7 +1,7 @@
 import { Product, ConflictError } from "@aonde-tem/domain";
 import type { ProductRepository } from "@aonde-tem/domain";
 import type { Logger } from "@aonde-tem/domain";
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 
 export interface BlockedTermChecker {
   check(name: string): Promise<{ action: "block" | "review" } | null>;
@@ -28,10 +28,10 @@ export class CreateProduct {
 
     // Blocklist check
     const blocked = await this.blocklist.check(trimmed);
-    const status = blocked?.action === "review" ? "under_review" : "active";
     if (blocked?.action === "block") {
       throw new ConflictError(`This product is not allowed: "${trimmed}"`);
     }
+    const status = blocked?.action === "review" ? "under_review" : "active";
 
     const product = Product.create({ id: randomUUID(), name: trimmed, createdById, status });
     await this.products.save(product);

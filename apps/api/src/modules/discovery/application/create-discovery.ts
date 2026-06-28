@@ -1,9 +1,13 @@
-import { Discovery, Price, Coordinates } from "@aonde-tem/domain";
-import type { DiscoveryRepository } from "@aonde-tem/domain";
+import { Discovery, Price, Coordinates, ValidationError } from "@aonde-tem/domain";
+import type { DiscoveryRepository, ProductRepository } from "@aonde-tem/domain";
 import type { Logger } from "@aonde-tem/domain";
 import { randomUUID } from "node:crypto";
 import type { CreateDiscoveryDto } from "@aonde-tem/contracts";
 
+/**
+ * Kept for backwards compatibility — still implemented by PlaceUpsertServiceImpl,
+ * but the real write path now uses saveWithPlace on the DiscoveryRepository.
+ */
 export interface PlaceUpsertService {
   findOrCreate(
     placeId: string | undefined,
@@ -14,10 +18,22 @@ export interface PlaceUpsertService {
   ): Promise<string>;
 }
 
+/**
+ * Narrow interface so we only pull in the method we need from PrismaDiscoveryRepository.
+ */
+export interface DiscoveryRepositoryWithPlace extends DiscoveryRepository {
+  saveWithPlace(
+    discovery: Discovery,
+    placeId: string | undefined,
+    placeName: string,
+    createdById: string,
+  ): Promise<string>;
+}
+
 export class CreateDiscovery {
   constructor(
-    private readonly discoveries: DiscoveryRepository,
-    private readonly places: PlaceUpsertService,
+    private readonly discoveries: DiscoveryRepositoryWithPlace,
+    private readonly products: ProductRepository,
     private readonly log: Logger,
   ) {}
 
@@ -25,18 +41,18 @@ export class CreateDiscovery {
     const coords = Coordinates.create(dto.lat, dto.lng);
     const price = Price.create(dto.priceBrl);
 
-    const placeId = await this.places.findOrCreate(
-      dto.placeId,
-      dto.placeName,
-      dto.lat,
-      dto.lng,
-      reporterId,
-    );
+    // Validate product exists and is active
+    const product = await this.products.findById(dto.productId!);
+    if (!product || product.status !== "active") {
+      throw new ValidationError("Product is not available for discovery reporting");
+    }
 
+    // Create the discovery entity with a placeholder placeId — the real placeId
+    // will be resolved atomically inside saveWithPlace.
     const discovery = Discovery.create({
       id: randomUUID(),
       productId: dto.productId!,
-      placeId,
+      placeId: dto.placeId ?? "pending", // resolved in saveWithPlace
       price,
       quantity: dto.quantity,
       reporterId,
@@ -44,8 +60,28 @@ export class CreateDiscovery {
       note: dto.note,
     });
 
-    await this.discoveries.save(discovery);
-    this.log.info({ discoveryId: discovery.id }, "discovery created");
-    return discovery;
+    const resolvedPlaceId = await this.discoveries.saveWithPlace(
+      discovery,
+      dto.placeId,
+      dto.placeName,
+      reporterId,
+    );
+
+    // Return a discovery with the resolved placeId for the controller response
+    const saved = Discovery.create({
+      id: discovery.id,
+      productId: discovery.productId,
+      placeId: resolvedPlaceId,
+      price: discovery.price,
+      quantity: discovery.quantity,
+      reporterId: discovery.reporterId,
+      coords: discovery.coords,
+      note: discovery.note,
+      createdAt: discovery.createdAt,
+      expiresAt: discovery.expiresAt,
+    });
+
+    this.log.info({ discoveryId: saved.id, placeId: resolvedPlaceId }, "discovery created");
+    return saved;
   }
 }

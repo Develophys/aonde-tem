@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { LoggerModule } from "nestjs-pino";
-import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
-import { APP_GUARD } from "@nestjs/core";
+import { ThrottlerModule } from "@nestjs/throttler";
 import { randomUUID } from "node:crypto";
 import { PlaceModule } from "./modules/place/place.module";
 import { DiscoveryModule } from "./modules/discovery/discovery.module.js";
@@ -26,6 +25,7 @@ import { ProductModule } from "./modules/product/product.module.js";
     AuthModule,
     ProductModule,
   ],
-  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+  // ThrottlerGuard removed from global scope — applied per-route on write endpoints only
+  providers: [],
 })
 export class AppModule {}

@@ -6,7 +6,7 @@ import type {
   NearbyDiscoveriesQuery,
   NearbyDiscoveryRow,
 } from "@aonde-tem/domain";
-import { Discovery, Price, Coordinates } from "@aonde-tem/domain";
+import { Discovery, Price, Coordinates, NotFoundError } from "@aonde-tem/domain";
 import type { PlaceUpsertService } from "../application/create-discovery.js";
 
 interface RawDiscoveryRow {
@@ -151,6 +151,54 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
     `;
   }
 
+  /**
+   * Atomically resolve/create the place and insert the discovery in a single
+   * transaction — prevents orphan place rows if the discovery insert fails.
+   */
+  async saveWithPlace(
+    discovery: Discovery,
+    placeId: string | undefined,
+    placeName: string,
+    createdById: string,
+  ): Promise<string> {
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Resolve or create place
+      let resolvedPlaceId: string;
+      if (placeId) {
+        const exists = await tx.place.findUnique({ where: { id: placeId } });
+        if (!exists) throw new NotFoundError(`Place ${placeId} not found`);
+        resolvedPlaceId = placeId;
+      } else {
+        const { randomUUID } = await import("node:crypto");
+        const newPlaceId = randomUUID();
+        await tx.$executeRaw`
+          INSERT INTO places (id, name, location, "createdById")
+          VALUES (${newPlaceId}, ${placeName},
+            ST_MakePoint(${discovery.coords.lng}, ${discovery.coords.lat})::geography,
+            ${createdById})
+        `;
+        resolvedPlaceId = newPlaceId;
+      }
+
+      // 2. Insert discovery
+      await tx.$executeRaw`
+        INSERT INTO discoveries (id, "productId", "placeId", price, quantity, "reporterId", note, location, "expiresAt")
+        VALUES (
+          ${discovery.id},
+          ${discovery.productId},
+          ${resolvedPlaceId},
+          ${discovery.price.cents / 100},
+          ${discovery.quantity},
+          ${discovery.reporterId},
+          ${discovery.note ?? null},
+          ST_MakePoint(${discovery.coords.lng}, ${discovery.coords.lat})::geography,
+          ${discovery.expiresAt}
+        )
+      `;
+      return resolvedPlaceId;
+    });
+  }
+
   async delete(id: string): Promise<void> {
     await this.prisma.discovery.update({
       where: { id },
@@ -172,7 +220,8 @@ export class PlaceUpsertServiceImpl implements PlaceUpsertService {
   ): Promise<string> {
     if (placeId) {
       const exists = await this.prisma.place.findUnique({ where: { id: placeId } });
-      if (exists) return exists.id;
+      if (!exists) throw new NotFoundError(`Place ${placeId} not found`);
+      return exists.id;
     }
     const { randomUUID } = await import("node:crypto");
     const id = randomUUID();

@@ -1,8 +1,9 @@
 import { Module } from "@nestjs/common";
-import type { DiscoveryRepository, Logger } from "@aonde-tem/domain";
+import type { DiscoveryRepository, Logger, ProductRepository } from "@aonde-tem/domain";
 import { PrismaService } from "../../shared/prisma.service.js";
 import { PinoLoggerAdapter, LOGGER } from "../../shared/logging/pino-logger.adapter.js";
 import { PrismaDiscoveryRepository, PlaceUpsertServiceImpl } from "./infrastructure/prisma-discovery.repository.js";
+import type { DiscoveryRepositoryWithPlace } from "./application/create-discovery.js";
 import { FindNearbyDiscoveries } from "./application/find-nearby-discoveries.js";
 import { CreateDiscovery } from "./application/create-discovery.js";
 import { DiscoveryController } from "./presentation/discovery.controller.js";
@@ -27,9 +28,12 @@ const DISCOVERY_REPOSITORY = Symbol("DiscoveryRepository");
     },
     {
       provide: CreateDiscovery,
-      useFactory: (repo: DiscoveryRepository, places: PlaceUpsertServiceImpl, log: Logger) =>
-        new CreateDiscovery(repo, places, log),
-      inject: [DISCOVERY_REPOSITORY, PlaceUpsertServiceImpl, LOGGER],
+      useFactory: (
+        repo: DiscoveryRepositoryWithPlace,
+        products: ProductRepository,
+        log: Logger,
+      ) => new CreateDiscovery(repo, products, log),
+      inject: [DISCOVERY_REPOSITORY, "ProductRepository", LOGGER],
     },
   ],
 })

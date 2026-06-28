@@ -87,9 +87,8 @@ export class PrismaProductRepository implements ProductRepository, BlockedTermCh
 
   async check(name: string): Promise<{ action: "block" | "review" } | null> {
     const lower = name.toLowerCase();
-    const term = await this.prisma.blockedTerm.findFirst({
-      where: { pattern: { in: lower.split(" ").filter(Boolean) } },
-    });
-    return term ? { action: toBlockAction(term.action) } : null;
+    const terms = await this.prisma.blockedTerm.findMany();
+    const match = terms.find((t) => lower.includes(t.pattern.toLowerCase()));
+    return match ? { action: toBlockAction(match.action) } : null;
   }
 }

@@ -9,6 +9,7 @@ import {
   BadRequestException,
   UseGuards,
 } from "@nestjs/common";
+import { Throttle, ThrottlerGuard } from "@nestjs/throttler";
 import { ZodError } from "zod";
 import {
   nearbyDiscoveriesQuerySchema,
@@ -62,7 +63,8 @@ export class DiscoveryController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(ThrottlerGuard, JwtAuthGuard)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   async create(@Body() body: unknown, @Req() req: Request & { user: { sub: string } }): Promise<CreateDiscoveryResponse> {
     let dto: ReturnType<typeof createDiscoverySchema.parse>;
     try {
