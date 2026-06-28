@@ -1,27 +1,53 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
-interface GeoState {
-  coords?: { lat: number; lng: number };
-  error?: string;
-  loading: boolean;
+interface GeoCoords {
+  lat: number;
+  lng: number;
+  accuracy: number;
 }
 
-export function useGeolocation(): GeoState {
-  const [state, setState] = useState<GeoState>({ loading: true });
+interface GeolocationState {
+  coords: GeoCoords | null;
+  error: string | null;
+  loading: boolean;
+  denied: boolean;
+}
+
+export function useGeolocation(): GeolocationState {
+  const [state, setState] = useState<GeolocationState>({
+    coords: null,
+    error: null,
+    loading: true,
+    denied: false,
+  });
 
   useEffect(() => {
     if (!("geolocation" in navigator)) {
-      setState({ loading: false, error: "Geolocation is not supported" });
+      setState({ coords: null, error: "Localização não disponível neste dispositivo", loading: false, denied: false });
       return;
     }
-    const id = navigator.geolocation.watchPosition(
-      (p) =>
-        setState({ loading: false, coords: { lat: p.coords.latitude, lng: p.coords.longitude } }),
-      (e) => setState({ loading: false, error: e.message }),
-      { enableHighAccuracy: true, maximumAge: 10_000, timeout: 15_000 },
+
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        setState({
+          coords: { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy },
+          error: null,
+          loading: false,
+          denied: false,
+        });
+      },
+      (err) => {
+        const denied = err.code === err.PERMISSION_DENIED;
+        setState({ coords: null, error: err.message, loading: false, denied });
+      },
+      { enableHighAccuracy: true, maximumAge: 15_000, timeout: 10_000 },
     );
-    return () => navigator.geolocation.clearWatch(id);
+
+    return () => navigator.geolocation.clearWatch(watchId);
   }, []);
 
   return state;
 }
+
+// Default coordinates — São Paulo city center (used when geolocation denied/unavailable)
+export const DEFAULT_COORDS: GeoCoords = { lat: -23.5505, lng: -46.6333, accuracy: 0 };
