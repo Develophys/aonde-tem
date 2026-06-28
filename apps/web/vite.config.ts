@@ -11,12 +11,13 @@ export default defineConfig({
       registerType: "autoUpdate",
       manifest: {
         name: "Aonde Tem",
-        short_name: "AondeTem",
-        description: "Find places near you.",
+        short_name: "Aonde Tem",
+        description: "Descubra onde encontrar produtos perto de você",
+        lang: "pt-BR",
         start_url: "/",
         display: "standalone",
-        theme_color: "#0f172a",
-        background_color: "#0f172a",
+        theme_color: "#1a5c3a",
+        background_color: "#ffffff",
         icons: [
           { src: "/icons/192.png", sizes: "192x192", type: "image/png" },
           { src: "/icons/512.png", sizes: "512x512", type: "image/png" },
@@ -36,7 +37,7 @@ export default defineConfig({
             handler: "CacheFirst",
             options: {
               cacheName: "map-tiles",
-              expiration: { maxEntries: 500, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              expiration: { maxEntries: 500, maxAgeSeconds: 60 * 60 * 24 * 30 },
             },
           },
         ],
