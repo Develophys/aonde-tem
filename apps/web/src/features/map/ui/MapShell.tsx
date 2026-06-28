@@ -1,0 +1,24 @@
+import { lazy, Suspense } from "react";
+import type { DiscoveryResponse } from "@aonde-tem/contracts";
+
+// MapView is heavy (MapLibre GL); load it lazily so it never blocks first paint
+const MapView = lazy(() => import("./MapView.js").then((m) => ({ default: m.MapView })));
+
+interface Props {
+  center: { lat: number; lng: number };
+  discoveries: DiscoveryResponse[];
+}
+
+export function MapShell({ center, discoveries }: Props) {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full h-full bg-surface-alt flex items-center justify-center">
+          <span className="text-text-muted text-sm">Carregando mapa…</span>
+        </div>
+      }
+    >
+      <MapView center={center} discoveries={discoveries} />
+    </Suspense>
+  );
+}

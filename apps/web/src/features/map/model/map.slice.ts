@@ -1,15 +1,17 @@
-import type { SliceCreator } from "../../../app/store/types";
+import type { SliceCreator } from "../../../app/store/types.js";
 
 export interface MapSlice {
-  selectedPlaceId: string | null;
-  radius: number; // metres
-  selectPlace: (id: string | null) => void;
-  setRadius: (m: number) => void;
+  selectedDiscoveryId: string | null;
+  mapRadius: number;
+  selectDiscovery: (id: string) => void;
+  clearSelectedDiscovery: () => void;
+  setRadius: (r: number) => void;
 }
 
 export const createMapSlice: SliceCreator<MapSlice> = (set) => ({
-  selectedPlaceId: null,
-  radius: 2000,
-  selectPlace: (id) => set({ selectedPlaceId: id }, undefined, "map/selectPlace"),
-  setRadius: (m) => set({ radius: m }, undefined, "map/setRadius"),
+  selectedDiscoveryId: null,
+  mapRadius: 5_000,
+  selectDiscovery: (id) => set({ selectedDiscoveryId: id }, undefined, "map/selectDiscovery"),
+  clearSelectedDiscovery: () => set({ selectedDiscoveryId: null }, undefined, "map/clearSelectedDiscovery"),
+  setRadius: (mapRadius) => set({ mapRadius }, undefined, "map/setRadius"),
 });

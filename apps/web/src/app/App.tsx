@@ -1,27 +1,24 @@
-import { useGeolocation } from "../features/map/model/use-geolocation";
-import { useNearbyPlaces } from "../features/place/api/place.queries";
-import { MapView } from "../features/map/ui/MapView";
-import { useAppStore } from "./store";
+import { useGeolocation } from "../features/map/model/use-geolocation.js";
+import { MapShell } from "../features/map/ui/MapShell.js";
+import { useAppStore } from "./store/index.js";
 
 export function App() {
   const { coords, error, loading } = useGeolocation();
-  const radius = useAppStore((s) => s.radius);
-  const selectPlace = useAppStore((s) => s.selectPlace);
-  const { data: places = [], isLoading } = useNearbyPlaces(coords, radius);
+  const mapRadius = useAppStore((s) => s.mapRadius);
 
   return (
     <div className="flex h-full flex-col">
       <header className="flex items-center justify-between bg-brand px-4 py-3 text-white">
         <h1 className="text-lg font-semibold">Aonde Tem</h1>
         <span className="text-sm opacity-80">
-          {isLoading ? "Buscando..." : `${places.length} lugares por perto`}
+          {loading ? "Obtendo localização…" : `Raio: ${(mapRadius / 1000).toFixed(1)}km`}
         </span>
       </header>
 
       <main className="relative flex-1">
         {loading && <Centered>Obtendo sua localização…</Centered>}
         {error && <Centered>Não foi possível obter a localização: {error}</Centered>}
-        {coords && <MapView center={coords} places={places} onSelect={selectPlace} />}
+        {coords && <MapShell center={coords} discoveries={[]} />}
       </main>
     </div>
   );

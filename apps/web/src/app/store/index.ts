@@ -12,7 +12,7 @@ export const useAppStore = create<AppStore>()(
         ...createUiSlice(...a),
         ...createMapSlice(...a),
       })),
-      { name: "aonde-tem", partialize: (s) => ({ theme: s.theme, radius: s.radius }) },
+      { name: "aonde-tem", partialize: (s) => ({ theme: s.theme, mapRadius: s.mapRadius }) },
     ),
     { name: "AondeTemStore" },
   ),
