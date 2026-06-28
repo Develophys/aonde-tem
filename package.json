@@ -21,6 +21,7 @@
     "format:check": "prettier --check ."
   },
   "devDependencies": {
+    "prisma": "^7.0.0",
     "turbo": "^2.1.0",
     "typescript": "^5.6.0",
     "@eslint/js": "^9.12.0",
