@@ -31,7 +31,7 @@ export function SearchBar({ onSearch, placeholder = "Buscar produto…" }: Props
       {value && (
         <button
           onClick={() => setValue("")}
-          className="text-text-muted text-xl leading-none"
+          className="p-3 text-text-muted text-xl leading-none flex items-center justify-center"
           aria-label="Limpar busca"
         >
           ×
