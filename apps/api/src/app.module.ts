@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { LoggerModule } from "nestjs-pino";
 import { randomUUID } from "node:crypto";
 import { PlaceModule } from "./modules/place/place.module";
+import { DiscoveryModule } from "./modules/discovery/discovery.module.js";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PlaceModule } from "./modules/place/place.module";
       },
     }),
     PlaceModule,
+    DiscoveryModule,
   ],
 })
 export class AppModule {}
