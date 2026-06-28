@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import { PlaceModule } from "./modules/place/place.module";
 import { DiscoveryModule } from "./modules/discovery/discovery.module.js";
 import { AuthModule } from "./modules/auth/auth.module.js";
+import { ProductModule } from "./modules/product/product.module.js";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AuthModule } from "./modules/auth/auth.module.js";
     PlaceModule,
     DiscoveryModule,
     AuthModule,
+    ProductModule,
   ],
 })
 export class AppModule {}
