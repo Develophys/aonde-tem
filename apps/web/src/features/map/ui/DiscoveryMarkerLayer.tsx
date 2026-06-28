@@ -80,7 +80,7 @@ export function DiscoveryMarkerLayer({ discoveries }: Props) {
         filter: ["!", ["has", "point_count"]],
         paint: {
           "circle-radius": 10,
-          "circle-color": "#1a5c3a",
+          "circle-color": ["get", "color"],
           "circle-stroke-width": 2,
           "circle-stroke-color": "#ffffff",
           "circle-opacity": 0.9,

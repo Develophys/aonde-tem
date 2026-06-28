@@ -20,7 +20,7 @@ export function DiscoveryPopup({ discovery }: Props) {
     <div className="absolute bottom-0 left-0 right-0 bg-surface rounded-t-2xl shadow-xl p-4 pb-8 z-10 animate-slide-up">
       <button
         onClick={clearSelected}
-        className="absolute top-3 right-4 text-text-muted text-2xl leading-none"
+        className="absolute top-3 right-4 text-text-muted text-2xl leading-none min-h-11 min-w-11 flex items-center justify-center"
         aria-label="Fechar"
       >
         ×
