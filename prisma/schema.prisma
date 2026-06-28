@@ -1,3 +1,4 @@
+// prisma/schema.prisma
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
@@ -5,19 +6,112 @@ generator client {
 
 datasource db {
   provider   = "postgresql"
-  extensions = [postgis]
+  url        = env("DATABASE_URL")
+  extensions = [postgis, pg_trgm]
+}
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  displayName String?
+  role        String   @default("user") // "user" | "admin"
+  createdAt   DateTime @default(now())
+
+  places      Place[]
+  products    Product[]
+  discoveries Discovery[]
+  flags       Flag[]
+
+  @@map("users")
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  normalizedKey String   @unique
+  status        String   @default("active") // "active" | "under_review" | "blocked"
+  description   String?
+  imageUrl      String?
+  createdById   String
+  createdAt     DateTime @default(now())
+
+  createdBy   User        @relation(fields: [createdById], references: [id])
+  discoveries Discovery[]
+
+  @@index([normalizedKey])
+  @@map("products")
 }
 
 model Place {
-  id       String                                @id @default(uuid())
-  name     String
-  category String
-  address  String?
-  // PostGIS has no native Prisma type — modelled as Unsupported and queried via $queryRaw.
-  location Unsupported("geography(Point, 4326)")
+  id          String   @id @default(uuid())
+  name        String
+  // PostGIS geography point (WGS84)
+  location    Unsupported("geography(Point, 4326)")
+  address     String?
+  createdById String?
+  createdAt   DateTime @default(now())
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdBy   User?       @relation(fields: [createdById], references: [id])
+  discoveries Discovery[]
 
   @@map("places")
+}
+
+model Discovery {
+  id         String   @id @default(uuid())
+  productId  String
+  placeId    String
+  price      Decimal  @db.Decimal(10, 2)
+  quantity   Int
+  reporterId String
+  note       String?
+  // Denormalised location for cheap nearby queries without Place join
+  location   Unsupported("geography(Point, 4326)")
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime
+  hiddenAt   DateTime? // set when admin hides due to a flag
+
+  product  Product @relation(fields: [productId], references: [id])
+  place    Place   @relation(fields: [placeId], references: [id])
+  reporter User    @relation(fields: [reporterId], references: [id])
+  flags    Flag[]
+
+  @@map("discoveries")
+}
+
+model Flag {
+  id         String   @id @default(uuid())
+  targetType String   // "product" | "discovery"
+  targetId   String
+  reason     String   // "illegal" | "inappropriate" | "spam" | "wrong_info" | "other"
+  comment    String?
+  reporterId String
+  status     String   @default("open") // "open" | "actioned" | "dismissed"
+  createdAt  DateTime @default(now())
+
+  reporter  User       @relation(fields: [reporterId], references: [id])
+  discovery Discovery? @relation(fields: [targetId], references: [id], map: "flag_discovery_fk")
+
+  @@map("flags")
+}
+
+model BlockedTerm {
+  id        String   @id @default(uuid())
+  pattern   String   @unique
+  action    String   @default("block") // "block" | "review"
+  createdAt DateTime @default(now())
+
+  @@map("blocked_terms")
+}
+
+model MagicCode {
+  id        String    @id @default(uuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([email, code])
+  @@map("magic_codes")
 }
