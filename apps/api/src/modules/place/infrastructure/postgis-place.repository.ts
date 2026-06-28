@@ -5,7 +5,6 @@ import { PrismaService } from "../../../shared/prisma.service";
 interface Row {
   id: string;
   name: string;
-  category: string;
   address: string | null;
   lat: number;
   lng: number;
@@ -19,7 +18,6 @@ export class PostgisPlaceRepository implements PlaceRepository {
     return Place.create({
       id: r.id,
       name: r.name,
-      category: r.category,
       address: r.address ?? undefined,
       coords: Coordinates.create(r.lat, r.lng),
     });
@@ -27,7 +25,7 @@ export class PostgisPlaceRepository implements PlaceRepository {
 
   async findById(id: string): Promise<Place | null> {
     const rows = await this.prisma.$queryRaw<Row[]>`
-      SELECT id, name, category, address,
+      SELECT id, name, address,
              ST_Y(location::geometry) AS lat,
              ST_X(location::geometry) AS lng
       FROM places WHERE id = ${id} LIMIT 1;`;
@@ -37,7 +35,7 @@ export class PostgisPlaceRepository implements PlaceRepository {
 
   async findNearby(center: Coordinates, radiusMeters: number): Promise<Place[]> {
     const rows = await this.prisma.$queryRaw<Row[]>`
-      SELECT id, name, category, address,
+      SELECT id, name, address,
              ST_Y(location::geometry) AS lat,
              ST_X(location::geometry) AS lng
       FROM places
@@ -49,16 +47,14 @@ export class PostgisPlaceRepository implements PlaceRepository {
 
   async save(place: Place): Promise<void> {
     await this.prisma.$executeRaw`
-      INSERT INTO places (id, name, address, location, "updatedAt")
+      INSERT INTO places (id, name, address, location)
       VALUES (
         ${place.id}, ${place.name}, ${place.address ?? null},
-        ST_SetSRID(ST_MakePoint(${place.coords.lng}, ${place.coords.lat}), 4326)::geography,
-        CURRENT_TIMESTAMP
+        ST_SetSRID(ST_MakePoint(${place.coords.lng}, ${place.coords.lat}), 4326)::geography
       )
       ON CONFLICT (id) DO UPDATE SET
         name = EXCLUDED.name,
         address = EXCLUDED.address,
-        location = EXCLUDED.location,
-        "updatedAt" = CURRENT_TIMESTAMP;`;
+        location = EXCLUDED.location;`;
   }
 }

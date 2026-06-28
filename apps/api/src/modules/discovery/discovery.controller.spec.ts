@@ -31,6 +31,7 @@ describe("GET /discoveries/nearby", () => {
       .get("/discoveries/nearby?lat=-23.55&lng=-46.63&radius=10000&item=arroz")
       .expect(200);
     const names: string[] = res.body.results.map((r: any) => r.productName.toLowerCase());
+    expect(names.length).toBeGreaterThan(0);
     names.forEach((n) => expect(n).toContain("arroz"));
   });
 
