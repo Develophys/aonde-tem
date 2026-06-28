@@ -19,7 +19,7 @@ interface RawDiscoveryRow {
   note: string | null;
   lat: number;
   lng: number;
-  distance_meters: number;
+  distanceMeters: number;
   createdAt: Date;
   expiresAt: Date;
 }
@@ -73,7 +73,7 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
         ST_Distance(
           d.location,
           ST_MakePoint(${center.lng}, ${center.lat})::geography
-        ) AS distance_meters,
+        ) AS "distanceMeters",
         d."createdAt",
         d."expiresAt"
       FROM discoveries d
@@ -103,7 +103,7 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
       note: r.note,
       lat: r.lat,
       lng: r.lng,
-      distanceMeters: Math.round(r.distance_meters),
+      distanceMeters: Math.round(r.distanceMeters),
       createdAt: r.createdAt,
       expiresAt: r.expiresAt,
     }));
