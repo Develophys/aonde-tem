@@ -9,7 +9,7 @@ export class CreatePlace {
 
   async execute(input: {
     name: string;
-    category: string;
+    category?: string;
     address?: string;
     coords: { lat: number; lng: number };
   }): Promise<Place> {

@@ -49,15 +49,14 @@ export class PostgisPlaceRepository implements PlaceRepository {
 
   async save(place: Place): Promise<void> {
     await this.prisma.$executeRaw`
-      INSERT INTO places (id, name, category, address, location, "updatedAt")
+      INSERT INTO places (id, name, address, location, "updatedAt")
       VALUES (
-        ${place.id}, ${place.name}, ${place.category}, ${place.address ?? null},
+        ${place.id}, ${place.name}, ${place.address ?? null},
         ST_SetSRID(ST_MakePoint(${place.coords.lng}, ${place.coords.lat}), 4326)::geography,
         CURRENT_TIMESTAMP
       )
       ON CONFLICT (id) DO UPDATE SET
         name = EXCLUDED.name,
-        category = EXCLUDED.category,
         address = EXCLUDED.address,
         location = EXCLUDED.location,
         "updatedAt" = CURRENT_TIMESTAMP;`;

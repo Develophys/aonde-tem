@@ -27,17 +27,18 @@
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@aonde-tem/config": "workspace:*",
     "@nestjs/cli": "^10.4.0",
+    "@nestjs/testing": "^10.4.0",
+    "@types/jest": "^29.5.13",
     "@types/node": "^22.7.0",
+    "@types/pg": "^8.11.0",
+    "@types/supertest": "^6.0.2",
+    "jest": "^29.7.0",
     "pino-pretty": "^11.2.0",
     "prisma": "^7.0.0",
-    "typescript": "^5.6.0",
-    "@aonde-tem/config": "workspace:*",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.2.5",
-    "@types/jest": "^29.5.13",
-    "@types/pg": "^8.11.0",
     "supertest": "^7.0.0",
-    "@types/supertest": "^6.0.2"
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.6.0"
   }
 }

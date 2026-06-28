@@ -7,7 +7,7 @@ export const coordinatesSchema = z.object({
 
 export const createPlaceSchema = z.object({
   name: z.string().min(2),
-  category: z.string().min(1),
+  category: z.string().min(1).optional(),
   address: z.string().optional(),
   coords: coordinatesSchema,
 });
@@ -16,7 +16,7 @@ export type CreatePlaceDto = z.infer<typeof createPlaceSchema>;
 export const placeResponseSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
-  category: z.string(),
+  category: z.string().optional(),
   address: z.string().optional(),
   coords: coordinatesSchema,
 });

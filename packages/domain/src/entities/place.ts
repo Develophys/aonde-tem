@@ -10,6 +10,7 @@ export class Place {
     public readonly address: string | undefined,
     public readonly createdById: string | undefined,
     public readonly createdAt: Date,
+    public readonly category: string | undefined,
   ) {}
 
   static create(props: {
@@ -19,6 +20,7 @@ export class Place {
     address?: string;
     createdById?: string;
     createdAt?: Date;
+    category?: string;
   }): Place {
     if (props.name.trim().length < 2) {
       throw new ValidationError("Place name must be at least 2 characters");
@@ -30,6 +32,7 @@ export class Place {
       props.address,
       props.createdById,
       props.createdAt ?? new Date(),
+      props.category,
     );
   }
 }
