@@ -22,6 +22,6 @@ import type { Logger } from "@aonde-tem/domain";
       inject: [PrismaProductRepository, LOGGER],
     },
   ],
-  exports: ["ProductRepository", PrismaProductRepository],
+  exports: ["ProductRepository", PrismaProductRepository, CreateProduct],
 })
 export class ProductModule {}

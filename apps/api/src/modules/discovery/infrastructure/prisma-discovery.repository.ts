@@ -7,6 +7,7 @@ import type {
   NearbyDiscoveryRow,
 } from "@aonde-tem/domain";
 import { Discovery, Price, Coordinates } from "@aonde-tem/domain";
+import type { PlaceUpsertService } from "../application/create-discovery.js";
 
 interface RawDiscoveryRow {
   id: string;
@@ -133,9 +134,21 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
     });
   }
 
-  async save(_discovery: Discovery): Promise<void> {
-    // Implemented in Plan C (write API).
-    throw new Error("save() not implemented — will be added in Plan C");
+  async save(discovery: Discovery): Promise<void> {
+    await this.prisma.$executeRaw`
+      INSERT INTO discoveries (id, "productId", "placeId", price, quantity, "reporterId", note, location, "expiresAt")
+      VALUES (
+        ${discovery.id},
+        ${discovery.productId},
+        ${discovery.placeId},
+        ${discovery.price.cents / 100},
+        ${discovery.quantity},
+        ${discovery.reporterId},
+        ${discovery.note ?? null},
+        ST_MakePoint(${discovery.coords.lng}, ${discovery.coords.lat})::geography,
+        ${discovery.expiresAt}
+      )
+    `;
   }
 
   async delete(id: string): Promise<void> {
@@ -143,5 +156,30 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
       where: { id },
       data: { hiddenAt: new Date() },
     });
+  }
+}
+
+@Injectable()
+export class PlaceUpsertServiceImpl implements PlaceUpsertService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async findOrCreate(
+    placeId: string | undefined,
+    name: string,
+    lat: number,
+    lng: number,
+    createdById: string,
+  ): Promise<string> {
+    if (placeId) {
+      const exists = await this.prisma.place.findUnique({ where: { id: placeId } });
+      if (exists) return exists.id;
+    }
+    const { randomUUID } = await import("node:crypto");
+    const id = randomUUID();
+    await this.prisma.$executeRaw`
+      INSERT INTO places (id, name, location, "createdById")
+      VALUES (${id}, ${name}, ST_MakePoint(${lng}, ${lat})::geography, ${createdById})
+    `;
+    return id;
   }
 }
