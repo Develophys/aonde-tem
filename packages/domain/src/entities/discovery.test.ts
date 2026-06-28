@@ -1,7 +1,7 @@
-import { Discovery, DISCOVERY_DEFAULT_TTL_MS } from "./discovery.js";
-import { Price } from "../value-objects/price.js";
-import { Coordinates } from "../value-objects/coordinates.js";
-import { ValidationError } from "../errors/domain-error.js";
+import { Discovery, DISCOVERY_DEFAULT_TTL_MS } from "./discovery";
+import { Price } from "../value-objects/price";
+import { Coordinates } from "../value-objects/coordinates";
+import { ValidationError } from "../errors/domain-error";
 
 const coords = Coordinates.create(-23.55, -46.63);
 const price = Price.create(5.99);

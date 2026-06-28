@@ -1,5 +1,5 @@
-import type { Discovery } from "../entities/discovery.js";
-import type { Coordinates } from "../value-objects/coordinates.js";
+import type { Discovery } from "../entities/discovery";
+import type { Coordinates } from "../value-objects/coordinates";
 
 export interface NearbyDiscoveriesQuery {
   center: Coordinates;

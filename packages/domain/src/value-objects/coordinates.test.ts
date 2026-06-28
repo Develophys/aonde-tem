@@ -1,5 +1,5 @@
-import { Coordinates } from "./coordinates.js";
-import { ValidationError } from "../errors/domain-error.js";
+import { Coordinates } from "./coordinates";
+import { ValidationError } from "../errors/domain-error";
 
 describe("Coordinates", () => {
   it("creates a valid coordinate", () => {

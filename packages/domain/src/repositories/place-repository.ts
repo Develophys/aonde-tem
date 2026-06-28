@@ -1,5 +1,5 @@
-import { Place } from "../entities/place.js";
-import { Coordinates } from "../value-objects/coordinates.js";
+import { Place } from "../entities/place";
+import { Coordinates } from "../value-objects/coordinates";
 
 /** Port: persistence boundary for places. Implemented in infrastructure (PostGIS). */
 export interface PlaceRepository {

@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors/domain-error.js";
-import { PRICE_MAX } from "../consts/price.js";
+import { ValidationError } from "../errors/domain-error";
+import { PRICE_MAX } from "../consts/price";
 
 export class Price {
   private constructor(public readonly cents: number) {}

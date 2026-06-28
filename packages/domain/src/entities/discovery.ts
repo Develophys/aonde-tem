@@ -1,6 +1,6 @@
-import type { Price } from "../value-objects/price.js";
-import type { Coordinates } from "../value-objects/coordinates.js";
-import { ValidationError } from "../errors/domain-error.js";
+import type { Price } from "../value-objects/price";
+import type { Coordinates } from "../value-objects/coordinates";
+import { ValidationError } from "../errors/domain-error";
 
 export const DISCOVERY_DEFAULT_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 

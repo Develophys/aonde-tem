@@ -1,26 +1,26 @@
 // Errors
-export * from "./errors/domain-error.js";
+export * from "./errors/domain-error";
 
 // Value Objects
-export * from "./value-objects/coordinates.js";
-export * from "./value-objects/email.js";
-export * from "./value-objects/price.js";
+export * from "./value-objects/coordinates";
+export * from "./value-objects/email";
+export * from "./value-objects/price";
 
 // Entities
-export * from "./entities/place.js";
-export * from "./entities/user.js";
-export * from "./entities/product.js";
-export * from "./entities/discovery.js";
-export * from "./entities/flag.js";
-export * from "./entities/blocked-term.js";
+export * from "./entities/place";
+export * from "./entities/user";
+export * from "./entities/product";
+export * from "./entities/discovery";
+export * from "./entities/flag";
+export * from "./entities/blocked-term";
 
 // Repositories (interfaces / ports)
-export * from "./repositories/place-repository.js";
-export * from "./repositories/user-repository.js";
-export * from "./repositories/product-repository.js";
-export * from "./repositories/discovery-repository.js";
-export * from "./repositories/flag-repository.js";
+export * from "./repositories/place-repository";
+export * from "./repositories/user-repository";
+export * from "./repositories/product-repository";
+export * from "./repositories/discovery-repository";
+export * from "./repositories/flag-repository";
 
 // Ports
-export * from "./ports/logger.js";
-export * from "./ports/geocoding.js";
+export * from "./ports/logger";
+export * from "./ports/geocoding";

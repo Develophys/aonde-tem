@@ -1,5 +1,5 @@
-import { Product } from "./product.js";
-import { ValidationError } from "../errors/domain-error.js";
+import { Product } from "./product";
+import { ValidationError } from "../errors/domain-error";
 
 describe("Product", () => {
   it("normalises key: strips accents, punctuation, lowercases", () => {

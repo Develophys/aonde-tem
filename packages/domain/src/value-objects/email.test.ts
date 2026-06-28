@@ -1,5 +1,5 @@
-import { Email } from "./email.js";
-import { ValidationError } from "../errors/domain-error.js";
+import { Email } from "./email";
+import { ValidationError } from "../errors/domain-error";
 
 describe("Email", () => {
   it("normalises to lowercase", () => {

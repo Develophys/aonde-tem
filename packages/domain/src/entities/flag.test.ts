@@ -1,5 +1,5 @@
-import { Flag } from "./flag.js";
-import { ValidationError } from "../errors/domain-error.js";
+import { Flag } from "./flag";
+import { ValidationError } from "../errors/domain-error";
 
 describe("Flag", () => {
   it("creates open flag", () => {

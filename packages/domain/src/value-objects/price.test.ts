@@ -1,5 +1,5 @@
-import { Price } from "./price.js";
-import { ValidationError } from "../errors/domain-error.js";
+import { Price } from "./price";
+import { ValidationError } from "../errors/domain-error";
 
 describe("Price", () => {
   it("stores cents as integer", () => {

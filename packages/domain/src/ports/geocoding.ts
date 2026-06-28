@@ -1,4 +1,4 @@
-import { Coordinates } from "../value-objects/coordinates.js";
+import { Coordinates } from "../value-objects/coordinates";
 
 export interface GeocodeResult {
   label: string;

@@ -1,5 +1,5 @@
-import { Email } from "../value-objects/email.js";
-import { ValidationError } from "../errors/domain-error.js";
+import { Email } from "../value-objects/email";
+import { ValidationError } from "../errors/domain-error";
 
 export type UserRole = "user" | "admin";
 

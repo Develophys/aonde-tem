@@ -1,5 +1,5 @@
-import { User } from "./user.js";
-import { ValidationError } from "../errors/domain-error.js";
+import { User } from "./user";
+import { ValidationError } from "../errors/domain-error";
 
 describe("User", () => {
   it("creates valid user", () => {

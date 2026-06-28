@@ -1,4 +1,4 @@
-import { ValidationError } from "../errors/domain-error.js";
+import { ValidationError } from "../errors/domain-error";
 
 export type ProductStatus = "active" | "under_review" | "blocked";
 

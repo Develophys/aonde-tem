@@ -1,4 +1,4 @@
-import { ValidationError } from "../errors/domain-error.js";
+import { ValidationError } from "../errors/domain-error";
 
 /** Geographic point (WGS84). Self-validating value object. */
 export class Coordinates {

@@ -1,6 +1,6 @@
 // packages/domain/src/entities/place.ts
-import { Coordinates } from "../value-objects/coordinates.js";
-import { ValidationError } from "../errors/domain-error.js";
+import { Coordinates } from "../value-objects/coordinates";
+import { ValidationError } from "../errors/domain-error";
 
 export class Place {
   private constructor(

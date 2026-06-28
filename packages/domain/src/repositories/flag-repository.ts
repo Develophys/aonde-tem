@@ -1,4 +1,4 @@
-import type { Flag, FlagStatus } from "../entities/flag.js";
+import type { Flag, FlagStatus } from "../entities/flag";
 
 export interface FlagRepository {
   findById(id: string): Promise<Flag | null>;

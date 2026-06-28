@@ -1,5 +1,5 @@
-import { ValidationError } from "../errors/domain-error.js";
-import { VALID_FLAG_REASONS } from "../consts/flag.js";
+import { ValidationError } from "../errors/domain-error";
+import { VALID_FLAG_REASONS } from "../consts/flag";
 
 export type FlagTargetType = "product" | "discovery";
 export type FlagReason = "illegal" | "inappropriate" | "spam" | "wrong_info" | "other";
