@@ -3,6 +3,7 @@ import { LoggerModule } from "nestjs-pino";
 import { randomUUID } from "node:crypto";
 import { PlaceModule } from "./modules/place/place.module";
 import { DiscoveryModule } from "./modules/discovery/discovery.module.js";
+import { AuthModule } from "./modules/auth/auth.module.js";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { DiscoveryModule } from "./modules/discovery/discovery.module.js";
     }),
     PlaceModule,
     DiscoveryModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
