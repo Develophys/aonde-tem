@@ -1,0 +1,24 @@
+import type { SliceCreator } from "../../../app/store/types.js";
+
+interface SessionUser {
+  id: string;
+  email: string;
+  displayName: string | null;
+  role: "user" | "admin";
+}
+
+export interface SessionSlice {
+  accessToken: string | null;
+  sessionUser: SessionUser | null;
+  setSession: (token: string, user: SessionUser) => void;
+  clearSession: () => void;
+  isAuthenticated: () => boolean;
+}
+
+export const createSessionSlice: SliceCreator<SessionSlice> = (set, get) => ({
+  accessToken: null,
+  sessionUser: null,
+  setSession: (accessToken, sessionUser) => set({ accessToken, sessionUser }),
+  clearSession: () => set({ accessToken: null, sessionUser: null }),
+  isAuthenticated: () => get().accessToken !== null,
+});
