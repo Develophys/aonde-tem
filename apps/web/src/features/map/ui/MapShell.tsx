@@ -6,10 +6,11 @@ const MapView = lazy(() => import("./MapView.js").then((m) => ({ default: m.MapV
 
 interface Props {
   center: { lat: number; lng: number };
+  userPin?: { lat: number; lng: number };
   discoveries: DiscoveryResponse[];
 }
 
-export function MapShell({ center, discoveries }: Props) {
+export function MapShell({ center, userPin, discoveries }: Props) {
   return (
     <Suspense
       fallback={
@@ -18,7 +19,7 @@ export function MapShell({ center, discoveries }: Props) {
         </div>
       }
     >
-      <MapView center={center} discoveries={discoveries} />
+      <MapView center={center} userPin={userPin} discoveries={discoveries} />
     </Suspense>
   );
 }

@@ -34,7 +34,7 @@ export function SeekPage({ onReport }: Props) {
     <div className="relative w-full h-screen bg-surface overflow-hidden">
       {/* Full-screen map — underneath everything */}
       <div className="absolute inset-0">
-        <MapShell center={center} discoveries={discoveries} />
+        <MapShell center={center} userPin={coords ?? undefined} discoveries={discoveries} />
       </div>
 
       {/* Search bar — floats on top of the map */}
