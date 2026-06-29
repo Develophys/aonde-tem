@@ -38,7 +38,7 @@ export function ProductPicker({ value, onChange }: Props) {
         value={query}
         onChange={(e) => handleChange(e.target.value)}
         onFocus={() => setShowDropdown(true)}
-        onBlur={() => setShowDropdown(false)}
+        onKeyDown={(e) => { if (e.key === "Escape") setShowDropdown(false); }}
         placeholder="Ex: Arroz 5kg, Leite 1L…"
         className="w-full border border-border rounded-xl px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-brand"
         autoComplete="off"

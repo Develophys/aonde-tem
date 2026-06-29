@@ -29,8 +29,10 @@ export function PlacePicker({ value, onChange }: Props) {
         type="text"
         value={placeName}
         onChange={(e) => {
-          setPlaceName(e.target.value);
-          if (value) onChange({ ...value, name: e.target.value });
+          const name = e.target.value;
+          setPlaceName(name);
+          const base = value ?? { lat: 0, lng: 0 };
+          onChange({ ...base, name });
         }}
         placeholder="Nome do mercado / estabelecimento"
         className="w-full border border-border rounded-xl px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-brand mb-2"

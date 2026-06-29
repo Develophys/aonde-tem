@@ -38,7 +38,7 @@ export function PriceInput({ value, onChange, error }: Props) {
         />
       </div>
       <p className="text-xs text-text-muted mt-1">Preço relatado pelo usuário — pode variar.</p>
-      {error && <p className="text-red-600 text-xs mt-1">{error}</p>}
+      {error && <p className="text-error text-xs mt-1">{error}</p>}
     </div>
   );
 }
