@@ -1,19 +1,24 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { sendMagicCodeSchema, verifyMagicCodeSchema, type SendMagicCodeDto } from "@aonde-tem/contracts";
+import {
+  sendMagicCodeSchema,
+  verifyMagicCodeSchema,
+  type SendMagicCodeDto,
+} from "@aonde-tem/contracts";
 import { useSendMagicCode, useVerifyMagicCode } from "../api/auth.mutations.js";
 
 // Code step only needs the 6-digit code; email is held in component state.
 const codeOnlySchema = verifyMagicCodeSchema.pick({ code: true });
 type CodeOnlyFormValues = z.infer<typeof codeOnlySchema>;
 
-interface Props {
-  onSuccess: () => void;
-}
+export function SignInPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as { from?: { pathname: string } } | null)?.from?.pathname ?? "/";
 
-export function SignInPage({ onSuccess }: Props) {
   const [step, setStep] = useState<"email" | "code">("email");
   const [email, setEmail] = useState("");
 
@@ -31,7 +36,7 @@ export function SignInPage({ onSuccess }: Props) {
 
   async function onSubmitCode(data: { email: string; code: string }) {
     await verifyCode.mutateAsync(data);
-    onSuccess();
+    navigate(from, { replace: true });
   }
 
   return (
@@ -61,9 +66,7 @@ export function SignInPage({ onSuccess }: Props) {
               {...emailForm.register("email")}
             />
             {emailForm.formState.errors.email && (
-              <p className="text-error text-sm mb-3">
-                {emailForm.formState.errors.email.message}
-              </p>
+              <p className="text-error text-sm mb-3">{emailForm.formState.errors.email.message}</p>
             )}
             {sendCode.isError && (
               <p className="text-error text-sm mb-3" role="alert">
@@ -80,9 +83,7 @@ export function SignInPage({ onSuccess }: Props) {
           </form>
         ) : (
           <form
-            onSubmit={codeForm.handleSubmit((d) =>
-              onSubmitCode({ email, code: d.code })
-            )}
+            onSubmit={codeForm.handleSubmit((d) => onSubmitCode({ email, code: d.code }))}
             noValidate
           >
             <label className="block text-sm font-medium text-text mb-1" htmlFor="code">
