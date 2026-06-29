@@ -1,7 +1,7 @@
 # Design: App Header with Auth Button
 
 **Date:** 2026-06-29
-**Status:** Blocked — requires React Router migration first (see `2026-06-29-react-router-migration-design.md`)
+**Status:** Approved — React Router migration complete, ready to implement
 
 ## Prerequisite
 
