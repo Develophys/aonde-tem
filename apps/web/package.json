@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "test": "jest --passWithNoTests",
-    "size-limit": "size-limit"
+    "size-limit": "size-limit",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@aonde-tem/contracts": "workspace:*",
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "@aonde-tem/config": "workspace:*",
+    "@playwright/test": "^1.61.1",
     "@size-limit/preset-app": "^12.1.0",
     "@tailwindcss/vite": "^4.0.0",
     "@testing-library/jest-dom": "^6.5.0",

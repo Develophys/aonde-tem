@@ -83,6 +83,12 @@ jobs:
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
+      - name: Install Playwright browsers
+        run: pnpm --filter @aonde-tem/web exec playwright install chromium --with-deps
+
+      - name: E2E smoke tests
+        run: pnpm --filter @aonde-tem/web e2e
+
   # Design slop gate — fails the build on frontend anti-patterns. (Backlog: AT-117)
   # Non-blocking until Impeccable is installed/configured; flip continue-on-error to false to enforce.
   design-slop:
