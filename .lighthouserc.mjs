@@ -1,6 +1,7 @@
 export default {
   ci: {
     collect: {
+      startServerCommand: "pnpm --filter @aonde-tem/web preview",
       url: ["http://localhost:4173/"],
       numberOfRuns: 2,
       settings: {

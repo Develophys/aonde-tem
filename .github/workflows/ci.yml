@@ -72,12 +72,6 @@ jobs:
       - name: Check bundle size
         run: pnpm --filter @aonde-tem/web size-limit
 
-      - name: Preview build for Lighthouse
-        run: pnpm --filter @aonde-tem/web preview &
-
-      - name: Wait for preview server
-        run: npx wait-on http://localhost:4173 --timeout 30000
-
       - name: Lighthouse CI
         run: npx lhci autorun
         env:
