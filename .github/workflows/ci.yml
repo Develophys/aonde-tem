@@ -69,6 +69,9 @@ jobs:
       - name: Build
         run: pnpm run build
 
+      - name: Check bundle size
+        run: pnpm --filter @aonde-tem/web size-limit
+
   # Design slop gate — fails the build on frontend anti-patterns. (Backlog: AT-117)
   # Non-blocking until Impeccable is installed/configured; flip continue-on-error to false to enforce.
   design-slop:

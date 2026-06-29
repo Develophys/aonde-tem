@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests",
+    "size-limit": "size-limit"
   },
   "dependencies": {
     "@aonde-tem/contracts": "workspace:*",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@aonde-tem/config": "workspace:*",
+    "@size-limit/preset-app": "^12.1.0",
     "@tailwindcss/vite": "^4.0.0",
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
