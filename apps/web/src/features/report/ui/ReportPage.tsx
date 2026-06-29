@@ -98,7 +98,7 @@ export function ReportPage({ onSuccess, onSignInRequired }: Props) {
     <div className="min-h-screen bg-surface flex flex-col">
       {/* Header */}
       <div className="px-4 py-4 border-b border-border flex items-center gap-3">
-        <button onClick={onSuccess} aria-label="Voltar" className="text-text-muted text-2xl">←</button>
+        <button onClick={onSuccess} aria-label="Voltar" className="text-text-muted text-2xl min-h-11 min-w-11 flex items-center justify-center">←</button>
         <h1 className="text-lg font-semibold text-text">
           {step === "confirm" ? "Confirmar" : "Relatar produto"}
         </h1>
@@ -111,13 +111,13 @@ export function ReportPage({ onSuccess, onSignInRequired }: Props) {
               value={form.product}
               onChange={(product) => setForm((f) => ({ ...f, product }))}
             />
-            {errors.product && <p className="text-red-600 text-xs -mt-4">{errors.product}</p>}
+            {errors.product && <p className="text-error text-xs -mt-4">{errors.product}</p>}
 
             <PlacePicker
               value={form.place}
               onChange={(place) => setForm((f) => ({ ...f, place }))}
             />
-            {errors.place && <p className="text-red-600 text-xs -mt-4">{errors.place}</p>}
+            {errors.place && <p className="text-error text-xs -mt-4">{errors.place}</p>}
 
             <PriceInput
               value={form.priceBrl}

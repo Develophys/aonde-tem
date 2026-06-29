@@ -61,8 +61,13 @@ export function SignInPage({ onSuccess }: Props) {
               {...emailForm.register("email")}
             />
             {emailForm.formState.errors.email && (
-              <p className="text-red-600 text-sm mb-3">
+              <p className="text-error text-sm mb-3">
                 {emailForm.formState.errors.email.message}
+              </p>
+            )}
+            {sendCode.isError && (
+              <p className="text-error text-sm mb-3" role="alert">
+                Não foi possível enviar o código. Tente novamente.
               </p>
             )}
             <button
@@ -94,7 +99,7 @@ export function SignInPage({ onSuccess }: Props) {
               {...codeForm.register("code")}
             />
             {verifyCode.isError && (
-              <p className="text-red-600 text-sm mb-3">
+              <p className="text-error text-sm mb-3">
                 Código inválido ou expirado. Tente novamente.
               </p>
             )}

@@ -7,7 +7,7 @@ export function useProductSearch(query: string) {
     queryKey: ["products", "search", debouncedQuery],
     queryFn: async () => {
       if (!debouncedQuery || debouncedQuery.length < 2) return { results: [] };
-      const res = await fetch(`/api/products?q=${encodeURIComponent(debouncedQuery)}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL ?? ""}/api/products?q=${encodeURIComponent(debouncedQuery)}`);
       if (!res.ok) return { results: [] };
       return res.json() as Promise<{ results: { id: string; name: string }[] }>;
     },

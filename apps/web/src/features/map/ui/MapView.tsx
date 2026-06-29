@@ -6,7 +6,10 @@ import { DiscoveryPopup } from "./DiscoveryPopup.js";
 import { useRef } from "react";
 import { useAppStore } from "../../../app/store/index.js";
 
-const MAP_STYLE = `https://api.maptiler.com/maps/streets-v2/style.json?key=${import.meta.env.VITE_MAP_KEY}`;
+// Use VITE_MAP_KEY for MapTiler if set; fall back to OpenFreeMap (no key required)
+const MAP_STYLE = import.meta.env.VITE_MAP_KEY && import.meta.env.VITE_MAP_KEY !== "demo"
+  ? `https://api.maptiler.com/maps/streets-v2/style.json?key=${import.meta.env.VITE_MAP_KEY}`
+  : "https://tiles.openfreemap.org/styles/bright";
 
 interface MapViewProps {
   center: { lat: number; lng: number };

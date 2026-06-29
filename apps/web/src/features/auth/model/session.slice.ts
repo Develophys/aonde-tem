@@ -1,11 +1,7 @@
+import type { JwtResponse } from "@aonde-tem/contracts";
 import type { SliceCreator } from "../../../app/store/types.js";
 
-export interface SessionUser {
-  id: string;
-  email: string;
-  displayName: string | null;
-  role: "user" | "admin";
-}
+export type SessionUser = JwtResponse["user"];
 
 export interface SessionSlice {
   accessToken: string | null;
