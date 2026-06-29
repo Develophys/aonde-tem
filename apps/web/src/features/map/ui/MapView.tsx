@@ -3,10 +3,9 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import type { DiscoveryResponse } from "@aonde-tem/contracts";
 import { DiscoveryMarkerLayer } from "./DiscoveryMarkerLayer.js";
 import { DiscoveryPopup } from "./DiscoveryPopup.js";
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import { useAppStore } from "../../../app/store/index.js";
 
-// Use VITE_MAP_KEY for MapTiler if set; fall back to OpenFreeMap (no key required)
 const MAP_STYLE =
   import.meta.env.VITE_MAP_KEY && import.meta.env.VITE_MAP_KEY !== "demo"
     ? `https://api.maptiler.com/maps/streets-v2/style.json?key=${import.meta.env.VITE_MAP_KEY}`
@@ -23,6 +22,11 @@ export function MapView({ center, userPin, discoveries }: MapViewProps) {
   const selectedId = useAppStore((s) => s.selectedDiscoveryId);
   const selectedDiscovery = discoveries.find((d) => d.id === selectedId) ?? null;
 
+  const recenter = useCallback(() => {
+    if (!userPin || !mapRef.current) return;
+    mapRef.current.flyTo({ center: [userPin.lng, userPin.lat], zoom: 15, duration: 800 });
+  }, [userPin]);
+
   return (
     <div className="relative w-full h-full">
       <Map
@@ -36,7 +40,6 @@ export function MapView({ center, userPin, discoveries }: MapViewProps) {
 
         {userPin && (
           <Marker longitude={userPin.lng} latitude={userPin.lat} anchor="center">
-            {/* Blue "you are here" dot — intentionally NOT a discovery marker */}
             <div
               style={{
                 width: 14,
@@ -51,6 +54,31 @@ export function MapView({ center, userPin, discoveries }: MapViewProps) {
           </Marker>
         )}
       </Map>
+
+      {/* Recenter button — only when GPS is known */}
+      {userPin && (
+        <button
+          type="button"
+          onClick={recenter}
+          aria-label="Centralizar em minha localização"
+          className="absolute bottom-24 right-4 z-10 bg-surface shadow-md rounded-full w-11 h-11 flex items-center justify-center border border-border"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="3" />
+            <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
+          </svg>
+        </button>
+      )}
 
       {selectedDiscovery && <DiscoveryPopup discovery={selectedDiscovery} />}
     </div>
