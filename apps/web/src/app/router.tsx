@@ -1,6 +1,7 @@
 import { lazy, Suspense, type ReactNode } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Outlet } from "react-router-dom";
 import { ProtectedRoute } from "../features/auth/ui/ProtectedRoute.js";
+import { AppHeader } from "../features/auth/ui/AppHeader.js";
 
 const SeekPage = lazy(() =>
   import("../features/seek/ui/SeekPage.js").then((m) => ({ default: m.SeekPage })),
@@ -26,31 +27,45 @@ function PageSuspense({ children }: { children: ReactNode }) {
   );
 }
 
+function RootLayout() {
+  return (
+    <>
+      <AppHeader />
+      <Outlet />
+    </>
+  );
+}
+
 export const router = createBrowserRouter([
   {
-    path: "/",
-    element: (
-      <PageSuspense>
-        <SeekPage />
-      </PageSuspense>
-    ),
-  },
-  {
-    path: "/signin",
-    element: (
-      <PageSuspense>
-        <SignInPage />
-      </PageSuspense>
-    ),
-  },
-  {
-    path: "/report",
-    element: (
-      <ProtectedRoute>
-        <PageSuspense>
-          <ReportPage />
-        </PageSuspense>
-      </ProtectedRoute>
-    ),
+    element: <RootLayout />,
+    children: [
+      {
+        path: "/",
+        element: (
+          <PageSuspense>
+            <SeekPage />
+          </PageSuspense>
+        ),
+      },
+      {
+        path: "/signin",
+        element: (
+          <PageSuspense>
+            <SignInPage />
+          </PageSuspense>
+        ),
+      },
+      {
+        path: "/report",
+        element: (
+          <ProtectedRoute>
+            <PageSuspense>
+              <ReportPage />
+            </PageSuspense>
+          </ProtectedRoute>
+        ),
+      },
+    ],
   },
 ]);
