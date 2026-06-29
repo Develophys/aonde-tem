@@ -106,9 +106,15 @@ export function DiscoveryMarkerLayer({ discoveries }: Props) {
 
     return () => {
       map.off("load", applyLayers);
-      if (map.getLayer("discoveries-points")) map.removeLayer("discoveries-points");
-      if (map.getLayer("discoveries-clusters")) map.removeLayer("discoveries-clusters");
-      if (map.getSource("discoveries")) map.removeSource("discoveries");
+      // Guard against the case where the parent Map component destroyed the
+      // MapLibre instance before this cleanup runs (map.style becomes null).
+      try {
+        if (map.getLayer("discoveries-points")) map.removeLayer("discoveries-points");
+        if (map.getLayer("discoveries-clusters")) map.removeLayer("discoveries-clusters");
+        if (map.getSource("discoveries")) map.removeSource("discoveries");
+      } catch {
+        // map already removed — nothing to clean up
+      }
     };
   }, [mapRef, discoveries, setSelected]);
 

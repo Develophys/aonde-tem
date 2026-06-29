@@ -1,7 +1,11 @@
 # Design: App Header with Auth Button
 
 **Date:** 2026-06-29
-**Status:** Approved
+**Status:** Blocked — requires React Router migration first (see `2026-06-29-react-router-migration-design.md`)
+
+## Prerequisite
+
+This spec depends on React Router being in place. The `onSignIn` prop and `setPage` references will be replaced by `useNavigate("/signin")`. Do not implement until routing migration is complete.
 
 ## What we're building
 
