@@ -2,13 +2,11 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { sendMagicCodeSchema, type SendMagicCodeDto } from "@aonde-tem/contracts";
+import { sendMagicCodeSchema, verifyMagicCodeSchema, type SendMagicCodeDto } from "@aonde-tem/contracts";
 import { useSendMagicCode, useVerifyMagicCode } from "../api/auth.mutations.js";
 
 // Code step only needs the 6-digit code; email is held in component state.
-const codeOnlySchema = z.object({
-  code: z.string().length(6).regex(/^\d{6}$/),
-});
+const codeOnlySchema = verifyMagicCodeSchema.pick({ code: true });
 type CodeOnlyFormValues = z.infer<typeof codeOnlySchema>;
 
 interface Props {
