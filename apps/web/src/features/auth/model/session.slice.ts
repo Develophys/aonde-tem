@@ -1,6 +1,6 @@
 import type { SliceCreator } from "../../../app/store/types.js";
 
-interface SessionUser {
+export interface SessionUser {
   id: string;
   email: string;
   displayName: string | null;
