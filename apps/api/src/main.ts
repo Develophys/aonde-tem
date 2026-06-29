@@ -8,6 +8,7 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
   app.useLogger(app.get(Logger));
   app.useGlobalFilters(new AllExceptionsFilter());
+  app.setGlobalPrefix("api");
   app.enableCors({ origin: process.env.WEB_ORIGIN ?? true });
   const port = Number(process.env.PORT ?? 3000);
   await app.listen(port);

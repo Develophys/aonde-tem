@@ -32,7 +32,6 @@ export function DiscoveryMarkerLayer({ discoveries }: Props) {
 
   useEffect(() => {
     if (!mapRef) return;
-    // Use the underlying MapLibre Map instance directly for source/layer manipulation
     const map: MapLibreMap = mapRef.getMap();
 
     const geojson: FeatureCollection = {
@@ -50,9 +49,12 @@ export function DiscoveryMarkerLayer({ discoveries }: Props) {
       })),
     };
 
-    if (map.getSource("discoveries")) {
-      (map.getSource("discoveries") as GeoJSONSource).setData(geojson);
-    } else {
+    function applyLayers() {
+      if (map.getSource("discoveries")) {
+        (map.getSource("discoveries") as GeoJSONSource).setData(geojson);
+        return;
+      }
+
       map.addSource("discoveries", {
         type: "geojson",
         data: geojson,
@@ -93,7 +95,17 @@ export function DiscoveryMarkerLayer({ discoveries }: Props) {
       });
     }
 
+    // The style may not be loaded yet when this effect first runs (map mounts
+    // before the MapTiler style JSON returns). Gate on isStyleLoaded() and
+    // fall back to the 'load' event so we never call addSource too early.
+    if (map.isStyleLoaded()) {
+      applyLayers();
+    } else {
+      map.once("load", applyLayers);
+    }
+
     return () => {
+      map.off("load", applyLayers);
       if (map.getLayer("discoveries-points")) map.removeLayer("discoveries-points");
       if (map.getLayer("discoveries-clusters")) map.removeLayer("discoveries-clusters");
       if (map.getSource("discoveries")) map.removeSource("discoveries");
