@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Param, Body, UseGuards } from "@nestjs/common";
+import { Controller, Get, Patch, Param, Body, UseGuards, NotFoundException } from "@nestjs/common";
 import { adminActionSchema, type AdminFlagResponse } from "@aonde-tem/contracts";
 import { AdminGuard } from "../guards/admin.guard.js";
 import { PrismaFlagRepository } from "../infrastructure/prisma-flag.repository.js";
@@ -40,7 +40,7 @@ export class AdminController {
   ): Promise<{ ok: boolean }> {
     const dto = adminActionSchema.parse(body);
     const flag = await this.flags.findById(id);
-    if (!flag) return { ok: false };
+    if (!flag) throw new NotFoundException(`Flag ${id} not found`);
 
     if (dto.action === "hide") {
       if (flag.targetType === "discovery") {
