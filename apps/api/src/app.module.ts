@@ -6,6 +6,7 @@ import { PlaceModule } from "./modules/place/place.module";
 import { DiscoveryModule } from "./modules/discovery/discovery.module.js";
 import { AuthModule } from "./modules/auth/auth.module.js";
 import { ProductModule } from "./modules/product/product.module.js";
+import { FlagModule } from "./modules/flag/flag.module.js";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ProductModule } from "./modules/product/product.module.js";
     DiscoveryModule,
     AuthModule,
     ProductModule,
+    FlagModule,
   ],
   // ThrottlerGuard removed from global scope — applied per-route on write endpoints only
   providers: [],
