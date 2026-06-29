@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ProductPicker } from "./ProductPicker.js";
 import { PlacePicker } from "./PlacePicker.js";
 import { PriceInput } from "./PriceInput.js";
 import { ConfirmStep } from "./ConfirmStep.js";
 import { useCreateDiscovery } from "../api/report.api.js";
-import { useAppStore } from "../../../app/store/index.js";
 
 interface FormState {
   product: { id?: string; name: string } | null;
@@ -13,13 +13,8 @@ interface FormState {
   quantity: number;
 }
 
-interface Props {
-  onSuccess: () => void;
-  onSignInRequired: () => void;
-}
-
-export function ReportPage({ onSuccess, onSignInRequired }: Props) {
-  const isAuthenticated = useAppStore((s) => s.isAuthenticated());
+export function ReportPage() {
+  const navigate = useNavigate();
   const [step, setStep] = useState<"form" | "confirm" | "success">("form");
   const [form, setForm] = useState<FormState>({
     product: null,
@@ -30,24 +25,6 @@ export function ReportPage({ onSuccess, onSignInRequired }: Props) {
   const [errors, setErrors] = useState<{ price?: string; product?: string; place?: string }>({});
 
   const createDiscovery = useCreateDiscovery();
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-surface flex flex-col items-center justify-center px-6">
-        <div className="text-5xl mb-4">🔒</div>
-        <h2 className="text-lg font-bold text-text mb-2">Entre para relatar</h2>
-        <p className="text-text-muted text-sm text-center mb-6">
-          Para contribuir com relatos você precisa entrar.
-        </p>
-        <button
-          onClick={onSignInRequired}
-          className="bg-brand text-white font-semibold px-8 py-3 rounded-full"
-        >
-          Entrar
-        </button>
-      </div>
-    );
-  }
 
   function validateForm(): boolean {
     const newErrors: typeof errors = {};
@@ -87,7 +64,10 @@ export function ReportPage({ onSuccess, onSignInRequired }: Props) {
         <div className="text-6xl mb-4">✅</div>
         <h2 className="text-xl font-bold text-text mb-2">Relato enviado!</h2>
         <p className="text-text-muted text-sm mb-8">Você ajudou alguém a encontrar esse produto.</p>
-        <button onClick={onSuccess} className="bg-brand text-white font-semibold px-8 py-3 rounded-full">
+        <button
+          onClick={() => navigate("/")}
+          className="bg-brand text-white font-semibold px-8 py-3 rounded-full"
+        >
           Ver no mapa
         </button>
       </div>
@@ -98,7 +78,13 @@ export function ReportPage({ onSuccess, onSignInRequired }: Props) {
     <div className="min-h-screen bg-surface flex flex-col">
       {/* Header */}
       <div className="px-4 py-4 border-b border-border flex items-center gap-3">
-        <button onClick={onSuccess} aria-label="Voltar" className="text-text-muted text-2xl min-h-11 min-w-11 flex items-center justify-center">←</button>
+        <button
+          onClick={() => navigate(-1)}
+          aria-label="Voltar"
+          className="text-text-muted text-2xl min-h-11 min-w-11 flex items-center justify-center"
+        >
+          ←
+        </button>
         <h1 className="text-lg font-semibold text-text">
           {step === "confirm" ? "Confirmar" : "Relatar produto"}
         </h1>
@@ -132,7 +118,9 @@ export function ReportPage({ onSuccess, onSignInRequired }: Props) {
                 inputMode="numeric"
                 min={1}
                 value={form.quantity}
-                onChange={(e) => setForm((f) => ({ ...f, quantity: parseInt(e.target.value) || 1 }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, quantity: parseInt(e.target.value) || 1 }))
+                }
                 className="w-full border border-border rounded-xl px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-brand"
               />
             </div>
