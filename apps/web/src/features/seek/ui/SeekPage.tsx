@@ -6,7 +6,11 @@ import { useGeolocation, DEFAULT_COORDS } from "../../map/model/use-geolocation.
 import { useNearbyDiscoveries } from "../api/discovery.queries.js";
 import { useAppStore } from "../../../app/store/index.js";
 
-export function SeekPage() {
+interface Props {
+  onReport: () => void;
+}
+
+export function SeekPage({ onReport }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const { coords, denied } = useGeolocation();
   const radius = useAppStore((s) => s.mapRadius);
@@ -61,7 +65,7 @@ export function SeekPage() {
       <button
         className="absolute bottom-6 right-4 z-10 bg-brand text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-2xl"
         aria-label="Relatar produto"
-        onClick={() => {/* navigate to /report — wired in Plan E */}}
+        onClick={onReport}
       >
         +
       </button>
