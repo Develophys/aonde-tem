@@ -23,6 +23,6 @@ describe("HealthController", () => {
     expect(res.body.status).toBe("ok");
     expect(typeof res.body.timestamp).toBe("string");
     // timestamp must be a valid ISO date
-    expect(() => new Date(res.body.timestamp)).not.toThrow();
+    expect(new Date(res.body.timestamp).getTime()).not.toBeNaN();
   });
 });
