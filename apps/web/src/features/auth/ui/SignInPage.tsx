@@ -100,7 +100,7 @@ export function SignInPage() {
               {...codeForm.register("code")}
             />
             {verifyCode.isError && (
-              <p className="text-error text-sm mb-3">
+              <p className="text-error text-sm mb-3" role="alert">
                 Código inválido ou expirado. Tente novamente.
               </p>
             )}
