@@ -1,5 +1,7 @@
+import { useState } from "react";
 import type { DiscoveryResponse } from "@aonde-tem/contracts";
 import { useAppStore } from "../../../app/store/index.js";
+import { FlagSheet } from "../../../features/flag/ui/FlagSheet.js";
 
 interface Props {
   discovery: DiscoveryResponse;
@@ -13,12 +15,15 @@ function freshnessLabel(ageMinutes: number): string {
 
 export function DiscoveryPopup({ discovery }: Props) {
   const clearSelected = useAppStore((s) => s.clearSelectedDiscovery);
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated());
+  const [showFlag, setShowFlag] = useState(false);
 
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${discovery.lat},${discovery.lng}`;
 
   return (
     <div className="absolute bottom-0 left-0 right-0 bg-surface rounded-t-2xl shadow-xl p-4 pb-8 z-10 animate-slide-up">
       <button
+        type="button"
         onClick={clearSelected}
         className="absolute top-3 right-4 text-text-muted text-2xl leading-none min-h-11 min-w-11 flex items-center justify-center"
         aria-label="Fechar"
@@ -57,6 +62,24 @@ export function DiscoveryPopup({ discovery }: Props) {
       >
         Ver no mapa
       </a>
+
+      {isAuthenticated && (
+        <button
+          type="button"
+          onClick={() => setShowFlag(true)}
+          className="w-full text-text-muted text-sm py-2 mt-1 min-h-11"
+        >
+          Denunciar
+        </button>
+      )}
+
+      {showFlag && (
+        <FlagSheet
+          targetType="discovery"
+          targetId={discovery.id}
+          onClose={() => setShowFlag(false)}
+        />
+      )}
     </div>
   );
 }
