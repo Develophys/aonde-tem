@@ -23,6 +23,7 @@ export function AppHeader() {
   if (!sessionUser) {
     return (
       <button
+        type="button"
         className="fixed right-3 z-50 bg-brand text-white rounded-full px-4 py-2 text-sm font-medium shadow-md"
         style={{ top: "calc(env(safe-area-inset-top, 0px) + 12px)" }}
         onClick={() => navigate("/signin")}
@@ -45,6 +46,7 @@ export function AppHeader() {
       style={{ top: "calc(env(safe-area-inset-top, 0px) + 12px)" }}
     >
       <button
+        type="button"
         className="flex items-center gap-2 bg-brand text-white rounded-full px-3 py-1.5 shadow-md"
         onClick={() => setDropdownOpen((o) => !o)}
         aria-expanded={dropdownOpen}
