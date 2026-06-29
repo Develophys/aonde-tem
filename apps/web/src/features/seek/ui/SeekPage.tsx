@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { MapShell } from "../../map/ui/MapShell.js";
 import { SearchBar } from "./SearchBar.js";
 import { EmptyState } from "./EmptyState.js";
@@ -6,11 +7,8 @@ import { useGeolocation, DEFAULT_COORDS } from "../../map/model/use-geolocation.
 import { useNearbyDiscoveries } from "../api/discovery.queries.js";
 import { useAppStore } from "../../../app/store/index.js";
 
-interface Props {
-  onReport: () => void;
-}
-
-export function SeekPage({ onReport }: Props) {
+export function SeekPage() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const { coords, denied } = useGeolocation();
   const radius = useAppStore((s) => s.mapRadius);
@@ -80,11 +78,11 @@ export function SeekPage({ onReport }: Props) {
         </span>
       </div>
 
-      {/* FAB — report discovery (links to contribute flow in Plan E) */}
+      {/* FAB — report discovery */}
       <button
         className="absolute bottom-6 right-4 z-10 bg-brand text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-2xl"
         aria-label="Relatar produto"
-        onClick={onReport}
+        onClick={() => navigate("/report")}
       >
         +
       </button>
