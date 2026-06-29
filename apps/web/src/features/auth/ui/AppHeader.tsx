@@ -20,6 +20,19 @@ export function AppHeader() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [dropdownOpen]);
 
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setDropdownOpen(false);
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [dropdownOpen]);
+
+  // Invariant: `sessionUser` and `accessToken` are always kept in sync by
+  // `setSession` / `clearSession` in session.slice.ts — so branching on
+  // `sessionUser` here is equivalent to calling `isAuthenticated()` in
+  // ProtectedRoute. Never clear one without the other.
   if (!sessionUser) {
     return (
       <button
@@ -50,7 +63,6 @@ export function AppHeader() {
         className="flex items-center gap-2 bg-brand text-white rounded-full px-3 py-1.5 shadow-md"
         onClick={() => setDropdownOpen((o) => !o)}
         aria-expanded={dropdownOpen}
-        aria-haspopup="true"
       >
         <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold shrink-0">
           {initials}

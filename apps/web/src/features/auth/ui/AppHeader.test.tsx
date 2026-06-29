@@ -101,4 +101,13 @@ describe("AppHeader — authenticated", () => {
     fireEvent.click(screen.getByText("Sair"));
     expect(screen.queryByText("Sair")).not.toBeInTheDocument();
   });
+
+  it("closes dropdown when Escape is pressed", () => {
+    setupStore({ sessionUser: authenticatedUser });
+    renderHeader();
+    fireEvent.click(screen.getByText("MA").closest("button")!);
+    expect(screen.getByText("Sair")).toBeInTheDocument();
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByText("Sair")).not.toBeInTheDocument();
+  });
 });
