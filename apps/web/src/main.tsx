@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./app/query-client.js";
+import { useAppStore } from "./app/store/index.js";
 import { SeekPage } from "./features/seek/ui/SeekPage.js";
 import { ReportPage } from "./features/report/ui/ReportPage.js";
 import { SignInPage } from "./features/auth/ui/SignInPage.js";
@@ -11,6 +12,7 @@ type Route = "seek" | "report" | "signin";
 
 function App() {
   const [route, setRoute] = useState<Route>("seek");
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated());
 
   if (route === "signin") return <SignInPage onSuccess={() => setRoute("report")} />;
   if (route === "report")
@@ -20,7 +22,7 @@ function App() {
         onSignInRequired={() => setRoute("signin")}
       />
     );
-  return <SeekPage onReport={() => setRoute("report")} />;
+  return <SeekPage onReport={() => setRoute(isAuthenticated ? "report" : "signin")} />;
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
