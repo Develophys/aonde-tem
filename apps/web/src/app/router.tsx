@@ -12,6 +12,9 @@ const ReportPage = lazy(() =>
 const SignInPage = lazy(() =>
   import("../features/auth/ui/SignInPage.js").then((m) => ({ default: m.SignInPage })),
 );
+const SignUpPage = lazy(() =>
+  import("../features/auth/ui/SignUpPage.js").then((m) => ({ default: m.SignUpPage })),
+);
 
 function PageSuspense({ children }: { children: ReactNode }) {
   return (
@@ -53,6 +56,14 @@ export const router = createBrowserRouter([
         element: (
           <PageSuspense>
             <SignInPage />
+          </PageSuspense>
+        ),
+      },
+      {
+        path: "/signup",
+        element: (
+          <PageSuspense>
+            <SignUpPage />
           </PageSuspense>
         ),
       },
