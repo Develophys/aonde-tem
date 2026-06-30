@@ -91,7 +91,7 @@ export function SignInPage() {
 
           {login.isError && (
             <p className="text-error text-sm mb-3" role="alert">
-              {login.error instanceof Error && login.error.message.includes("google")
+              {login.error instanceof Error && login.error.message.includes("google-only-account")
                 ? "Esta conta usa login com Google."
                 : "E-mail ou senha incorretos."}
             </p>

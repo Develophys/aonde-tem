@@ -12,8 +12,11 @@ export class LoginWithPassword {
   async execute(email: string, password: string): Promise<User> {
     const normalized = email.trim().toLowerCase();
     const user = await this.users.findByEmail(normalized);
-    if (!user || !user.hasPassword()) {
+    if (!user) {
       throw new UnauthorizedError("Invalid credentials");
+    }
+    if (!user.hasPassword()) {
+      throw new UnauthorizedError("google-only-account");
     }
     const valid = await this.hash.compare(password, user.passwordHash!);
     if (!valid) {
