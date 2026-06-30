@@ -18,10 +18,12 @@ export function useVerifyMagicCode() {
   return useMutation({
     mutationFn: verifyMagicCode,
     onSuccess: (data: JwtResponse | RegistrationTokenResponse) => {
-      if ("accessToken" in data) {
+      if ("registrationToken" in data) {
+        // Registration flow: caller (SignUpPage) handles navigation.
+      } else {
+        // Full JWT flow: user has password.
         setSession(data.accessToken, data.user);
       }
-      // If registrationToken, the caller (SignUpPage) handles navigation.
     },
   });
 }
