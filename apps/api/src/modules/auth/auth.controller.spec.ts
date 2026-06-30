@@ -4,6 +4,7 @@ import request from "supertest";
 import type { Response } from "supertest";
 import { AppModule } from "../../app.module.js";
 import { AllExceptionsFilter } from "../../shared/errors/all-exceptions.filter.js";
+import { GoogleStrategy } from "./infrastructure/google.strategy.js";
 
 describe("Auth (integration)", () => {
   let app: INestApplication;
@@ -11,7 +12,11 @@ describe("Auth (integration)", () => {
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      // Google OAuth requires real credentials at construction time; stub it out for CI.
+      .overrideProvider(GoogleStrategy)
+      .useValue({})
+      .compile();
     app = moduleRef.createNestApplication();
     app.setGlobalPrefix("api");
     // No ValidationPipe: controllers use Zod directly for validation
@@ -44,5 +49,26 @@ describe("Auth (integration)", () => {
       .post("/api/auth/send-code")
       .send({ email: "notanemail" })
       .expect(400);
+  });
+
+  it("POST /api/auth/login returns 401 for unknown email", async () => {
+    await request(app.getHttpServer())
+      .post("/api/auth/login")
+      .send({ email: "nobody@example.com", password: "wrong" })
+      .expect(401);
+  });
+
+  it("POST /api/auth/login returns 400 for missing password", async () => {
+    await request(app.getHttpServer())
+      .post("/api/auth/login")
+      .send({ email: "test@example.com" })
+      .expect(400);
+  });
+
+  it("POST /api/auth/complete-registration returns 401 for bad token", async () => {
+    await request(app.getHttpServer())
+      .post("/api/auth/complete-registration")
+      .send({ registrationToken: "bad.token.here", displayName: "Ana", password: "secret123" })
+      .expect(401);
   });
 });
