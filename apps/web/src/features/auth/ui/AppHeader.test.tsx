@@ -56,6 +56,26 @@ describe("AppHeader — unauthenticated", () => {
     fireEvent.click(screen.getByRole("button", { name: "Entrar" }));
     expect(mockNavigate).toHaveBeenCalledWith("/signin");
   });
+
+  it("returns nothing when on /signin", () => {
+    setupStore({ sessionUser: null });
+    render(
+      <MemoryRouter initialEntries={["/signin"]}>
+        <AppHeader />
+      </MemoryRouter>,
+    );
+    expect(screen.queryByRole("button", { name: "Entrar" })).not.toBeInTheDocument();
+  });
+
+  it("returns nothing when on /signup", () => {
+    setupStore({ sessionUser: null });
+    render(
+      <MemoryRouter initialEntries={["/signup"]}>
+        <AppHeader />
+      </MemoryRouter>,
+    );
+    expect(screen.queryByRole("button", { name: "Entrar" })).not.toBeInTheDocument();
+  });
 });
 
 describe("AppHeader — authenticated", () => {

@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAppStore } from "../../../app/store/index.js";
 
 export function AppHeader() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const sessionUser = useAppStore((s) => s.sessionUser);
   const clearSession = useAppStore((s) => s.clearSession);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -34,6 +35,7 @@ export function AppHeader() {
   // `sessionUser` here is equivalent to calling `isAuthenticated()` in
   // ProtectedRoute. Never clear one without the other.
   if (!sessionUser) {
+    if (pathname === "/signin" || pathname === "/signup") return null;
     return (
       <button
         type="button"

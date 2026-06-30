@@ -13,6 +13,7 @@ export function SeekPage() {
   const { coords, denied } = useGeolocation();
   const radius = useAppStore((s) => s.mapRadius);
   const setRadius = useAppStore((s) => s.setRadius);
+  const selectedPlaceId = useAppStore((s) => s.selectedPlaceId);
 
   const center = coords ?? DEFAULT_COORDS;
 
@@ -61,22 +62,24 @@ export function SeekPage() {
       )}
 
       {/* Radius slider — bottom-left, above FAB */}
-      <div className="absolute bottom-6 left-4 z-10 bg-surface/95 rounded-full px-4 py-2 shadow-sm border border-border flex items-center gap-2.5">
-        <span className="text-xs text-text-muted">Raio</span>
-        <input
-          type="range"
-          min={500}
-          max={20_000}
-          step={500}
-          value={radius}
-          onChange={(e) => setRadius(Number(e.target.value))}
-          className="w-24"
-          aria-label="Raio de busca"
-        />
-        <span className="text-xs text-text font-medium w-14 text-right tabular-nums">
-          {radius >= 1000 ? `${(radius / 1000).toFixed(1)} km` : `${radius} m`}
-        </span>
-      </div>
+      {!selectedPlaceId && (
+        <div className="absolute bottom-6 left-4 z-10 bg-surface/95 rounded-full px-4 py-2 shadow-sm border border-border flex items-center gap-2.5">
+          <span className="text-xs text-text-muted">Raio</span>
+          <input
+            type="range"
+            min={500}
+            max={20_000}
+            step={500}
+            value={radius}
+            onChange={(e) => setRadius(Number(e.target.value))}
+            className="w-24"
+            aria-label="Raio de busca"
+          />
+          <span className="text-xs text-text font-medium w-14 text-right tabular-nums">
+            {radius >= 1000 ? `${(radius / 1000).toFixed(1)} km` : `${radius} m`}
+          </span>
+        </div>
+      )}
 
       {/* FAB — report discovery */}
       <button

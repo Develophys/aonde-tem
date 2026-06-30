@@ -17,18 +17,15 @@ function freshnessClass(ageMinutes: number): string {
 
 interface Props {
   placeId: string;
+  onFlyTo: (coords: { lat: number; lng: number }) => void;
 }
 
-export function PlaceModal({ placeId }: Props) {
+export function PlaceModal({ placeId, onFlyTo }: Props) {
   const clearSelected = useAppStore((s) => s.clearSelectedPlace);
   const isAuthenticated = useAppStore((s) => s.isAuthenticated());
   const [flagTargetId, setFlagTargetId] = useState<string | null>(null);
 
   const { data, isLoading } = usePlaceDiscoveries(placeId);
-
-  const mapsUrl = data
-    ? `https://www.google.com/maps/search/?api=1&query=${data.coords.lat},${data.coords.lng}`
-    : null;
 
   return (
     <div className="absolute bottom-0 left-0 right-0 bg-surface rounded-t-2xl shadow-xl pb-8 z-10 animate-slide-up max-h-[80vh] flex flex-col">
@@ -89,16 +86,18 @@ export function PlaceModal({ placeId }: Props) {
       </div>
 
       {/* Footer actions */}
-      {mapsUrl && (
+      {data?.coords && (
         <div className="px-4 pt-3 shrink-0">
-          <a
-            href={mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => {
+              clearSelected();
+              onFlyTo(data.coords);
+            }}
             className="block w-full text-center bg-brand text-white font-semibold py-3 rounded-xl"
           >
             Ver no mapa
-          </a>
+          </button>
         </div>
       )}
 

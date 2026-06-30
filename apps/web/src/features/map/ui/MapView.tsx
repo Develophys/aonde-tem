@@ -26,6 +26,10 @@ export function MapView({ center, userPin, discoveries }: MapViewProps) {
     mapRef.current.flyTo({ center: [userPin.lng, userPin.lat], zoom: 15, duration: 800 });
   }, [userPin]);
 
+  const flyToPlace = useCallback((coords: { lat: number; lng: number }) => {
+    mapRef.current?.flyTo({ center: [coords.lng, coords.lat], zoom: 17, duration: 800 });
+  }, []);
+
   return (
     <div className="relative w-full h-full">
       <Map
@@ -78,7 +82,7 @@ export function MapView({ center, userPin, discoveries }: MapViewProps) {
         </button>
       )}
 
-      {selectedPlaceId && <PlaceModal placeId={selectedPlaceId} />}
+      {selectedPlaceId && <PlaceModal placeId={selectedPlaceId} onFlyTo={flyToPlace} />}
     </div>
   );
 }
