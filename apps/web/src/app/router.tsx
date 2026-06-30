@@ -1,7 +1,8 @@
-import { lazy, Suspense, type ReactNode } from "react";
-import { createBrowserRouter, Outlet } from "react-router-dom";
+import { lazy, Suspense, useEffect, type ReactNode } from "react";
+import { createBrowserRouter, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "../features/auth/ui/ProtectedRoute.js";
 import { AppHeader } from "../features/auth/ui/AppHeader.js";
+import { useAppStore } from "./store/index.js";
 
 const SeekPage = lazy(() =>
   import("../features/seek/ui/SeekPage.js").then((m) => ({ default: m.SeekPage })),
@@ -30,9 +31,44 @@ function PageSuspense({ children }: { children: ReactNode }) {
   );
 }
 
+function GoogleTokenCapture() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const setSession = useAppStore((s) => s.setSession);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get("token");
+    if (!token) return;
+
+    // Decode JWT payload to get user info (no signature check needed — server already validated)
+    try {
+      const payloadB64 = token.split(".")[1] ?? "";
+      const payload = JSON.parse(atob(payloadB64)) as {
+        sub: string;
+        email: string;
+        role: "user" | "admin";
+      };
+      setSession(token, {
+        id: payload.sub,
+        email: payload.email,
+        displayName: null,
+        role: payload.role,
+      });
+    } catch {
+      // Malformed token — ignore
+    }
+    // Remove ?token= from URL and go to home
+    navigate("/", { replace: true });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return null;
+}
+
 function RootLayout() {
   return (
     <>
+      <GoogleTokenCapture />
       <AppHeader />
       <Outlet />
     </>
