@@ -9,7 +9,7 @@ export interface NearbyDiscoveriesQuery {
   includeFresh?: boolean; // default true
 }
 
-/** Enriched row returned by findNearbyWithDetails — includes joined product/place names and distance. */
+/** Enriched row returned by findNearbyWithDetails and findByPlace — includes joined product/place names. */
 export interface NearbyDiscoveryRow {
   id: string;
   productId: string;
@@ -30,6 +30,8 @@ export interface DiscoveryRepository {
   findById(id: string): Promise<Discovery | null>;
   findNearby(query: NearbyDiscoveriesQuery): Promise<Discovery[]>;
   findNearbyWithDetails(query: NearbyDiscoveriesQuery): Promise<NearbyDiscoveryRow[]>;
+  /** Returns all active (non-expired, non-hidden) discoveries for a place, newest first. */
+  findByPlace(placeId: string): Promise<NearbyDiscoveryRow[]>;
   save(discovery: Discovery): Promise<void>;
   delete(id: string): Promise<void>;
 }

@@ -19,43 +19,54 @@ type FeatureCollection = {
   features: PointFeature[];
 };
 
-// Freshness color based on age
 function freshnessColor(ageMinutes: number): string {
-  if (ageMinutes < 120) return "#1a5c3a"; // < 2h: fresh green
-  if (ageMinutes < 720) return "#b45309"; // 2-12h: aging amber
-  return "#9ca3af"; // > 12h: stale gray
+  if (ageMinutes < 120) return "#1a5c3a";
+  if (ageMinutes < 720) return "#b45309";
+  return "#9ca3af";
+}
+
+/** Deduplicate discoveries by placeId, keeping the freshest per place. */
+function groupByPlace(discoveries: DiscoveryResponse[]): DiscoveryResponse[] {
+  const map = new Map<string, DiscoveryResponse>();
+  for (const d of discoveries) {
+    const existing = map.get(d.placeId);
+    if (!existing || d.createdAt > existing.createdAt) {
+      map.set(d.placeId, d);
+    }
+  }
+  return Array.from(map.values());
 }
 
 export function DiscoveryMarkerLayer({ discoveries }: Props) {
   const { current: mapRef } = useMap();
-  const setSelected = useAppStore((s) => s.selectDiscovery);
+  const selectPlace = useAppStore((s) => s.selectPlace);
 
   useEffect(() => {
     if (!mapRef) return;
     const map: MapLibreMap = mapRef.getMap();
 
+    const places = groupByPlace(discoveries);
+
     const geojson: FeatureCollection = {
       type: "FeatureCollection",
-      features: discoveries.map((d) => ({
+      features: places.map((d) => ({
         type: "Feature",
         geometry: { type: "Point", coordinates: [d.lng, d.lat] },
         properties: {
-          id: d.id,
-          productName: d.productName,
-          priceBrl: d.priceBrl,
-          ageMinutes: d.ageMinutes,
+          placeId: d.placeId,
+          placeName: d.placeName,
           color: freshnessColor(d.ageMinutes),
         },
       })),
     };
 
     function applyLayers() {
-      if (map.getSource("discoveries")) {
-        (map.getSource("discoveries") as GeoJSONSource).setData(geojson);
+      if (map.getSource("places")) {
+        (map.getSource("places") as GeoJSONSource).setData(geojson);
         return;
       }
 
-      map.addSource("discoveries", {
+      map.addSource("places", {
         type: "geojson",
         data: geojson,
         cluster: true,
@@ -64,9 +75,9 @@ export function DiscoveryMarkerLayer({ discoveries }: Props) {
       });
 
       map.addLayer({
-        id: "discoveries-clusters",
+        id: "places-clusters",
         type: "circle",
-        source: "discoveries",
+        source: "places",
         filter: ["has", "point_count"],
         paint: {
           "circle-color": "#1a5c3a",
@@ -76,12 +87,12 @@ export function DiscoveryMarkerLayer({ discoveries }: Props) {
       });
 
       map.addLayer({
-        id: "discoveries-points",
+        id: "places-points",
         type: "circle",
-        source: "discoveries",
+        source: "places",
         filter: ["!", ["has", "point_count"]],
         paint: {
-          "circle-radius": 10,
+          "circle-radius": 12,
           "circle-color": ["get", "color"],
           "circle-stroke-width": 2,
           "circle-stroke-color": "#ffffff",
@@ -89,15 +100,12 @@ export function DiscoveryMarkerLayer({ discoveries }: Props) {
         },
       });
 
-      map.on("click", "discoveries-points", (e) => {
-        const id = e.features?.[0]?.properties?.id;
-        if (id) setSelected(String(id));
+      map.on("click", "places-points", (e) => {
+        const placeId = e.features?.[0]?.properties?.placeId;
+        if (placeId) selectPlace(String(placeId));
       });
     }
 
-    // The style may not be loaded yet when this effect first runs (map mounts
-    // before the MapTiler style JSON returns). Gate on isStyleLoaded() and
-    // fall back to the 'load' event so we never call addSource too early.
     if (map.isStyleLoaded()) {
       applyLayers();
     } else {
@@ -106,17 +114,15 @@ export function DiscoveryMarkerLayer({ discoveries }: Props) {
 
     return () => {
       map.off("load", applyLayers);
-      // Guard against the case where the parent Map component destroyed the
-      // MapLibre instance before this cleanup runs (map.style becomes null).
       try {
-        if (map.getLayer("discoveries-points")) map.removeLayer("discoveries-points");
-        if (map.getLayer("discoveries-clusters")) map.removeLayer("discoveries-clusters");
-        if (map.getSource("discoveries")) map.removeSource("discoveries");
+        if (map.getLayer("places-points")) map.removeLayer("places-points");
+        if (map.getLayer("places-clusters")) map.removeLayer("places-clusters");
+        if (map.getSource("places")) map.removeSource("places");
       } catch {
         // map already removed — nothing to clean up
       }
     };
-  }, [mapRef, discoveries, setSelected]);
+  }, [mapRef, discoveries, selectPlace]);
 
   return null;
 }

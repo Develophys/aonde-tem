@@ -1,6 +1,11 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 
-const prisma = new PrismaClient();
+const pool = new Pool({
+  connectionString: process.env["DATABASE_URL"] ?? "postgresql://aonde:aonde@localhost:5432/aonde",
+});
+const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 
 // Fixed UUIDs so the seed is idempotent (re-running inserts nothing twice).
 const SEED_USER_ID = "00000000-0000-0000-0000-000000000001";
@@ -84,13 +89,14 @@ async function main() {
     update: {},
   });
 
-  // Products (upsert by id)
+  // Products — conflict on normalizedKey (the true business key); if a product
+  // with that key already exists from the app, leave it alone.
   for (const p of PRODUCTS) {
-    await prisma.product.upsert({
-      where: { id: p.id },
-      create: { id: p.id, name: p.name, normalizedKey: p.normalizedKey, createdById: SEED_USER_ID },
-      update: {},
-    });
+    await prisma.$executeRaw`
+      INSERT INTO products (id, name, "normalizedKey", "createdById")
+      VALUES (${p.id}, ${p.name}, ${p.normalizedKey}, ${SEED_USER_ID})
+      ON CONFLICT ("normalizedKey") DO NOTHING
+    `;
   }
 
   // Places — PostGIS geography column requires $executeRaw
@@ -115,19 +121,22 @@ async function main() {
     const product = PRODUCTS[pIdx];
     const place = PLACES[plIdx];
 
+    // Use a subquery to resolve the actual productId in case the product was
+    // inserted by the app with a different UUID but the same normalizedKey.
     await prisma.$executeRaw`
       INSERT INTO discoveries (id, "productId", "placeId", price, quantity, "reporterId", location, "expiresAt")
-      VALUES (
+      SELECT
         ${id},
-        ${product.id},
+        p.id,
         ${place.id},
         ${price},
         ${quantity},
         ${SEED_USER_ID},
         ST_MakePoint(${place.lng}, ${place.lat})::geography,
         ${expiresAt}
-      )
-      ON CONFLICT (id) DO NOTHING
+      FROM products p
+      WHERE p."normalizedKey" = ${product.normalizedKey}
+      ON CONFLICT (id) DO UPDATE SET "expiresAt" = EXCLUDED."expiresAt"
     `;
   }
 
@@ -138,4 +147,7 @@ async function main() {
 
 main()
   .catch(console.error)
-  .finally(() => prisma.$disconnect());
+  .finally(async () => {
+    await prisma.$disconnect();
+    await pool.end();
+  });

@@ -2,7 +2,7 @@ import Map, { Marker, type MapRef } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { DiscoveryResponse } from "@aonde-tem/contracts";
 import { DiscoveryMarkerLayer } from "./DiscoveryMarkerLayer.js";
-import { DiscoveryPopup } from "./DiscoveryPopup.js";
+import { PlaceModal } from "./PlaceModal.js";
 import { useRef, useCallback } from "react";
 import { useAppStore } from "../../../app/store/index.js";
 
@@ -19,8 +19,7 @@ interface MapViewProps {
 
 export function MapView({ center, userPin, discoveries }: MapViewProps) {
   const mapRef = useRef<MapRef>(null);
-  const selectedId = useAppStore((s) => s.selectedDiscoveryId);
-  const selectedDiscovery = discoveries.find((d) => d.id === selectedId) ?? null;
+  const selectedPlaceId = useAppStore((s) => s.selectedPlaceId);
 
   const recenter = useCallback(() => {
     if (!userPin || !mapRef.current) return;
@@ -55,7 +54,6 @@ export function MapView({ center, userPin, discoveries }: MapViewProps) {
         )}
       </Map>
 
-      {/* Recenter button — only when GPS is known */}
       {userPin && (
         <button
           type="button"
@@ -80,7 +78,7 @@ export function MapView({ center, userPin, discoveries }: MapViewProps) {
         </button>
       )}
 
-      {selectedDiscovery && <DiscoveryPopup discovery={selectedDiscovery} />}
+      {selectedPlaceId && <PlaceModal placeId={selectedPlaceId} />}
     </div>
   );
 }

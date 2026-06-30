@@ -20,6 +20,16 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
 
+  // Allow _-prefixed names to signal intentionally unused vars/args.
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { varsIgnorePattern: "^_", argsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" },
+      ],
+    },
+  },
+
   // Node-land (api + packages)
   {
     files: ["apps/api/**/*.ts", "packages/**/*.ts"],

@@ -27,7 +27,7 @@ export interface DiscoveryRepositoryWithPlace extends DiscoveryRepository {
     placeId: string | undefined,
     placeName: string,
     createdById: string,
-  ): Promise<string>;
+  ): Promise<{ placeId: string; discoveryId: string }>;
 }
 
 export class CreateDiscovery {
@@ -60,16 +60,11 @@ export class CreateDiscovery {
       note: dto.note,
     });
 
-    const resolvedPlaceId = await this.discoveries.saveWithPlace(
-      discovery,
-      dto.placeId,
-      dto.placeName,
-      reporterId,
-    );
+    const { placeId: resolvedPlaceId, discoveryId: resolvedDiscoveryId } =
+      await this.discoveries.saveWithPlace(discovery, dto.placeId, dto.placeName, reporterId);
 
-    // Return a discovery with the resolved placeId for the controller response
     const saved = Discovery.create({
-      id: discovery.id,
+      id: resolvedDiscoveryId,
       productId: discovery.productId,
       placeId: resolvedPlaceId,
       price: discovery.price,
@@ -81,7 +76,14 @@ export class CreateDiscovery {
       expiresAt: discovery.expiresAt,
     });
 
-    this.log.info({ discoveryId: saved.id, placeId: resolvedPlaceId }, "discovery created");
+    this.log.info(
+      {
+        discoveryId: saved.id,
+        placeId: resolvedPlaceId,
+        upserted: resolvedDiscoveryId !== discovery.id,
+      },
+      "discovery saved",
+    );
     return saved;
   }
 }

@@ -31,13 +31,10 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findNearby(_query: NearbyDiscoveriesQuery): Promise<Discovery[]> {
-    // Enriched queries use findNearbyWithDetails; plain findNearby is stubbed.
     return [];
   }
 
-  async findNearbyWithDetails(
-    query: NearbyDiscoveriesQuery,
-  ): Promise<NearbyDiscoveryRow[]> {
+  async findNearbyWithDetails(query: NearbyDiscoveriesQuery): Promise<NearbyDiscoveryRow[]> {
     const { center, radiusMeters, itemQuery, limit = 50 } = query;
     const now = new Date();
 
@@ -134,6 +131,50 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
     });
   }
 
+  async findByPlace(placeId: string): Promise<NearbyDiscoveryRow[]> {
+    const now = new Date();
+    const rows = await this.prisma.$queryRaw<RawDiscoveryRow[]>`
+      SELECT
+        d.id,
+        d."productId",
+        p.name             AS "productName",
+        d."placeId",
+        pl.name            AS "placeName",
+        d.price,
+        d.quantity,
+        d.note,
+        ST_Y(d.location::geometry) AS lat,
+        ST_X(d.location::geometry) AS lng,
+        0                          AS "distanceMeters",
+        d."createdAt",
+        d."expiresAt"
+      FROM discoveries d
+        JOIN products p  ON p.id = d."productId"
+        JOIN places   pl ON pl.id = d."placeId"
+      WHERE
+        d."placeId"  = ${placeId}
+        AND d."hiddenAt"  IS NULL
+        AND d."expiresAt" > ${now}
+        AND p.status = 'active'
+      ORDER BY d."createdAt" DESC
+    `;
+    return rows.map((r) => ({
+      id: r.id,
+      productId: r.productId,
+      productName: r.productName,
+      placeId: r.placeId,
+      placeName: r.placeName,
+      priceBrl: parseFloat(r.price),
+      quantity: r.quantity,
+      note: r.note,
+      lat: r.lat,
+      lng: r.lng,
+      distanceMeters: 0,
+      createdAt: r.createdAt,
+      expiresAt: r.expiresAt,
+    }));
+  }
+
   async save(discovery: Discovery): Promise<void> {
     await this.prisma.$executeRaw`
       INSERT INTO discoveries (id, "productId", "placeId", price, quantity, "reporterId", note, location, "expiresAt")
@@ -152,15 +193,17 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
   }
 
   /**
-   * Atomically resolve/create the place and insert the discovery in a single
+   * Atomically resolve/create the place and upsert the discovery in a single
    * transaction — prevents orphan place rows if the discovery insert fails.
+   * If an active (non-hidden, non-expired) discovery for the same productId+placeId
+   * already exists, it is updated in place and its id is returned.
    */
   async saveWithPlace(
     discovery: Discovery,
     placeId: string | undefined,
     placeName: string,
     createdById: string,
-  ): Promise<string> {
+  ): Promise<{ placeId: string; discoveryId: string }> {
     return this.prisma.$transaction(async (tx) => {
       // 1. Resolve or create place
       let resolvedPlaceId: string;
@@ -180,7 +223,35 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
         resolvedPlaceId = newPlaceId;
       }
 
-      // 2. Insert discovery
+      // 2. Upsert: if an active discovery for the same product+place already exists,
+      //    update its price/quantity/note and refresh the TTL instead of inserting a duplicate.
+      const now = new Date();
+      const existing = await tx.$queryRaw<{ id: string }[]>`
+        SELECT id FROM discoveries
+        WHERE "productId" = ${discovery.productId}
+          AND "placeId"   = ${resolvedPlaceId}
+          AND "hiddenAt"  IS NULL
+          AND "expiresAt" > ${now}
+        LIMIT 1
+      `;
+
+      if (existing.length > 0) {
+        const existingId = existing[0]!.id;
+        // Location is intentionally not updated — it is owned by the places table.
+        await tx.$executeRaw`
+          UPDATE discoveries
+          SET
+            price       = ${discovery.price.cents / 100},
+            quantity    = ${discovery.quantity},
+            note        = ${discovery.note ?? null},
+            "expiresAt" = ${discovery.expiresAt},
+            "reporterId" = ${discovery.reporterId}
+          WHERE id = ${existingId}
+        `;
+        return { placeId: resolvedPlaceId, discoveryId: existingId };
+      }
+
+      // 3. No existing active discovery — insert new
       await tx.$executeRaw`
         INSERT INTO discoveries (id, "productId", "placeId", price, quantity, "reporterId", note, location, "expiresAt")
         VALUES (
@@ -195,7 +266,7 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
           ${discovery.expiresAt}
         )
       `;
-      return resolvedPlaceId;
+      return { placeId: resolvedPlaceId, discoveryId: discovery.id };
     });
   }
 

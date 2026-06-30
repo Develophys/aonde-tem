@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { fetchNearbyDiscoveries } from "./discovery.api.js";
 
 const keys = {
@@ -7,7 +7,7 @@ const keys = {
 };
 
 export function useNearbyDiscoveries(
-  params: { lat: number; lng: number; radius: number; item?: string } | null
+  params: { lat: number; lng: number; radius: number; item?: string } | null,
 ) {
   return useQuery({
     queryKey: params
@@ -17,5 +17,6 @@ export function useNearbyDiscoveries(
     enabled: params !== null,
     staleTime: 30_000, // 30s — discoveries don't change every second
     gcTime: 5 * 60_000,
+    placeholderData: keepPreviousData,
   });
 }

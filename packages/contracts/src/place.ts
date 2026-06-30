@@ -30,3 +30,25 @@ export const nearbyQuerySchema = z.object({
   radius: z.coerce.number().positive().max(50_000).default(2000), // metres
 });
 export type NearbyQuery = z.infer<typeof nearbyQuerySchema>;
+
+export const placeDiscoveryItemSchema = z.object({
+  id: z.string().uuid(),
+  productId: z.string().uuid(),
+  productName: z.string(),
+  priceBrl: z.number(),
+  quantity: z.number().int(),
+  note: z.string().nullable(),
+  createdAt: z.string().datetime(),
+  expiresAt: z.string().datetime(),
+  ageMinutes: z.number().int(),
+});
+export type PlaceDiscoveryItem = z.infer<typeof placeDiscoveryItemSchema>;
+
+export const placeWithDiscoveriesResponseSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  address: z.string().optional(),
+  coords: coordinatesSchema,
+  discoveries: z.array(placeDiscoveryItemSchema),
+});
+export type PlaceWithDiscoveriesResponse = z.infer<typeof placeWithDiscoveriesResponseSchema>;

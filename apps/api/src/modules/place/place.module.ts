@@ -1,13 +1,19 @@
 import { Module } from "@nestjs/common";
 import type { PlaceRepository, Logger } from "@aonde-tem/domain";
-import { PrismaService } from "../../shared/prisma.service";
-import { PinoLoggerAdapter, LOGGER } from "../../shared/logging/pino-logger.adapter";
-import { PostgisPlaceRepository } from "./infrastructure/postgis-place.repository";
-import { FindNearbyPlaces } from "./application/find-nearby-places";
-import { CreatePlace } from "./application/create-place";
-import { PlaceController } from "./presentation/place.controller";
+import { PrismaService } from "../../shared/prisma.service.js";
+import { PinoLoggerAdapter, LOGGER } from "../../shared/logging/pino-logger.adapter.js";
+import { PostgisPlaceRepository } from "./infrastructure/postgis-place.repository.js";
+import { FindNearbyPlaces } from "./application/find-nearby-places.js";
+import { CreatePlace } from "./application/create-place.js";
+import {
+  FindPlaceWithDiscoveries,
+  type DiscoveryByPlaceFinder,
+} from "./application/find-place-with-discoveries.js";
+import { PrismaDiscoveryRepository } from "../discovery/infrastructure/prisma-discovery.repository.js";
+import { PlaceController } from "./presentation/place.controller.js";
 
 const PLACE_REPOSITORY = Symbol("PlaceRepository");
+const DISCOVERY_FINDER = Symbol("DiscoveryByPlaceFinder");
 
 @Module({
   controllers: [PlaceController],
@@ -15,6 +21,8 @@ const PLACE_REPOSITORY = Symbol("PlaceRepository");
     PrismaService,
     { provide: LOGGER, useClass: PinoLoggerAdapter },
     { provide: PLACE_REPOSITORY, useClass: PostgisPlaceRepository },
+    // A read-only instance of PrismaDiscoveryRepository used only for findByPlace.
+    { provide: DISCOVERY_FINDER, useClass: PrismaDiscoveryRepository },
     {
       provide: FindNearbyPlaces,
       useFactory: (repo: PlaceRepository, log: Logger) => new FindNearbyPlaces(repo, log),
@@ -24,6 +32,12 @@ const PLACE_REPOSITORY = Symbol("PlaceRepository");
       provide: CreatePlace,
       useFactory: (repo: PlaceRepository, log: Logger) => new CreatePlace(repo, log),
       inject: [PLACE_REPOSITORY, LOGGER],
+    },
+    {
+      provide: FindPlaceWithDiscoveries,
+      useFactory: (places: PlaceRepository, discoveries: DiscoveryByPlaceFinder) =>
+        new FindPlaceWithDiscoveries(places, discoveries),
+      inject: [PLACE_REPOSITORY, DISCOVERY_FINDER],
     },
   ],
 })
