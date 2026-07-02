@@ -12,7 +12,9 @@ export class Price {
 
   get formatted(): string {
     const value = this.cents / 100;
-    const formatted = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
-    return formatted.replace(/ /g, " ");
+    const formatted = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(
+      value,
+    );
+    return formatted.replace(/\u00a0/g, " ");
   }
 }

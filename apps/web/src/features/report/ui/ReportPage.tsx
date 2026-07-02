@@ -114,6 +114,7 @@ export function ReportPage() {
             <div>
               <label className="block text-sm font-medium text-text mb-1">Quantidade</label>
               <input
+                title="numeric input"
                 type="number"
                 inputMode="numeric"
                 min={1}

@@ -64,7 +64,7 @@ export function AppHeader() {
         type="button"
         className="flex items-center gap-2 bg-brand text-white rounded-full px-3 py-1.5 shadow-md"
         onClick={() => setDropdownOpen((o) => !o)}
-        aria-expanded={dropdownOpen}
+        // aria-expanded={dropdownOpen}
       >
         <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold shrink-0">
           {initials}

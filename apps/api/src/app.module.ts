@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
 import { LoggerModule } from "nestjs-pino";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { randomUUID } from "node:crypto";
@@ -11,6 +12,7 @@ import { HealthModule } from "./shared/health/health.module.js";
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ envFilePath: "../../.env", isGlobal: true }),
     LoggerModule.forRoot({
       pinoHttp: {
         level: process.env.LOG_LEVEL ?? "info",

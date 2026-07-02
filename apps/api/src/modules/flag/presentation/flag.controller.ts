@@ -1,7 +1,11 @@
 import { Controller, Post, Body, Req, UseGuards, Inject } from "@nestjs/common";
 import { createFlagSchema, type FlagResponse } from "@aonde-tem/contracts";
-import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard.js";
+import { JwtAuthGuard, type JwtPayload } from "../../auth/guards/jwt-auth.guard.js";
 import { CreateFlag } from "../application/create-flag.js";
+
+interface AuthenticatedRequest {
+  user: JwtPayload;
+}
 
 @Controller("flags")
 export class FlagController {
@@ -9,7 +13,7 @@ export class FlagController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async create(@Body() body: unknown, @Req() req: any): Promise<FlagResponse> {
+  async create(@Body() body: unknown, @Req() req: AuthenticatedRequest): Promise<FlagResponse> {
     const dto = createFlagSchema.parse(body);
     const flag = await this.createFlag.execute(dto, req.user.sub);
     return {

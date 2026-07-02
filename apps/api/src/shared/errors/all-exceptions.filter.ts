@@ -1,12 +1,18 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from "@nestjs/common";
 import { ZodError } from "zod";
 import {
-  DomainError, ValidationError, NotFoundError, ConflictError,
-  UnauthorizedError, ForbiddenError,
+  DomainError,
+  ValidationError,
+  NotFoundError,
+  ConflictError,
+  UnauthorizedError,
+  ForbiddenError,
 } from "@aonde-tem/domain";
 import type { ErrorResponse } from "@aonde-tem/contracts";
 
-const STATUS = new Map<Function, number>([
+type DomainErrorCtor = new (...args: never[]) => DomainError;
+
+const STATUS = new Map<DomainErrorCtor, number>([
   [ValidationError, 400],
   [UnauthorizedError, 401],
   [ForbiddenError, 403],
@@ -28,7 +34,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let details: unknown;
 
     if (err instanceof DomainError) {
-      status = STATUS.get(err.constructor) ?? 400;
+      status = STATUS.get(err.constructor as DomainErrorCtor) ?? 400;
       code = err.code;
       message = err.message;
       details = err.details;
