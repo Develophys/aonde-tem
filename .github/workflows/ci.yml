@@ -94,3 +94,55 @@ jobs:
           node-version: 24
       - name: Impeccable slop detector
         run: npx --yes impeccable detect apps/web/src/
+
+  # Static analysis (bugs, vulnerabilities, code smells) via SonarCloud, covering both
+  # apps/api and apps/web plus packages/contracts and packages/domain — configured in
+  # sonar-project.properties at the repo root.
+  sonar-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history — SonarCloud needs it for blame/new-code analysis
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  # Migrates Neon + deploys apps/api to Fly. main-only — apps/web deploys itself via
+  # Vercel's own Git integration, so it isn't handled here. (Backlog: AT-111)
+  deploy-api:
+    needs: [verify, design-slop]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-api-main
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run database migrations against Neon
+        run: pnpm --filter @aonde-tem/api prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.NEON_DATABASE_URL }}
+
+      - name: Setup flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy apps/api to Fly.io
+        run: flyctl deploy --remote-only --app aonde-tem
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

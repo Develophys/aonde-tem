@@ -176,12 +176,19 @@ For a custom domain:
   `VITE_API_URL`, `GOOGLE_CALLBACK_URL`, `FRONTEND_URL`, and `WEB_ORIGIN` to the final
   domains once both are live.
 
-## 7. CI/CD — not covered here (AT-111)
+## 7. CI/CD (AT-111)
 
-This doc only covers first, manual deploys via the Vercel dashboard and `fly deploy`.
-Automating this (GitHub Actions building/testing/deploying on merge to `main`, running
-`prisma migrate deploy` as part of the pipeline) is backlog item **AT-111**, which
-explicitly depends on AT-110 — i.e., on the platform choice this doc makes.
+`apps/web` deploys itself — Vercel's own Git integration builds and deploys on every push
+to `main` (plus PR previews), independent of GitHub Actions.
+
+`apps/api` deploys via the `deploy-api` job in `.github/workflows/ci.yml`: gated on the
+`verify` and `design-slop` jobs passing, and only on `push` to `main` (not PRs). It runs
+`prisma migrate deploy` against Neon, then `flyctl deploy`. Requires two repo secrets:
+
+| Secret | Value |
+|---|---|
+| `NEON_DATABASE_URL` | Neon **direct** (non-`-pooler`) connection string — used for the migration step |
+| `FLY_API_TOKEN` | A deploy-scoped token: `fly tokens create deploy --app aonde-tem` |
 
 ## 8. Cost & free-tier limits
 
