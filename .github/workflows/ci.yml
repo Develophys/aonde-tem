@@ -57,6 +57,9 @@ jobs:
       - name: Run database migrations
         run: pnpm --filter @aonde-tem/api exec prisma migrate deploy
 
+      - name: Seed database
+        run: pnpm run db:seed
+
       - name: Lint
         run: pnpm run lint
 
