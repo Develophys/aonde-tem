@@ -1,0 +1,40 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Debug API (NestJS)",
+      "port": 9229,
+      "restart": true,
+      "autoAttachChildProcesses": true,
+      "skipFiles": ["<node_internals>/**"],
+      "cwd": "${workspaceFolder}/apps/api",
+      "preLaunchTask": "api: dev (debug)"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Debug Web (Chrome)",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/apps/web",
+      "sourceMapPathOverrides": { "/@fs/*": "${webRoot}/*" },
+      "preLaunchTask": "web: dev"
+    },
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "Debug Web (Edge)",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/apps/web",
+      "sourceMapPathOverrides": { "/@fs/*": "${webRoot}/*" },
+      "preLaunchTask": "web: dev"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug Full Stack (API + Web)",
+      "configurations": ["Debug API (NestJS)", "Debug Web (Chrome)"]
+    }
+  ]
+}

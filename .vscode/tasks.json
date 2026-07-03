@@ -1,0 +1,37 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "api: dev (debug)",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["--filter", "@aonde-tem/api", "run", "dev:debug"],
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "debug" },
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "Debugger listening on"
+        }
+      }
+    },
+    {
+      "label": "web: dev",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["--filter", "@aonde-tem/web", "run", "dev"],
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "debug" },
+      "problemMatcher": {
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "ready in|Local:"
+        }
+      }
+    }
+  ]
+}
