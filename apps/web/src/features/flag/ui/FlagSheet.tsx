@@ -14,9 +14,9 @@ const REASONS: { value: FlagReason; label: string }[] = [
 ];
 
 interface Props {
-  targetType: FlagTargetType;
-  targetId: string;
-  onClose: () => void;
+  readonly targetType: FlagTargetType;
+  readonly targetId: string;
+  readonly onClose: () => void;
 }
 
 export function FlagSheet({ targetType, targetId, onClose }: Props) {
@@ -33,11 +33,7 @@ export function FlagSheet({ targetType, targetId, onClose }: Props) {
       <div className="absolute bottom-0 left-0 right-0 bg-surface rounded-t-2xl shadow-xl p-6 pb-10 z-20 flex flex-col items-center gap-4">
         <p className="text-text font-semibold">Denúncia enviada</p>
         <p className="text-text-muted text-sm text-center">Nossa equipe revisará em breve.</p>
-        <button
-          type="button"
-          onClick={onClose}
-          className="text-brand font-medium min-h-11 px-4"
-        >
+        <button type="button" onClick={onClose} className="text-brand font-medium min-h-11 px-4">
           Fechar
         </button>
       </div>
@@ -54,9 +50,7 @@ export function FlagSheet({ targetType, targetId, onClose }: Props) {
             key={r.value}
             onClick={() => setReason(r.value)}
             className={`text-left px-4 py-3 rounded-xl border text-sm font-medium min-h-11 ${
-              reason === r.value
-                ? "border-brand bg-brand/10 text-brand"
-                : "border-border text-text"
+              reason === r.value ? "border-brand bg-brand/10 text-brand" : "border-border text-text"
             }`}
           >
             {r.label}
@@ -71,11 +65,7 @@ export function FlagSheet({ targetType, targetId, onClose }: Props) {
       >
         {createFlag.isPending ? "Enviando…" : "Enviar denúncia"}
       </button>
-      <button
-        type="button"
-        onClick={onClose}
-        className="w-full text-text-muted py-2 mt-2 min-h-11"
-      >
+      <button type="button" onClick={onClose} className="w-full text-text-muted py-2 mt-2 min-h-11">
         Cancelar
       </button>
     </div>

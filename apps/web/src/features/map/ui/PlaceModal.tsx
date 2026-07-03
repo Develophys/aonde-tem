@@ -16,8 +16,8 @@ function freshnessClass(ageMinutes: number): string {
 }
 
 interface Props {
-  placeId: string;
-  onFlyTo: (coords: { lat: number; lng: number }) => void;
+  readonly placeId: string;
+  readonly onFlyTo: (coords: { lat: number; lng: number }) => void;
 }
 
 export function PlaceModal({ placeId, onFlyTo }: Props) {

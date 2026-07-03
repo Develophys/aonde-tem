@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useDebounce } from "use-debounce";
 
 interface Props {
-  onSearch: (query: string) => void;
-  placeholder?: string;
+  readonly onSearch: (query: string) => void;
+  readonly placeholder?: string;
 }
 
 export function SearchBar({ onSearch, placeholder = "Buscar produto…" }: Props) {
@@ -16,8 +16,18 @@ export function SearchBar({ onSearch, placeholder = "Buscar produto…" }: Props
 
   return (
     <div className="flex items-center gap-2 bg-surface rounded-full shadow px-4 py-3 border border-border">
-      <svg className="w-5 h-5 text-text-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+      <svg
+        className="w-5 h-5 text-text-muted shrink-0"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
+        />
       </svg>
       <input
         type="search"

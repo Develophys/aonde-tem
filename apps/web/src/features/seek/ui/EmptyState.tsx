@@ -1,6 +1,6 @@
 interface Props {
-  query?: string;
-  onReport?: () => void;
+  readonly query?: string;
+  readonly onReport?: () => void;
 }
 
 export function EmptyState({ query, onReport }: Props) {

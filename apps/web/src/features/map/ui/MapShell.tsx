@@ -5,9 +5,9 @@ import type { DiscoveryResponse } from "@aonde-tem/contracts";
 const MapView = lazy(() => import("./MapView.js").then((m) => ({ default: m.MapView })));
 
 interface Props {
-  center: { lat: number; lng: number };
-  userPin?: { lat: number; lng: number };
-  discoveries: DiscoveryResponse[];
+  readonly center: { lat: number; lng: number };
+  readonly userPin?: { lat: number; lng: number };
+  readonly discoveries: DiscoveryResponse[];
 }
 
 export function MapShell({ center, userPin, discoveries }: Props) {

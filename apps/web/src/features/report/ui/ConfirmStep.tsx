@@ -6,10 +6,10 @@ interface SightingDraft {
 }
 
 interface Props {
-  draft: SightingDraft;
-  onConfirm: () => void;
-  onEdit: () => void;
-  isSubmitting: boolean;
+  readonly draft: SightingDraft;
+  readonly onConfirm: () => void;
+  readonly onEdit: () => void;
+  readonly isSubmitting: boolean;
 }
 
 export function ConfirmStep({ draft, onConfirm, onEdit, isSubmitting }: Props) {
@@ -49,7 +49,7 @@ export function ConfirmStep({ draft, onConfirm, onEdit, isSubmitting }: Props) {
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function Row({ label, value }: { readonly label: string; readonly value: string }) {
   return (
     <div className="flex justify-between items-baseline">
       <span className="text-text-muted text-sm">{label}</span>

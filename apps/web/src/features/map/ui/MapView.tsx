@@ -12,9 +12,9 @@ const MAP_STYLE =
     : "https://tiles.openfreemap.org/styles/bright";
 
 interface MapViewProps {
-  center: { lat: number; lng: number };
-  userPin?: { lat: number; lng: number };
-  discoveries: DiscoveryResponse[];
+  readonly center: { lat: number; lng: number };
+  readonly userPin?: { lat: number; lng: number };
+  readonly discoveries: DiscoveryResponse[];
 }
 
 export function MapView({ center, userPin, discoveries }: MapViewProps) {

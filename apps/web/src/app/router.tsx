@@ -17,7 +17,7 @@ const SignUpPage = lazy(() =>
   import("../features/auth/ui/SignUpPage.js").then((m) => ({ default: m.SignUpPage })),
 );
 
-function PageSuspense({ children }: { children: ReactNode }) {
+function PageSuspense({ children }: { readonly children: ReactNode }) {
   return (
     <Suspense
       fallback={
