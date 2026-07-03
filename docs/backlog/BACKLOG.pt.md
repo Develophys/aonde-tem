@@ -260,7 +260,7 @@ dev solo. Pontos são *tamanho relativo*, não prazo; calibre com a velocidade r
 
 | ID | Item | Tipo | Pri | Est | Tam | Status | Depende |
 |---|---|---|---|---|---|---|---|
-| AT-110 | Spike: hospedagem econômica (web / API / Postgres+PostGIS) | spike | P1 | 2 | S | A fazer | — |
+| AT-110 | Spike: hospedagem econômica (web / API / Postgres+PostGIS) | spike | P1 | 2 | S | ✅ Feito | — |
 | AT-111 | Pipeline de deploy de produção (build, migrar, publicar) | chore | P1 | 5 | L | A fazer | AT-110 |
 | AT-112 | Domínio + HTTPS (obrigatório para PWA) | chore | P1 | 2 | S | A fazer | AT-111 |
 | AT-113 | Política de privacidade + texto de permissão de localização (LGPD) | chore | P1 | 2 | S | A fazer | — |

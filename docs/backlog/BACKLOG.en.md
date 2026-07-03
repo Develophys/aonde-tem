@@ -259,7 +259,7 @@
 
 | ID | Item | Type | Pri | Est | Size | Status | Depends |
 |---|---|---|---|---|---|---|---|
-| AT-110 | Spike: budget hosting (web / API / Postgres+PostGIS) | spike | P1 | 2 | S | Todo | — |
+| AT-110 | Spike: budget hosting (web / API / Postgres+PostGIS) | spike | P1 | 2 | S | ✅ Done | — |
 | AT-111 | Production deploy pipeline (build, migrate, deploy) | chore | P1 | 5 | L | Todo | AT-110 |
 | AT-112 | Domain + HTTPS (required for PWA) | chore | P1 | 2 | S | Todo | AT-111 |
 | AT-113 | Privacy policy + location-permission copy (LGPD) | chore | P1 | 2 | S | Todo | — |

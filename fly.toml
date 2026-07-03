@@ -1,0 +1,16 @@
+app = "aonde-tem"
+primary_region = "gru"          # São Paulo
+
+[build]
+  dockerfile = "docker/api.Dockerfile"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = false    # keep it warm — avoid cold starts against the latency budget
+  min_machines_running = 1
+
+[[http_service.checks]]
+  path = "/api/health"          # apps/api/src/shared/health — global prefix is "api"
+  interval = "15s"
+  timeout = "5s"

@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
+import bcrypt from "bcrypt";
+import { randomBytes } from "node:crypto";
 
 const pool = new Pool({
   connectionString: process.env["DATABASE_URL"] ?? "postgresql://aonde:aonde@localhost:5432/aonde",
@@ -9,6 +11,8 @@ const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 
 // Fixed UUIDs so the seed is idempotent (re-running inserts nothing twice).
 const SEED_USER_ID = "00000000-0000-0000-0000-000000000001";
+const ADMIN_USER_ID = "00000000-0000-0000-0000-000000000002";
+const ADMIN_EMAIL = "admin@aonde-tem.dev";
 
 const PRODUCTS = [
   {
@@ -88,6 +92,28 @@ async function main() {
     },
     update: {},
   });
+
+  // Admin user — only created (and password only generated/printed) the first time;
+  // re-running the seed never overwrites an existing admin's password.
+  const existingAdmin = await prisma.user.findUnique({ where: { email: ADMIN_EMAIL } });
+  if (!existingAdmin) {
+    const adminPassword = randomBytes(18).toString("base64url");
+    const passwordHash = await bcrypt.hash(adminPassword, 12);
+    await prisma.user.create({
+      data: {
+        id: ADMIN_USER_ID,
+        email: ADMIN_EMAIL,
+        displayName: "Admin",
+        password: passwordHash,
+        role: "admin",
+      },
+    });
+    console.log("Created admin user:");
+    console.log(`  email:    ${ADMIN_EMAIL}`);
+    console.log(`  password: ${adminPassword}`);
+  } else {
+    console.log("Admin user already exists — skipping (password unchanged).");
+  }
 
   // Products — conflict on normalizedKey (the true business key); if a product
   // with that key already exists from the app, leave it alone.
