@@ -8,8 +8,8 @@ import { LoginWithGoogle } from "../application/login-with-google.js";
 export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
   constructor(@Inject(LoginWithGoogle) private readonly loginWithGoogle: LoginWithGoogle) {
     super({
-      clientID: process.env["GOOGLE_CLIENT_ID"] ?? "",
-      clientSecret: process.env["GOOGLE_CLIENT_SECRET"] ?? "",
+      clientID: process.env["GOOGLE_CLIENT_ID"] || "google-oauth-not-configured",
+      clientSecret: process.env["GOOGLE_CLIENT_SECRET"] || "google-oauth-not-configured",
       callbackURL:
         process.env["GOOGLE_CALLBACK_URL"] ?? "http://localhost:3000/api/auth/google/callback",
       scope: ["email", "profile"],
