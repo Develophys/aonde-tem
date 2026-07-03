@@ -1,6 +1,5 @@
-import type { UserRepository } from "@aonde-tem/domain";
-import { User } from "@aonde-tem/domain";
-import type { Logger } from "@aonde-tem/domain";
+import { randomInt, randomUUID } from "node:crypto";
+import { User, type UserRepository, type Logger } from "@aonde-tem/domain";
 
 export interface MagicCodeRepository {
   save(email: string, code: string, expiresAt: Date): Promise<void>;
@@ -11,7 +10,7 @@ export interface EmailService {
 }
 
 function generateCode(): string {
-  return Math.floor(100_000 + Math.random() * 900_000).toString();
+  return randomInt(100_000, 1_000_000).toString();
 }
 
 export class SendMagicCode {
@@ -29,7 +28,6 @@ export class SendMagicCode {
     // Ensure user exists (create on first sign-in)
     let user = await this.users.findByEmail(email);
     if (!user) {
-      const { randomUUID } = await import("crypto");
       user = User.create({ id: randomUUID(), email, role: "user" });
       await this.users.save(user);
     }
