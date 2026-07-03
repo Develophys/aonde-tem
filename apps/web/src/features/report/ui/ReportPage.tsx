@@ -112,15 +112,17 @@ export function ReportPage() {
             />
 
             <div>
-              <label className="block text-sm font-medium text-text mb-1">Quantidade</label>
+              <label htmlFor="report-quantity" className="block text-sm font-medium text-text mb-1">
+                Quantidade
+              </label>
               <input
-                title="numeric input"
+                id="report-quantity"
                 type="number"
                 inputMode="numeric"
                 min={1}
                 value={form.quantity}
                 onChange={(e) =>
-                  setForm((f) => ({ ...f, quantity: parseInt(e.target.value) || 1 }))
+                  setForm((f) => ({ ...f, quantity: Number.parseInt(e.target.value) || 1 }))
                 }
                 className="w-full border border-border rounded-xl px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-brand"
               />

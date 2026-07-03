@@ -7,8 +7,8 @@ interface SelectedProduct {
 }
 
 interface Props {
-  value: SelectedProduct | null;
-  onChange: (product: SelectedProduct) => void;
+  readonly value: SelectedProduct | null;
+  readonly onChange: (product: SelectedProduct) => void;
 }
 
 export function ProductPicker({ value, onChange }: Props) {
@@ -32,13 +32,18 @@ export function ProductPicker({ value, onChange }: Props) {
 
   return (
     <div className="relative">
-      <label className="block text-sm font-medium text-text mb-1">Produto</label>
+      <label htmlFor="product-picker-input" className="block text-sm font-medium text-text mb-1">
+        Produto
+      </label>
       <input
+        id="product-picker-input"
         type="text"
         value={query}
         onChange={(e) => handleChange(e.target.value)}
         onFocus={() => setShowDropdown(true)}
-        onKeyDown={(e) => { if (e.key === "Escape") setShowDropdown(false); }}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") setShowDropdown(false);
+        }}
         placeholder="Ex: Arroz 5kg, Leite 1L…"
         className="w-full border border-border rounded-xl px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-brand"
         autoComplete="off"

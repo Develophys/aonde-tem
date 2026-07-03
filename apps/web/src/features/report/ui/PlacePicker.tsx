@@ -10,8 +10,8 @@ interface PlaceSelection {
 }
 
 interface Props {
-  value: PlaceSelection | null;
-  onChange: (place: PlaceSelection) => void;
+  readonly value: PlaceSelection | null;
+  readonly onChange: (place: PlaceSelection) => void;
 }
 
 export function PlacePicker({ value, onChange }: Props) {
@@ -35,7 +35,9 @@ export function PlacePicker({ value, onChange }: Props) {
 
   return (
     <div>
-      <label className="block text-sm font-medium text-text mb-1">Local</label>
+      <label htmlFor="place-picker-input" className="block text-sm font-medium text-text mb-1">
+        Local
+      </label>
 
       {nearbyPlaces && nearbyPlaces.length > 0 && (
         <div className="mb-3">
@@ -66,6 +68,7 @@ export function PlacePicker({ value, onChange }: Props) {
       )}
 
       <input
+        id="place-picker-input"
         type="text"
         value={placeName}
         onChange={(e) => {
