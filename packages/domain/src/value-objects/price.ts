@@ -15,6 +15,6 @@ export class Price {
     const formatted = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(
       value,
     );
-    return formatted.replace(/\u00a0/g, " ");
+    return formatted.replaceAll("\u00a0", " ");
   }
 }
