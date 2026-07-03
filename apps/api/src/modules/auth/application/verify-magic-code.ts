@@ -1,7 +1,4 @@
-import { UnauthorizedError } from "@aonde-tem/domain";
-import type { UserRepository } from "@aonde-tem/domain";
-import type { User } from "@aonde-tem/domain";
-import type { Logger } from "@aonde-tem/domain";
+import { UnauthorizedError, type UserRepository, type User, type Logger } from "@aonde-tem/domain";
 
 export interface MagicCodeVerifier {
   verifyAndConsume(email: string, code: string): Promise<boolean>;

@@ -1,6 +1,4 @@
-import { Product, ConflictError } from "@aonde-tem/domain";
-import type { ProductRepository } from "@aonde-tem/domain";
-import type { Logger } from "@aonde-tem/domain";
+import { Product, ConflictError, type ProductRepository, type Logger } from "@aonde-tem/domain";
 import { randomUUID } from "node:crypto";
 
 export interface BlockedTermChecker {

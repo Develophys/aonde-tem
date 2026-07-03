@@ -18,7 +18,7 @@ import { HealthModule } from "./shared/health/health.module.js";
         level: process.env.LOG_LEVEL ?? "info",
         genReqId: (req) => (req.headers["x-request-id"] as string | undefined) ?? randomUUID(),
         redact: ["req.headers.authorization", "*.password", "*.apiKey"],
-        transport: process.env.NODE_ENV !== "production" ? { target: "pino-pretty" } : undefined,
+        transport: process.env.NODE_ENV === "production" ? undefined : { target: "pino-pretty" },
       },
     }),
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 10 }]),

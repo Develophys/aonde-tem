@@ -1,6 +1,4 @@
-import { Flag } from "@aonde-tem/domain";
-import type { FlagRepository } from "@aonde-tem/domain";
-import type { Logger } from "@aonde-tem/domain";
+import { Flag, type FlagRepository, type Logger } from "@aonde-tem/domain";
 import type { CreateFlagDto } from "@aonde-tem/contracts";
 import { randomUUID } from "node:crypto";
 
@@ -21,7 +19,10 @@ export class CreateFlag {
     });
 
     await this.flags.save(flag);
-    this.log.info({ flagId: flag.id, targetType: dto.targetType, targetId: dto.targetId, reason: dto.reason }, "flag created");
+    this.log.info(
+      { flagId: flag.id, targetType: dto.targetType, targetId: dto.targetId, reason: dto.reason },
+      "flag created",
+    );
     return flag;
   }
 }

@@ -1,6 +1,12 @@
-import { Discovery, Price, Coordinates, ValidationError } from "@aonde-tem/domain";
-import type { DiscoveryRepository, ProductRepository } from "@aonde-tem/domain";
-import type { Logger } from "@aonde-tem/domain";
+import {
+  Discovery,
+  Price,
+  Coordinates,
+  ValidationError,
+  type DiscoveryRepository,
+  type ProductRepository,
+  type Logger,
+} from "@aonde-tem/domain";
 import { randomUUID } from "node:crypto";
 import type { CreateDiscoveryDto } from "@aonde-tem/contracts";
 
@@ -43,7 +49,7 @@ export class CreateDiscovery {
 
     // Validate product exists and is active
     const product = await this.products.findById(dto.productId!);
-    if (!product || product.status !== "active") {
+    if (product?.status !== "active") {
       throw new ValidationError("Product is not available for discovery reporting");
     }
 

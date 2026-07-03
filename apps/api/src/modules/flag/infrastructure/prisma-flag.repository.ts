@@ -1,8 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../../shared/prisma.service.js";
-import type { FlagRepository } from "@aonde-tem/domain";
-import { Flag } from "@aonde-tem/domain";
-import type { FlagTargetType, FlagReason, FlagStatus } from "@aonde-tem/domain";
+import {
+  Flag,
+  type FlagRepository,
+  type FlagTargetType,
+  type FlagReason,
+  type FlagStatus,
+} from "@aonde-tem/domain";
 
 @Injectable()
 export class PrismaFlagRepository implements FlagRepository {
