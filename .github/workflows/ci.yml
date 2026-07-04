@@ -17,6 +17,22 @@ env:
   DATABASE_URL: postgresql://aonde:aonde@localhost:5432/aonde
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.filter.outputs.api }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect API-relevant changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            api:
+              - 'apps/api/**'
+              - 'packages/contracts/**'
+              - 'packages/domain/**'
+
   verify:
     runs-on: ubuntu-latest
 
@@ -112,11 +128,12 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  # Migrates Neon + deploys apps/api to Fly. main-only — apps/web deploys itself via
+  # Migrates Neon + deploys apps/api to Fly. main-only, and skipped entirely when the
+  # push touches nothing api-relevant (see `changes` job) — apps/web deploys itself via
   # Vercel's own Git integration, so it isn't handled here. (Backlog: AT-111)
   deploy-api:
-    needs: [verify, design-slop]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [verify, design-slop, changes]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && needs.changes.outputs.api == 'true'
     runs-on: ubuntu-latest
     concurrency:
       group: deploy-api-main
