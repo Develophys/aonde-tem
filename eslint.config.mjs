@@ -36,6 +36,12 @@ export default tseslint.config(
     languageOptions: { globals: { ...globals.node } },
   },
 
+  // CommonJS config files (e.g. .lighthouserc.cjs, jest.config.cjs) run under Node.
+  {
+    files: ["**/*.cjs"],
+    languageOptions: { globals: { ...globals.node } },
+  },
+
   // Browser-land (web)
   {
     files: ["apps/web/**/*.{ts,tsx}"],
