@@ -10,7 +10,7 @@ import { useAppStore } from "../../../app/store/index.js";
 export function SeekPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const { coords, denied } = useGeolocation();
+  const { coords, denied, loading } = useGeolocation();
   const radius = useAppStore((s) => s.mapRadius);
   const setRadius = useAppStore((s) => s.setRadius);
   const selectedPlaceId = useAppStore((s) => s.selectedPlaceId);
@@ -34,7 +34,13 @@ export function SeekPage() {
     <div className="relative w-full h-screen bg-surface overflow-hidden">
       {/* Full-screen map — underneath everything */}
       <div className="absolute inset-0">
-        <MapShell center={center} userPin={coords ?? undefined} discoveries={discoveries} />
+        {loading ? (
+          <div className="w-full h-full bg-surface-alt flex items-center justify-center">
+            <span className="text-text-muted text-sm">Localizando você…</span>
+          </div>
+        ) : (
+          <MapShell center={center} userPin={coords ?? undefined} discoveries={discoveries} />
+        )}
       </div>
 
       {/* Search bar — floats on top of the map */}
