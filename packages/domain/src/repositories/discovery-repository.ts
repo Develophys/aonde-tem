@@ -1,5 +1,6 @@
 import type { Discovery } from "../entities/discovery";
 import type { Coordinates } from "../value-objects/coordinates";
+import type { Price } from "../value-objects/price";
 
 export interface NearbyDiscoveriesQuery {
   center: Coordinates;
@@ -19,6 +20,8 @@ export interface NearbyDiscoveryRow {
   priceBrl: number;
   quantity: number;
   note: string | null;
+  /** Only populated by findByPlace (used to derive `isMine` server-side); absent from findNearbyWithDetails. */
+  reporterId?: string;
   lat: number;
   lng: number;
   distanceMeters: number;
@@ -33,5 +36,10 @@ export interface DiscoveryRepository {
   /** Returns all active (non-expired, non-hidden) discoveries for a place, newest first. */
   findByPlace(placeId: string): Promise<NearbyDiscoveryRow[]>;
   save(discovery: Discovery): Promise<void>;
+  /** Updates the editable fields of an existing discovery and refreshes its TTL. */
+  update(
+    id: string,
+    changes: { price: Price; quantity: number; note?: string; expiresAt: Date },
+  ): Promise<void>;
   delete(id: string): Promise<void>;
 }
