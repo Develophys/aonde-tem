@@ -272,7 +272,7 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
 
   async update(
     id: string,
-    changes: { price: Price; quantity: number; note?: string; expiresAt: Date },
+    changes: { price: Price; quantity: number; note?: string; expiresAt: Date; createdAt: Date },
   ): Promise<void> {
     await this.prisma.$executeRaw`
       UPDATE discoveries
@@ -280,7 +280,8 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
         price       = ${changes.price.cents / 100},
         quantity    = ${changes.quantity},
         note        = ${changes.note ?? null},
-        "expiresAt" = ${changes.expiresAt}
+        "expiresAt" = ${changes.expiresAt},
+        "createdAt" = ${changes.createdAt}
       WHERE id = ${id}
     `;
   }

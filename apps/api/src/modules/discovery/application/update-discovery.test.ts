@@ -77,6 +77,9 @@ describe("UpdateDiscovery", () => {
     expect(result.createdAt.getTime()).toBeGreaterThanOrEqual(before);
     expect(updateCalls).toHaveLength(1);
     expect(updateCalls[0]!.id).toBe("d1");
+    const passedChanges = updateCalls[0]!.changes as { createdAt: Date };
+    expect(passedChanges.createdAt).toBeInstanceOf(Date);
+    expect(passedChanges.createdAt.getTime()).toBeGreaterThanOrEqual(before);
   });
 
   it("throws NotFoundError when the discovery does not exist", async () => {

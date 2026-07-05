@@ -104,6 +104,9 @@ describe("Discovery edit/delete (integration)", () => {
     expect(res.body.quantity).toBe(3);
     expect(res.body.note).toBe("preço baixou");
     expect(new Date(res.body.expiresAt).getTime()).toBeGreaterThan(before.expiresAt.getTime());
+
+    const after = await prisma.discovery.findUniqueOrThrow({ where: { id: updateTargetId } });
+    expect(after.createdAt.getTime()).toBeGreaterThan(before.createdAt.getTime());
   });
 
   it("PATCH on an unknown id returns 404", async () => {

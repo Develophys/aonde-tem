@@ -39,7 +39,7 @@ export interface DiscoveryRepository {
   /** Updates the editable fields of an existing discovery and refreshes its TTL. */
   update(
     id: string,
-    changes: { price: Price; quantity: number; note?: string; expiresAt: Date },
+    changes: { price: Price; quantity: number; note?: string; expiresAt: Date; createdAt: Date },
   ): Promise<void>;
   delete(id: string): Promise<void>;
 }

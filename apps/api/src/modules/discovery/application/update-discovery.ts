@@ -40,7 +40,13 @@ export class UpdateDiscovery {
       expiresAt,
     });
 
-    await this.discoveries.update(id, { price, quantity: dto.quantity, note: dto.note, expiresAt });
+    await this.discoveries.update(id, {
+      price,
+      quantity: dto.quantity,
+      note: dto.note,
+      expiresAt,
+      createdAt: now,
+    });
 
     this.log.info({ discoveryId: id }, "discovery updated");
     return updated;
