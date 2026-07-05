@@ -2,12 +2,17 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
+  Delete,
   Query,
   Body,
+  Param,
+  ParseUUIDPipe,
   Req,
   Inject,
   BadRequestException,
   UseGuards,
+  HttpCode,
 } from "@nestjs/common";
 import { Throttle, ThrottlerGuard } from "@nestjs/throttler";
 import { ZodError } from "zod";
@@ -16,10 +21,14 @@ import {
   type NearbyDiscoveriesResponse,
   createDiscoverySchema,
   type CreateDiscoveryResponse,
+  updateDiscoverySchema,
+  type UpdateDiscoveryResponse,
 } from "@aonde-tem/contracts";
 import { Coordinates } from "@aonde-tem/domain";
 import { FindNearbyDiscoveries } from "../application/find-nearby-discoveries.js";
 import { CreateDiscovery } from "../application/create-discovery.js";
+import { UpdateDiscovery } from "../application/update-discovery.js";
+import { DeleteDiscovery } from "../application/delete-discovery.js";
 import { CreateProduct } from "../../product/application/create-product.js";
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard.js";
 
@@ -29,6 +38,8 @@ export class DiscoveryController {
     @Inject(FindNearbyDiscoveries) private readonly findNearby: FindNearbyDiscoveries,
     @Inject(CreateDiscovery) private readonly createDiscovery: CreateDiscovery,
     @Inject(CreateProduct) private readonly createProduct: CreateProduct,
+    @Inject(UpdateDiscovery) private readonly updateDiscovery: UpdateDiscovery,
+    @Inject(DeleteDiscovery) private readonly deleteDiscovery: DeleteDiscovery,
   ) {}
 
   @Get("nearby")
@@ -65,7 +76,10 @@ export class DiscoveryController {
   @Post()
   @UseGuards(ThrottlerGuard, JwtAuthGuard)
   @Throttle({ default: { limit: 10, ttl: 60_000 } })
-  async create(@Body() body: unknown, @Req() req: Request & { user: { sub: string } }): Promise<CreateDiscoveryResponse> {
+  async create(
+    @Body() body: unknown,
+    @Req() req: Request & { user: { sub: string } },
+  ): Promise<CreateDiscoveryResponse> {
     let dto: ReturnType<typeof createDiscoverySchema.parse>;
     try {
       dto = createDiscoverySchema.parse(body);
@@ -85,10 +99,7 @@ export class DiscoveryController {
       productId = product.id;
     }
 
-    const discovery = await this.createDiscovery.execute(
-      { ...dto, productId },
-      reporterId,
-    );
+    const discovery = await this.createDiscovery.execute({ ...dto, productId }, reporterId);
 
     return {
       id: discovery.id,
@@ -96,5 +107,44 @@ export class DiscoveryController {
       placeId: discovery.placeId,
       createdAt: discovery.createdAt.toISOString(),
     };
+  }
+
+  @Patch(":id")
+  @UseGuards(JwtAuthGuard)
+  async update(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Body() body: unknown,
+    @Req() req: Request & { user: { sub: string } },
+  ): Promise<UpdateDiscoveryResponse> {
+    let dto: ReturnType<typeof updateDiscoverySchema.parse>;
+    try {
+      dto = updateDiscoverySchema.parse(body);
+    } catch (err) {
+      if (err instanceof ZodError) {
+        throw new BadRequestException(err.flatten());
+      }
+      throw err;
+    }
+
+    const updated = await this.updateDiscovery.execute(id, dto, req.user.sub);
+
+    return {
+      id: updated.id,
+      priceBrl: updated.price.cents / 100,
+      quantity: updated.quantity,
+      note: updated.note ?? null,
+      createdAt: updated.createdAt.toISOString(),
+      expiresAt: updated.expiresAt.toISOString(),
+    };
+  }
+
+  @Delete(":id")
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(204)
+  async remove(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Req() req: Request & { user: { sub: string } },
+  ): Promise<void> {
+    await this.deleteDiscovery.execute(id, req.user.sub);
   }
 }

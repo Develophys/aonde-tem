@@ -112,7 +112,7 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
     const row = await this.prisma.discovery.findUnique({
       where: { id },
     });
-    if (!row) return null;
+    if (!row || row.hiddenAt) return null;
 
     // location is Unsupported geography — coords cannot be hydrated without a
     // raw query. Pass zero-zero as a sentinel; consumers that need coords
@@ -268,6 +268,21 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
       `;
       return { placeId: resolvedPlaceId, discoveryId: discovery.id };
     });
+  }
+
+  async update(
+    id: string,
+    changes: { price: Price; quantity: number; note?: string; expiresAt: Date },
+  ): Promise<void> {
+    await this.prisma.$executeRaw`
+      UPDATE discoveries
+      SET
+        price       = ${changes.price.cents / 100},
+        quantity    = ${changes.quantity},
+        note        = ${changes.note ?? null},
+        "expiresAt" = ${changes.expiresAt}
+      WHERE id = ${id}
+    `;
   }
 
   async delete(id: string): Promise<void> {
