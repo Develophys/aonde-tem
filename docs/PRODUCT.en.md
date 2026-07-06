@@ -151,6 +151,7 @@ These are **hypotheses with targets**, to validate after launch in the pilot cit
 - Item autocomplete + categories.
 - User accounts (attribute Reports, enable reputation).
 - Photo/note on a Report.
+- **Edit/delete your own Report**: from the place detail sheet, a Reporter can edit or delete a Report they currently own, for as long as it's still active (not expired or already removed).
 - **Item watchlist & notifications** (requires account): watch an item, get alerted when it appears **nearby** or **at/below a target price**, via **Web Push + in-app inbox**, with batched delivery, a push on/off toggle, and LGPD-compliant consent/data controls. *(Epic E11; spec: [`specs/NOTIFICATIONS.en.md`](./specs/NOTIFICATIONS.en.md).)*
 
 ### Could-have / future — P2 (design for, don't build yet)

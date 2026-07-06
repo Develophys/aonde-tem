@@ -29,7 +29,12 @@ must be fast (~30s) and is **gated by login** (pending Q1 confirmation).
   - *Given* I filled the form, *when* I reach submit, *then* I confirm a summary; an out-of-range price is blocked with a clear message.
 
 ### P1
-- **Edit/delete your own recent discovery (R-03)** — let people fix mistakes.
+- **Edit/delete your own recent discovery (R-03)** — let people fix mistakes. Ownership means the
+  *current* reporter (`reporterId`), which can move between users through the existing re-report
+  upsert. Editable/deletable while `hiddenAt IS NULL` and `expiresAt > now` — no separate time
+  window. Editing price/quantity/note refreshes `createdAt`/`expiresAt` like a new report.
+  `PATCH`/`DELETE /discoveries/:id`, owner-only. See
+  [`2026-07-05-edit-delete-own-report-design.md`](../superpowers/specs/2026-07-05-edit-delete-own-report-design.md).
 - **Offline write-queue (R-06):** draft a report with no signal, sync on reconnect (core for in-store use).
 - **Qualitative availability (R-07):** muito / pouco / acabando as an alternative to an exact count.
 - **Price outlier soft-warning (R-02):** warn if the price is far from recent discoveries of the same product.

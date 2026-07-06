@@ -232,7 +232,7 @@ dev solo. Pontos são *tamanho relativo*, não prazo; calibre com a velocidade r
 | AT-133 | **Passo de confirmação/resumo** antes de enviar um relato | feature | P0 | 2 | S | A fazer | R-03 |
 | AT-134 | **Reutilizar lugar**: sugerir lugares próximos antes de criar novo | feature | P0 | 3 | M | A fazer | R-04 |
 | AT-135 | **Instrumentação de liquidez**: registrar buscas + taxa de resultado recente | chore | P0 | 2 | S | A fazer | R-40 |
-| AT-136 | **Editar/excluir o próprio** relato recente | feature | P1 | 2 | S | A fazer | R-03 |
+| AT-136 | **Editar/excluir o próprio** relato recente | feature | P1 | 2 | S | ✅ Feito | R-03 |
 | AT-137 | **Fila de escrita offline** (rascunhar offline → sincronizar) | feature | P1 | 5 | L | A fazer | R-06 |
 | AT-138 | **Disponibilidade qualitativa** (muito/pouco/acabando) | feature | P1 | 2 | S | A fazer | R-07 |
 | AT-139 | **Aviso de outlier** de preço vs relatos recentes | feature | P1 | 3 | M | A fazer | R-02 |

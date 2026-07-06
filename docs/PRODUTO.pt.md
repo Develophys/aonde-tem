@@ -154,6 +154,7 @@ São **hipóteses com metas**, a validar após o lançamento na cidade-piloto:
 - Autocomplete de item + categorias.
 - Contas de usuário (atribuir Relatos, habilitar reputação).
 - Foto/observação no Relato.
+- **Editar/excluir o próprio Relato**: a partir da folha de detalhes do local, um Relator pode editar ou excluir um Relato que ainda é seu, enquanto ele estiver ativo (não expirado nem já removido).
 - **Lista de interesse & notificações** (exige conta): monitorar um item e ser avisado quando ele aparecer **por perto** ou **por um preço igual/abaixo de uma meta**, via **Web Push + caixa de avisos no app**, com entrega agrupada, interruptor de push (liga/desliga) e controles de consentimento/dados conforme a LGPD. *(Épico E11; spec: [`specs/NOTIFICACOES.pt.md`](./specs/NOTIFICACOES.pt.md).)*
 
 ### Desejáveis / futuro — P2 (projetar para, mas não construir ainda)
