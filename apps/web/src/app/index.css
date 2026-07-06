@@ -8,6 +8,9 @@
   --color-surface-alt: #f7f7f5;
   --color-border: #e5e5e0;
 
+  /* On-surface accent (text/border/ring) — equal to --color-brand in light mode. */
+  --color-accent: #1a5c3a;
+
   /* Freshness states */
   --color-fresh: #1a5c3a;
   --color-aging: #b45309;
@@ -19,19 +22,60 @@
 
   /* Spacing */
   --radius-card: 0.75rem;
+  --radius-control: 0.75rem;
+  --radius-sheet: 1rem;
 
   /* Typography */
   --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 @keyframes slide-up {
-  from { transform: translateY(100%); }
-  to   { transform: translateY(0); }
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Modal/bottom-sheet scrim fade-in — pairs with slide-up. */
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @theme {
   --animate-slide-up: slide-up 0.25s ease-out;
+  --animate-backdrop-in: backdrop-in 0.2s ease-out;
+  --animate-toast-in: toast-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   --color-error: #dc2626;
 }
 
-html, body, #root { height: 100%; margin: 0; }
+/* z-index scale for stacked overlay content (bottom sheets, their backdrop, toasts). */
+:root {
+  --z-modal-backdrop: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}

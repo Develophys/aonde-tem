@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, type ReactNode } from "react";
 import { createBrowserRouter, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "../features/auth/ui/ProtectedRoute.js";
 import { AppHeader } from "../features/auth/ui/AppHeader.js";
+import { ToastViewport } from "../shared/ui/ToastViewport.js";
 import { useAppStore } from "./store/index.js";
 
 const SeekPage = lazy(() =>
@@ -71,6 +72,7 @@ function RootLayout() {
       <GoogleTokenCapture />
       <AppHeader />
       <Outlet />
+      <ToastViewport />
     </>
   );
 }

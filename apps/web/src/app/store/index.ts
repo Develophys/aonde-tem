@@ -3,6 +3,7 @@ import { devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import type { AppStore } from "./types";
 import { createUiSlice } from "./ui.slice";
+import { createToastSlice } from "./toast.slice";
 import { createMapSlice } from "../../features/map/model/map.slice";
 import { createSessionSlice } from "../../features/auth/model/session.slice.js";
 
@@ -11,6 +12,7 @@ export const useAppStore = create<AppStore>()(
     persist(
       immer((...a) => ({
         ...createUiSlice(...a),
+        ...createToastSlice(...a),
         ...createMapSlice(...a),
         ...createSessionSlice(...a),
       })),
