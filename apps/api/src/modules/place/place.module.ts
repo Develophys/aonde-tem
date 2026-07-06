@@ -11,11 +11,14 @@ import {
 } from "./application/find-place-with-discoveries.js";
 import { PrismaDiscoveryRepository } from "../discovery/infrastructure/prisma-discovery.repository.js";
 import { PlaceController } from "./presentation/place.controller.js";
+import { OptionalJwtAuthGuard } from "../auth/guards/optional-jwt-auth.guard.js";
+import { AuthModule } from "../auth/auth.module.js";
 
 const PLACE_REPOSITORY = Symbol("PlaceRepository");
 const DISCOVERY_FINDER = Symbol("DiscoveryByPlaceFinder");
 
 @Module({
+  imports: [AuthModule],
   controllers: [PlaceController],
   providers: [
     PrismaService,
@@ -23,6 +26,7 @@ const DISCOVERY_FINDER = Symbol("DiscoveryByPlaceFinder");
     { provide: PLACE_REPOSITORY, useClass: PostgisPlaceRepository },
     // A read-only instance of PrismaDiscoveryRepository used only for findByPlace.
     { provide: DISCOVERY_FINDER, useClass: PrismaDiscoveryRepository },
+    OptionalJwtAuthGuard,
     {
       provide: FindNearbyPlaces,
       useFactory: (repo: PlaceRepository, log: Logger) => new FindNearbyPlaces(repo, log),

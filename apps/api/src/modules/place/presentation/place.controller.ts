@@ -1,14 +1,27 @@
-import { Controller, Get, Post, Body, Query, Param, Inject, ParseUUIDPipe } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Query,
+  Param,
+  Inject,
+  ParseUUIDPipe,
+  Req,
+  UseGuards,
+} from "@nestjs/common";
 import {
   createPlaceSchema,
   nearbyQuerySchema,
   type PlaceResponse,
+  type PlaceDiscoveryItem,
   type PlaceWithDiscoveriesResponse,
 } from "@aonde-tem/contracts";
-import { Place } from "@aonde-tem/domain";
+import { Place, type NearbyDiscoveryRow } from "@aonde-tem/domain";
 import { FindNearbyPlaces } from "../application/find-nearby-places.js";
 import { CreatePlace } from "../application/create-place.js";
 import { FindPlaceWithDiscoveries } from "../application/find-place-with-discoveries.js";
+import { OptionalJwtAuthGuard } from "../../auth/guards/optional-jwt-auth.guard.js";
 
 function toResponse(p: Place): PlaceResponse {
   return {
@@ -17,6 +30,24 @@ function toResponse(p: Place): PlaceResponse {
     category: p.category,
     address: p.address,
     coords: { lat: p.coords.lat, lng: p.coords.lng },
+  };
+}
+
+export function toDiscoveryItem(
+  r: NearbyDiscoveryRow,
+  requestingUserId?: string,
+): PlaceDiscoveryItem {
+  return {
+    id: r.id,
+    productId: r.productId,
+    productName: r.productName,
+    priceBrl: r.priceBrl,
+    quantity: r.quantity,
+    note: r.note,
+    isMine: r.reporterId !== undefined && r.reporterId === requestingUserId,
+    createdAt: r.createdAt.toISOString(),
+    expiresAt: r.expiresAt.toISOString(),
+    ageMinutes: Math.floor((Date.now() - r.createdAt.getTime()) / 60_000),
   };
 }
 
@@ -37,8 +68,10 @@ export class PlaceController {
   }
 
   @Get(":id")
+  @UseGuards(OptionalJwtAuthGuard)
   async getWithDiscoveries(
     @Param("id", ParseUUIDPipe) id: string,
+    @Req() req: Request & { user?: { sub: string } },
   ): Promise<PlaceWithDiscoveriesResponse> {
     const { place, rows } = await this.findWithDiscoveries.execute(id);
     return {
@@ -46,17 +79,7 @@ export class PlaceController {
       name: place.name,
       address: place.address,
       coords: { lat: place.coords.lat, lng: place.coords.lng },
-      discoveries: rows.map((r) => ({
-        id: r.id,
-        productId: r.productId,
-        productName: r.productName,
-        priceBrl: r.priceBrl,
-        quantity: r.quantity,
-        note: r.note,
-        createdAt: r.createdAt.toISOString(),
-        expiresAt: r.expiresAt.toISOString(),
-        ageMinutes: Math.floor((Date.now() - r.createdAt.getTime()) / 60_000),
-      })),
+      discoveries: rows.map((r) => toDiscoveryItem(r, req.user?.sub)),
     };
   }
 

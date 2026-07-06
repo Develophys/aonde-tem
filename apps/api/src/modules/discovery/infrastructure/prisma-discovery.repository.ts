@@ -18,6 +18,7 @@ interface RawDiscoveryRow {
   price: string; // Decimal comes back as string from raw query
   quantity: number;
   note: string | null;
+  reporterId?: string;
   lat: number;
   lng: number;
   distanceMeters: number;
@@ -143,6 +144,7 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
         d.price,
         d.quantity,
         d.note,
+        d."reporterId",
         ST_Y(d.location::geometry) AS lat,
         ST_X(d.location::geometry) AS lng,
         0                          AS "distanceMeters",
@@ -167,6 +169,7 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
       priceBrl: Number.parseFloat(r.price),
       quantity: r.quantity,
       note: r.note,
+      reporterId: r.reporterId,
       lat: r.lat,
       lng: r.lng,
       distanceMeters: 0,

@@ -38,6 +38,7 @@ export const placeDiscoveryItemSchema = z.object({
   priceBrl: z.number(),
   quantity: z.number().int(),
   note: z.string().nullable(),
+  isMine: z.boolean(),
   createdAt: z.string().datetime(),
   expiresAt: z.string().datetime(),
   ageMinutes: z.number().int(),
