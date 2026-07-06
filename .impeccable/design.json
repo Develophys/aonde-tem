@@ -1,0 +1,343 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-04T00:00:00Z",
+  "title": "Design System: Aonde Tem",
+  "extensions": {
+    "colorMeta": {
+      "trust-green": {
+        "role": "primary",
+        "displayName": "Trust Green",
+        "canonical": "#1a5c3a",
+        "tonalRamp": [
+          "#0b2417",
+          "#14402a",
+          "#1a5c3a",
+          "#2d8f5a",
+          "#5cae83",
+          "#94cbac",
+          "#cce6da",
+          "#eef7f2"
+        ],
+        "note": "Fill only (buttons, under white text). Unchanged across themes — a white-on-green contrast pair doesn't depend on page background."
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Accent Green",
+        "canonical": "#1a5c3a",
+        "darkCanonical": "#3ea873",
+        "tonalRamp": [
+          "#0b2417",
+          "#14402a",
+          "#1a5c3a",
+          "#2d8f5a",
+          "#5cae83",
+          "#94cbac",
+          "#cce6da",
+          "#eef7f2"
+        ],
+        "note": "Trust Green as on-surface text/border/ring, not fill. Diverges from trust-green in dark mode (brighter, for contrast against a dark surface). --color-fresh is the same variable as this token."
+      },
+      "aging-amber": {
+        "role": "state",
+        "displayName": "Aging Amber",
+        "canonical": "#b45309",
+        "darkCanonical": "#d97b2e",
+        "tonalRamp": [
+          "#3d1c02",
+          "#6b3005",
+          "#96430a",
+          "#b45309",
+          "#d97b2e",
+          "#eba861",
+          "#f6cd9e",
+          "#fdecd6"
+        ]
+      },
+      "stale-gray": {
+        "role": "state",
+        "displayName": "Stale Gray",
+        "canonical": "#9ca3af",
+        "tonalRamp": [
+          "#1f2126",
+          "#3a3f47",
+          "#565d68",
+          "#767d8a",
+          "#9ca3af",
+          "#c1c6ce",
+          "#dde0e4",
+          "#f1f2f4"
+        ],
+        "note": "Unchanged in dark mode — already light enough to read well against a dark surface (~7.2:1)."
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#1a1a1a",
+        "darkCanonical": "#f1f3ef",
+        "tonalRamp": [
+          "#0d0d0d",
+          "#1a1a1a",
+          "#333333",
+          "#4d4d4d",
+          "#666666",
+          "#999999",
+          "#cccccc",
+          "#f2f2f2"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Ink Muted",
+        "canonical": "#6b7280",
+        "darkCanonical": "#a3ac9f",
+        "tonalRamp": [
+          "#16181c",
+          "#2b2f36",
+          "#454b54",
+          "#5f6570",
+          "#6b7280",
+          "#9aa0ab",
+          "#c4c8cf",
+          "#e8eaed"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "canonical": "#ffffff",
+        "darkCanonical": "#12160f"
+      },
+      "surface-alt": {
+        "role": "neutral",
+        "displayName": "Surface Alt",
+        "canonical": "#f7f7f5",
+        "darkCanonical": "#1b201a"
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Border",
+        "canonical": "#e5e5e0",
+        "darkCanonical": "#616f63",
+        "note": "Dark value is brighter than a 'subtle divider' instinct suggests — needed to clear the ~3:1 WCAG 1.4.11 non-text contrast minimum against the dark surface."
+      },
+      "error-red": {
+        "role": "state",
+        "displayName": "Error Red",
+        "canonical": "#dc2626",
+        "darkCanonical": "#ef5350",
+        "tonalRamp": [
+          "#450a0a",
+          "#7f1414",
+          "#a91d1d",
+          "#c22020",
+          "#dc2626",
+          "#ef5350",
+          "#f8a3a3",
+          "#fce4e4"
+        ]
+      },
+      "user-location": {
+        "role": "state",
+        "displayName": "User Location Blue",
+        "canonical": "#2563eb",
+        "note": "Map 'this is you' marker only. Deliberately not Trust Green — reusing brand/fresh green here would blur the Trust Green Rule's 'confirmed' signal. Unchanged across themes; the map canvas itself stays light-styled regardless of app theme.",
+        "tonalRamp": [
+          "#0f2c73",
+          "#1741a6",
+          "#1e4fc2",
+          "#2563eb",
+          "#5b85f0",
+          "#8babf5",
+          "#bdd0fa",
+          "#e5edfd"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page-level titles (auth screens, report flow steps)."
+      },
+      "title": { "displayName": "Title", "purpose": "Section and bottom-sheet titles." },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Input text, paragraph copy, primary button labels — never below 16px on real inputs."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Form labels, ghost/secondary button text, chip text."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Hints, freshness timestamps, helper copy under inputs."
+      }
+    },
+    "shadows": [
+      {
+        "name": "ambient",
+        "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "purpose": "Search bar, radius pill, fetch-error card — a light lift to read as 'on top of the map.'"
+      },
+      {
+        "name": "menu",
+        "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+        "purpose": "Account avatar chip, account dropdown, toast stack."
+      },
+      {
+        "name": "sheet",
+        "value": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+        "purpose": "The two bottom sheets — strongest shadow in the system."
+      }
+    ],
+    "motion": [
+      {
+        "name": "slide-up",
+        "value": "transform 0.25s ease-out",
+        "purpose": "Bottom sheet entrance (translateY 100% → 0)."
+      },
+      {
+        "name": "toast-in",
+        "value": "0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Toast entrance (opacity + translateY fade-up)."
+      }
+    ],
+    "zIndex": [
+      { "name": "dropdown", "value": 20 },
+      { "name": "sticky", "value": 30 },
+      { "name": "modal-backdrop", "value": 40 },
+      { "name": "modal", "value": 50 },
+      { "name": "toast", "value": 60 },
+      { "name": "tooltip", "value": 70 }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Full-width solid action button — form submits, confirmations.",
+      "html": "<button class=\"ds-btn-primary\">Continuar</button>",
+      "css": ".ds-btn-primary { background: #1a5c3a; color: #ffffff; font: 600 1rem/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; border: none; border-radius: 0.75rem; padding: 12px 16px; width: 100%; cursor: pointer; transition: opacity 0.15s ease-out; } .ds-btn-primary:focus-visible { outline: 2px solid #1a5c3a; outline-offset: 2px; } .ds-btn-primary:active { opacity: 0.85; } .ds-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }"
+    },
+    {
+      "name": "Pill CTA",
+      "kind": "button",
+      "refersTo": "button-pill",
+      "description": "Standalone high-commitment CTA — report FAB, empty-state and success-screen actions.",
+      "html": "<button class=\"ds-btn-pill\">Relatar agora</button>",
+      "css": ".ds-btn-pill { background: #1a5c3a; color: #ffffff; font: 600 0.875rem/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif; border: none; border-radius: 9999px; padding: 12px 32px; cursor: pointer; transition: opacity 0.15s ease-out; } .ds-btn-pill:focus-visible { outline: 2px solid #1a5c3a; outline-offset: 2px; } .ds-btn-pill:active { opacity: 0.85; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Text-only secondary action — Cancelar, Editar, Tentar novamente.",
+      "html": "<button class=\"ds-btn-ghost\">Cancelar</button>",
+      "css": ".ds-btn-ghost { background: transparent; color: #6b7280; font: 500 0.875rem/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif; border: none; padding: 12px 16px; min-height: 44px; cursor: pointer; } .ds-btn-ghost:focus-visible { outline: 2px solid #1a5c3a; outline-offset: 2px; border-radius: 0.75rem; } .ds-btn-ghost:hover { color: #1a1a1a; }"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Labeled text field — label always above, never placeholder-only.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-demo-input\">Produto</label><input id=\"ds-demo-input\" class=\"ds-field-input\" type=\"text\" placeholder=\"Ex: Arroz 5kg, Leite 1L…\" /></div>",
+      "css": ".ds-field-label { display: block; font: 500 0.875rem/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif; color: #1a1a1a; margin-bottom: 4px; } .ds-field-input { width: 100%; box-sizing: border-box; border: 1px solid #e5e5e0; border-radius: 0.75rem; padding: 12px 16px; font: 400 1rem/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; color: #1a1a1a; background: #ffffff; } .ds-field-input::placeholder { color: #6b7280; } .ds-field-input:focus { outline: none; box-shadow: 0 0 0 2px #1a5c3a; }"
+    },
+    {
+      "name": "Selectable Chip",
+      "kind": "chip",
+      "refersTo": "chip-selectable",
+      "description": "Border-only selectable option — flag reasons, nearby-place picks.",
+      "html": "<button class=\"ds-chip ds-chip-selected\">Produto ilegal</button>",
+      "css": ".ds-chip { display: block; width: 100%; text-align: left; background: #ffffff; color: #1a1a1a; border: 1px solid #e5e5e0; border-radius: 0.75rem; padding: 12px 16px; min-height: 44px; font: 500 0.875rem/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif; cursor: pointer; } .ds-chip:hover { background: #f7f7f5; } .ds-chip:focus-visible { outline: 2px solid #1a5c3a; outline-offset: 2px; } .ds-chip-selected { border-color: #1a5c3a; background: rgba(26, 92, 58, 0.1); color: #1a5c3a; } /* light-mode snapshot — selected state uses the accent token, which brightens to #3ea873 in dark mode */"
+    },
+    {
+      "name": "Bottom Sheet",
+      "kind": "custom",
+      "refersTo": "bottom-sheet",
+      "description": "Shared dialog primitive for 'sheet over the map' surfaces — place details, flag/report.",
+      "html": "<div class=\"ds-sheet\" role=\"dialog\" aria-modal=\"true\" aria-label=\"Denunciar\"><h2 class=\"ds-sheet-title\">Denunciar</h2><p class=\"ds-sheet-body\">Conteúdo do sheet…</p></div>",
+      "css": ".ds-sheet { position: relative; background: #ffffff; border-radius: 1rem 1rem 0 0; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1); padding: 24px; } .ds-sheet-title { font: 700 1.125rem/1.375 system-ui, -apple-system, 'Segoe UI', sans-serif; color: #1a1a1a; margin: 0 0 16px; } .ds-sheet-body { font: 400 1rem/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; color: #1a1a1a; margin: 0; }"
+    },
+    {
+      "name": "Summary Card",
+      "kind": "card",
+      "refersTo": "card-summary",
+      "description": "Flat label/value summary — the report confirm-step recap.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-row\"><span class=\"ds-card-label\">Produto</span><span class=\"ds-card-value\">Arroz 5kg</span></div><div class=\"ds-card-row\"><span class=\"ds-card-label\">Preço</span><span class=\"ds-card-value\">R$ 24,90</span></div></div>",
+      "css": ".ds-card { background: #f7f7f5; border-radius: 1rem; padding: 16px; display: flex; flex-direction: column; gap: 12px; } .ds-card-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; } .ds-card-label { font: 400 0.875rem/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif; color: #6b7280; flex-shrink: 0; } .ds-card-value { font: 500 0.875rem/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif; color: #1a1a1a; text-align: right; }"
+    },
+    {
+      "name": "Freshness Label",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "PRODUCT.md's first-class trust signal — color- and text-coded Report age, used on markers and list rows alike.",
+      "html": "<span class=\"ds-freshness ds-freshness-fresh\">12min atrás</span>",
+      "css": ".ds-freshness { font: 400 0.875rem/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif; } .ds-freshness-fresh { color: #1a5c3a; } .ds-freshness-aging { color: #b45309; } .ds-freshness-stale { color: #9ca3af; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Neighborhood Scout",
+    "overview": "Aonde Tem is built to feel like a trusted local who already checked the shelves for you — plain, quick, and reliable rather than clever or performative. Every screen exists to answer one of two questions fast: where is it, and how fresh is that answer — so the interface stays out of the way of the map, the price, and the timestamp. The voice is Brazilian-Portuguese-first, friendly and practical, the way a helpful neighbor talks, never markety or hype-driven.\n\nThis system explicitly rejects the generic AI-tool look: no purple/indigo gradients, no glassmorphism, no neon-on-black dashboards, no fake-metric hero sections, no gradient text, no side-stripe card borders, no emoji standing in for real iconography, and no over-rounded 'friendly SaaS' everything. It is a single-brand-green, mostly-flat, map-first tool, not a marketing surface.",
+    "keyCharacteristics": [
+      "Map-first: the interface is a thin, legible layer of cards and sheets floating over MapLibre, never burying it.",
+      "One accent color doing double duty: Trust Green is both the brand identity and the 'fresh Report' state color.",
+      "Flat at rest, shadowed only when floating above the map (search bar, FAB, bottom sheets, toasts).",
+      "One type family, fixed rem scale, five weight/size roles — no display face, no fluid clamp() sizing.",
+      "44px minimum touch targets as a near-universal, deliberate discipline (mobile, one-handed, on the move).",
+      "Light and dark themes, user-toggled — every token pair is contrast-verified independently in each theme."
+    ],
+    "rules": [
+      {
+        "name": "The Trust Green Rule",
+        "body": "The 'fresh' state color and the on-surface accent color are the same CSS variable on purpose (--color-fresh: var(--color-accent)). A user should feel the same 'this is good, act on it' signal whether green appears on a Report's timestamp or a link. The fill token (--color-brand, buttons) is allowed to diverge from the accent token across themes — a button's contrast pair is against white text, not the page.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Accent Rule",
+        "body": "Trust Green (fill or accent) is the only saturated color on any given screen. Aging Amber and Stale Gray are muted, functional, and only ever apply to freshness labels.",
+        "section": "colors"
+      },
+      {
+        "name": "The Single-Family Rule",
+        "body": "Product UI doesn't need a display/body pairing. One well-tuned system sans carries headings, labels, body, and data.",
+        "section": "typography"
+      },
+      {
+        "name": "The Floating-Only Rule",
+        "body": "Shadow means 'this is temporarily covering the map or the page,' never 'this card is fancier than that card.' A shadow on a static content card is a bug, not a style choice.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Two-Radius Rule",
+        "body": "rounded-control (12px) is for anything living inside a form, list, or sheet. rounded-full is reserved for a small, deliberate set of standalone commitment-moment CTAs, the account avatar, and plain circular badges/icons. Both --radius-control and --radius-sheet are real @theme tokens in index.css, backing genuine rounded-control / rounded-sheet / rounded-t-sheet utility classes.",
+        "section": "components"
+      },
+      {
+        "name": "The MapLibre Escape Hatch Rule",
+        "body": "MapLibre's paint API needs literal color strings — it cannot consume CSS custom properties. apps/web/src/features/map/model/map-colors.ts holds the one permitted set of duplicated hex literals (MAP_COLORS.brand/.fresh/.aging/.stale), each commented against its index.css counterpart. Never inline a fresh hex string into a MapLibre paint object — import from MAP_COLORS instead. DOM content over the map (markers, popups) is ordinary CSS and should reference the real token (e.g. bg-user-location), not this module.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do keep Trust Green as the only saturated accent color on any screen — Aging Amber and Stale Gray are functional freshness labels only, never decorative.",
+      "Do use the system font stack everywhere; never load a webfont for this product.",
+      "Do give every button, chip, and icon-only control a 44×44px minimum hit target.",
+      "Do reserve shadow for things floating above the map (search bar, FABs, dropdown, toasts, bottom sheets) — flat everywhere else.",
+      "Do build any new 'sheet over content' surface on the shared BottomSheet primitive (dialog role, focus trap, Escape-to-close), not a bespoke position: absolute div.",
+      "Do use text-accent / border-accent / ring-accent / bg-accent/10 when Trust Green appears as text, a border, a focus ring, or a translucent tint directly on a surface. Reserve bg-brand for solid fills under white text.",
+      "Do reference the semantic z-index scale (z-dropdown 20 → z-sticky 30 → z-modal-backdrop 40 → z-modal 50 → z-toast 60 → z-tooltip 70) via the z-(--z-name) syntax for any new stacking-context element.",
+      "Do use rounded-control / rounded-sheet / rounded-t-sheet for any new rectangular control or card — both are real --radius-* tokens in index.css, not raw Tailwind numbers. Reach for bare rounded-full only for the Pill CTA tier or a plain circular badge/icon.",
+      "Do import from map-colors.ts's MAP_COLORS for any MapLibre paint-layer color — never inline a fresh hex literal into a paint object. DOM content drawn over the map should reference the real CSS token instead (e.g. bg-user-location)."
+    ],
+    "donts": [
+      "Don't use purple/indigo gradients, glassmorphism, or neon-on-black 'dashboard' looks — explicitly banned by docs/PRODUCT.md.",
+      "Don't write generic SaaS hero sections, 'Boost your productivity' energy, or fake-metric dashboards — this is a utility, not a marketing surface.",
+      "Don't use gradient text, side-stripe card borders, or over-round-everything — a rectangular control gets the Control radius, not a pill, 'for friendliness.'",
+      "Don't clutter the map, ship tap targets under 44px, or put low-contrast text over map imagery.",
+      "Don't use emoji as primary illustration — docs/PRODUCT.md bans emoji-as-UI outright. EmptyState, ReportPage's success screen, and ErrorBoundary (formerly map/checkmark/warning emoji) now use hand-authored stroke icons matching the app's existing Feather-style SVG vocabulary instead.",
+      "Don't write a bare z-dropdown / z-sticky / z-modal / z-toast class (no parens, no var()). Tailwind v4's @theme only recognizes its own token namespaces and silently drops any --z-* custom property declared inside it, so a bare class compiles to nothing and resolves to z-index: auto. Declare the scale as plain :root custom properties and reference them with z-(--z-name).",
+      "Don't introduce a second saturated brand fill hue — --color-brand stays one value in both themes. The accent role is expected to diverge across themes; that's --color-accent's job, not a hue proliferation."
+    ]
+  }
+}

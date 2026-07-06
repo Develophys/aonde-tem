@@ -1,5 +1,5 @@
 import type { JwtResponse } from "@aonde-tem/contracts";
-import type { SliceCreator } from "../../../app/store/types.js";
+import type { SliceCreator } from "@/app/store/types.js";
 
 export type SessionUser = JwtResponse["user"];
 

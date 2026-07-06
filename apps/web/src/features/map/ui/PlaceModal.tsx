@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { useAppStore } from "../../../app/store/index.js";
+import { useAppStore } from "@/app/store/index.js";
 import { usePlaceDiscoveries } from "../api/place.queries.js";
+import { useGeolocation } from "../model/use-geolocation.js";
 import { FlagSheet } from "../../flag/ui/FlagSheet.js";
 import { EditDiscoverySheet } from "../../report/ui/EditDiscoverySheet.js";
 import { DeleteDiscoveryConfirmSheet } from "../../report/ui/DeleteDiscoveryConfirmSheet.js";
-import { BottomSheet } from "../../../shared/ui/BottomSheet.js";
+import { BottomSheet } from "@/shared/ui/BottomSheet.js";
+import { GhostButton } from "@/shared/ui/GhostButton.js";
+import { haversineMeters, formatMeters } from "@/shared/model/geo.js";
 import type { PlaceDiscoveryItem } from "@aonde-tem/contracts";
 
 function freshnessLabel(ageMinutes: number): string {
@@ -33,6 +36,21 @@ export function PlaceModal({ placeId, onFlyTo }: Props) {
 
   const { data, isLoading, isError, refetch } = usePlaceDiscoveries(placeId);
 
+  // "Distance/where" is one of PRODUCT.md's three facts that must be glanceable, but
+  // placeDiscoveryItemSchema has no per-item distance (every item here shares the same
+  // place, unlike the nearby-discoveries list) — computed client-side once per place
+  // instead, from the place's own coords and the user's current position.
+  const { coords: userCoords, loading: geoLoading } = useGeolocation();
+  const distanceLabel = (() => {
+    if (userCoords && data?.coords) return formatMeters(haversineMeters(userCoords, data.coords));
+    // Still resolving the user's position: say nothing yet rather than flash a
+    // "unavailable" label that a moment later gets replaced by a real distance.
+    if (geoLoading) return null;
+    // Genuinely resolved to no position (denied, or unsupported) — degrade with an
+    // honest label instead of letting the fact silently vanish from the header.
+    return "distância indisponível";
+  })();
+
   return (
     <BottomSheet
       label={data?.name ? `Detalhes de ${data.name}` : "Detalhes do local"}
@@ -41,11 +59,17 @@ export function PlaceModal({ placeId, onFlyTo }: Props) {
     >
       {/* Header */}
       <div className="flex items-start justify-between px-4 pt-4 pb-2 shrink-0">
-        <div>
+        <div className="min-w-0">
           <h2 className="text-lg font-semibold text-text leading-snug">
             {data?.name ?? "Carregando…"}
           </h2>
-          {data?.address && <p className="text-text-muted text-sm mt-0.5">{data.address}</p>}
+          {(data?.address ?? distanceLabel) && (
+            <p className="text-text-muted text-sm mt-0.5 wrap-break-word">
+              {data?.address}
+              {data?.address && distanceLabel && " · "}
+              {distanceLabel}
+            </p>
+          )}
         </div>
         <button
           type="button"
@@ -100,30 +124,22 @@ export function PlaceModal({ placeId, onFlyTo }: Props) {
             {(isAuthenticated || item.isMine) && (
               <div className="flex items-center gap-3 mt-1">
                 {isAuthenticated && (
-                  <button
-                    type="button"
-                    onClick={() => setFlagTargetId(item.id)}
-                    className="text-text-muted text-xs min-h-11 flex items-center"
-                  >
-                    Denunciar
-                  </button>
+                  <GhostButton onClick={() => setFlagTargetId(item.id)}>Denunciar</GhostButton>
                 )}
                 {item.isMine && (
                   <>
-                    <button
-                      type="button"
+                    <GhostButton
                       onClick={() => setEditTarget(item)}
-                      className="text-accent text-xs font-semibold min-h-11 flex items-center"
+                      className="text-accent font-semibold"
                     >
                       Editar
-                    </button>
-                    <button
-                      type="button"
+                    </GhostButton>
+                    <GhostButton
                       onClick={() => setDeleteTargetId(item.id)}
-                      className="text-error text-xs font-semibold min-h-11 flex items-center"
+                      className="text-error font-semibold"
                     >
                       Excluir
-                    </button>
+                    </GhostButton>
                   </>
                 )}
               </div>

@@ -4,12 +4,19 @@ import type { DiscoveryResponse } from "@aonde-tem/contracts";
 import { DiscoveryMarkerLayer } from "./DiscoveryMarkerLayer.js";
 import { PlaceModal } from "./PlaceModal.js";
 import { useRef, useCallback } from "react";
-import { useAppStore } from "../../../app/store/index.js";
+import { useAppStore } from "@/app/store/index.js";
+import { useSaveData } from "@/shared/model/use-save-data.js";
 
 const MAP_STYLE =
   import.meta.env.VITE_MAP_KEY && import.meta.env.VITE_MAP_KEY !== "demo"
     ? `https://api.maptiler.com/maps/streets-v2/style.json?key=${import.meta.env.VITE_MAP_KEY}`
     : "https://tiles.openfreemap.org/styles/bright";
+
+// One zoom level out means each tile covers 4x the area, so the same viewport
+// needs roughly a quarter of the tile requests on first paint — per docs/PERFORMANCE.md
+// §3's "fewer map tiles" guidance under Save-Data. The user can still zoom in freely.
+const DEFAULT_ZOOM = 14;
+const SAVE_DATA_ZOOM = 13;
 
 interface MapViewProps {
   readonly center: { lat: number; lng: number };
@@ -20,6 +27,7 @@ interface MapViewProps {
 export function MapView({ center, userPin, discoveries }: MapViewProps) {
   const mapRef = useRef<MapRef>(null);
   const selectedPlaceId = useAppStore((s) => s.selectedPlaceId);
+  const saveData = useSaveData();
 
   const recenter = useCallback(() => {
     if (!userPin || !mapRef.current) return;
@@ -34,7 +42,11 @@ export function MapView({ center, userPin, discoveries }: MapViewProps) {
     <div className="relative w-full h-full">
       <Map
         ref={mapRef}
-        initialViewState={{ longitude: center.lng, latitude: center.lat, zoom: 14 }}
+        initialViewState={{
+          longitude: center.lng,
+          latitude: center.lat,
+          zoom: saveData ? SAVE_DATA_ZOOM : DEFAULT_ZOOM,
+        }}
         mapStyle={MAP_STYLE}
         style={{ width: "100%", height: "100%" }}
         attributionControl={false}
@@ -44,14 +56,8 @@ export function MapView({ center, userPin, discoveries }: MapViewProps) {
         {userPin && (
           <Marker longitude={userPin.lng} latitude={userPin.lat} anchor="center">
             <div
-              style={{
-                width: 14,
-                height: 14,
-                borderRadius: "50%",
-                backgroundColor: "#2563eb",
-                border: "2px solid white",
-                boxShadow: "0 1px 4px rgba(0,0,0,0.35)",
-              }}
+              className="bg-user-location rounded-full border-2 border-white"
+              style={{ width: 14, height: 14, boxShadow: "0 1px 4px rgba(0,0,0,0.35)" }}
               aria-label="Sua localização"
             />
           </Marker>
@@ -63,7 +69,7 @@ export function MapView({ center, userPin, discoveries }: MapViewProps) {
           type="button"
           onClick={recenter}
           aria-label="Centralizar em minha localização"
-          className="absolute bottom-24 right-4 z-10 bg-surface shadow-md rounded-full w-11 h-11 flex items-center justify-center border border-border"
+          className="absolute bottom-24 right-4 z-(--z-sticky) bg-surface shadow-md rounded-full w-11 h-11 flex items-center justify-center border border-border"
         >
           <svg
             width="20"

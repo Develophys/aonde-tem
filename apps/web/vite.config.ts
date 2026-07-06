@@ -1,9 +1,13 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  resolve: {
+    alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
+  },
   plugins: [
     react(),
     tailwindcss(),
@@ -21,7 +25,12 @@ export default defineConfig({
         icons: [
           { src: "/icons/192.png", sizes: "192x192", type: "image/png" },
           { src: "/icons/512.png", sizes: "512x512", type: "image/png" },
-          { src: "/icons/512-maskable.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+          {
+            src: "/icons/512-maskable.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
+          },
         ],
       },
       workbox: {
@@ -33,7 +42,8 @@ export default defineConfig({
           },
           {
             // Cache map tiles so the PWA works offline AND uses fewer billable requests.
-            urlPattern: ({ url }) => url.hostname.includes("maptiler") || url.hostname.includes("tiles"),
+            urlPattern: ({ url }) =>
+              url.hostname.includes("maptiler") || url.hostname.includes("tiles"),
             handler: "CacheFirst",
             options: {
               cacheName: "map-tiles",
@@ -44,5 +54,8 @@ export default defineConfig({
       },
     }),
   ],
-  server: { port: 5173, proxy: { "/api": { target: "http://localhost:3000", changeOrigin: true } } },
+  server: {
+    port: 5173,
+    proxy: { "/api": { target: "http://localhost:3000", changeOrigin: true } },
+  },
 });

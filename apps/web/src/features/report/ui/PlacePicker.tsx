@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useGeolocation } from "../../map/model/use-geolocation.js";
 import { useNearbyPlaces } from "../api/places.api.js";
+import { hasRealCoords } from "../model/report-draft.slice.js";
 
 interface PlaceSelection {
   lat: number;
@@ -12,10 +13,11 @@ interface PlaceSelection {
 interface Props {
   readonly value: PlaceSelection | null;
   readonly onChange: (place: PlaceSelection) => void;
+  readonly errorId?: string;
 }
 
-export function PlacePicker({ value, onChange }: Props) {
-  const { coords } = useGeolocation();
+export function PlacePicker({ value, onChange, errorId }: Props) {
+  const { coords, denied } = useGeolocation();
   const [placeName, setPlaceName] = useState(value?.name ?? "");
   const { data: nearbyPlaces } = useNearbyPlaces(coords?.lat, coords?.lng);
 
@@ -50,9 +52,9 @@ export function PlacePicker({ value, onChange }: Props) {
                 key={p.id}
                 type="button"
                 onClick={() => selectNearbyPlace(p)}
-                className={`text-left px-3 py-2.5 rounded-xl border text-sm min-h-11 ${
+                className={`text-left px-3 py-2.5 rounded-control border text-sm min-h-11 ${
                   value?.placeId === p.id
-                    ? "border-brand bg-brand/10 text-brand font-medium"
+                    ? "border-accent bg-accent/10 text-accent font-medium"
                     : "border-border text-text"
                 }`}
               >
@@ -78,14 +80,16 @@ export function PlacePicker({ value, onChange }: Props) {
           onChange({ ...base, name, placeId: undefined });
         }}
         placeholder="Nome do mercado / estabelecimento"
-        className="w-full border border-border rounded-xl px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-brand mb-2"
+        className="w-full border border-border rounded-control px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-accent mb-2"
+        aria-invalid={!!errorId}
+        aria-describedby={errorId}
       />
 
       <button
         type="button"
         onClick={useCurrentLocation}
         disabled={!coords}
-        className="flex items-center gap-2 text-brand text-sm font-medium disabled:text-text-muted min-h-[44px] py-3"
+        className="flex items-center gap-2 text-accent text-sm font-medium disabled:text-text-muted min-h-11 py-3"
       >
         <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
@@ -95,12 +99,34 @@ export function PlacePicker({ value, onChange }: Props) {
             d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
           />
         </svg>
-        {coords ? "Usar minha localização atual" : "Aguardando localização…"}
+        {denied
+          ? "Localização negada — informe o local manualmente"
+          : coords
+            ? "Usar minha localização atual"
+            : "Aguardando localização…"}
       </button>
 
-      {value && (
-        <p className="text-xs text-fresh mt-1">
-          ✓ {value.lat.toFixed(5)}, {value.lng.toFixed(5)}
+      {/* Only claim confirmation once there's a real location behind it — a typed
+          name with no chosen suggestion/location still carries the placeholder
+          (0, 0) coords (see hasRealCoords), and showing this for that would falsely
+          reassure the user their location was captured. Stroke-SVG check, not a bare
+          "✓" glyph, to match the hand-authored icon vocabulary used everywhere else
+          (the location pin above, ConfirmStep's shield-check, ThemeToggle, ...). */}
+      {value?.name && hasRealCoords(value) && (
+        <p className="text-xs text-fresh mt-1 flex items-center gap-1">
+          <svg
+            className="w-3.5 h-3.5 shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M20 6L9 17l-5-5" />
+          </svg>
+          {value.name}
         </p>
       )}
     </div>

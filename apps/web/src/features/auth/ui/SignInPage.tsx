@@ -27,7 +27,7 @@ export function SignInPage() {
         {/* Google */}
         <a
           href={googleUrl}
-          className="flex items-center justify-center gap-3 w-full border border-border rounded-xl px-4 py-3 text-text text-sm font-medium mb-4 hover:bg-surface-alt transition-colors"
+          className="flex items-center justify-center gap-3 w-full border border-border rounded-control px-4 py-3 text-text text-sm font-medium mb-4 hover:bg-surface-alt transition-colors"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
             <path
@@ -67,11 +67,15 @@ export function SignInPage() {
             inputMode="email"
             autoComplete="email"
             placeholder="seu@email.com"
-            className="w-full border border-border rounded-xl px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-brand mb-3"
+            className="w-full border border-border rounded-control px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-accent mb-3"
+            aria-invalid={!!form.formState.errors.email}
+            aria-describedby={form.formState.errors.email ? "email-error" : undefined}
             {...form.register("email")}
           />
           {form.formState.errors.email && (
-            <p className="text-error text-sm mb-2">{form.formState.errors.email.message}</p>
+            <p id="email-error" role="alert" className="text-error text-sm mb-2">
+              {form.formState.errors.email.message}
+            </p>
           )}
 
           <label className="block text-sm font-medium text-text mb-1" htmlFor="password">
@@ -82,11 +86,15 @@ export function SignInPage() {
             type="password"
             autoComplete="current-password"
             placeholder="••••••••"
-            className="w-full border border-border rounded-xl px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-brand mb-3"
+            className="w-full border border-border rounded-control px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-accent mb-3"
+            aria-invalid={!!form.formState.errors.password}
+            aria-describedby={form.formState.errors.password ? "password-error" : undefined}
             {...form.register("password")}
           />
           {form.formState.errors.password && (
-            <p className="text-error text-sm mb-2">{form.formState.errors.password.message}</p>
+            <p id="password-error" role="alert" className="text-error text-sm mb-2">
+              {form.formState.errors.password.message}
+            </p>
           )}
 
           {login.isError && (
@@ -100,7 +108,7 @@ export function SignInPage() {
           <button
             type="submit"
             disabled={login.isPending}
-            className="w-full bg-brand text-white font-semibold py-3 rounded-xl disabled:opacity-60 mb-4"
+            className="w-full bg-brand text-white font-semibold py-3 rounded-control disabled:opacity-60 mb-4"
           >
             {login.isPending ? "Entrando…" : "Entrar"}
           </button>
@@ -111,7 +119,7 @@ export function SignInPage() {
           <button
             type="button"
             onClick={() => navigate("/signup")}
-            className="text-brand font-medium"
+            className="text-accent font-medium"
           >
             Criar conta
           </button>

@@ -6,8 +6,8 @@ import {
   type CreateDiscoveryDto,
   type UpdateDiscoveryDto,
 } from "@aonde-tem/contracts";
-import { http } from "../../../shared/api/http.js";
-import { useAppStore } from "../../../app/store/index.js";
+import { http } from "@/shared/api/http.js";
+import { useAppStore } from "@/app/store/index.js";
 
 export function useCreateDiscovery() {
   const qc = useQueryClient();

@@ -6,8 +6,9 @@ export const queryClient = new QueryClient({
     queries: {
       staleTime: 30_000,
       refetchOnWindowFocus: false,
-      // Don't retry expected client errors (4xx); retry transient ones once.
-      retry: (count, err) => !(err instanceof ApiError && err.status < 500) && count < 2,
+      // Don't retry expected client errors (4xx); retry transient ones (5xx, network, timeout).
+      retry: (count, err) =>
+        (!(err instanceof ApiError) || err.status === 0 || err.status >= 500) && count < 2,
     },
   },
   queryCache: new QueryCache({

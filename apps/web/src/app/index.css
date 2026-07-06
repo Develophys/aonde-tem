@@ -3,30 +3,73 @@
 @theme {
   /* Brand */
   --color-brand: #1a5c3a;
-  --color-brand-light: #2d8f5a;
   --color-surface: #ffffff;
   --color-surface-alt: #f7f7f5;
   --color-border: #e5e5e0;
 
-  /* On-surface accent (text/border/ring) — equal to --color-brand in light mode. */
+  /* Trust Green used as an on-surface accent (text/border/ring) rather than a solid
+     fill — split from --color-brand because dark mode needs a brighter value here
+     for contrast, while --color-brand (button fills, always paired with white text)
+     stays the same in both themes. Equal to --color-brand in light mode. */
   --color-accent: #1a5c3a;
 
-  /* Freshness states */
-  --color-fresh: #1a5c3a;
+  /* Freshness states — "fresh" always equals the accent color (see The Trust Green
+     Rule in DESIGN.md): same color for "confirmed" whether it's a button or a Report. */
+  --color-fresh: var(--color-accent);
   --color-aging: #b45309;
   --color-stale: #9ca3af;
+
+  /* The map's "this is you" marker — deliberately NOT Trust Green. Reusing the brand/fresh
+     color here would blur the Trust Green Rule's "confirmed/act" signal with "this is your
+     own position," which is a different meaning. Blue also matches the near-universal
+     mapping-app convention for the user's own location dot. No dark-mode override: the map
+     canvas itself stays light-styled regardless of theme (documented gap, see Dark theme
+     section of DESIGN.md), so this marker — rendered as DOM content on top of the map —
+     intentionally stays visually consistent with it rather than diverging. */
+  --color-user-location: #2563eb;
 
   /* Text */
   --color-text: #1a1a1a;
   --color-text-muted: #6b7280;
 
-  /* Spacing */
-  --radius-card: 0.75rem;
+  /* The Two-Radius Rule (see DESIGN.md) — every rectangular control in the app uses one
+     of exactly two radii. `--radius-*` IS a Tailwind v4 @theme-recognized namespace (unlike
+     `--z-*` below), so these auto-generate real `rounded-control` / `rounded-sheet` /
+     `rounded-t-sheet` utilities. `rounded-full` stays Tailwind's own built-in utility for
+     the Pill tier and for plain circles — no third custom property needed for it. */
   --radius-control: 0.75rem;
   --radius-sheet: 1rem;
 
   /* Typography */
   --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Z-index scale — never use arbitrary numbers outside this list; reference these via
+   `z-[var(--z-name)]` in className. NOT inside @theme: Tailwind v4 only auto-generates
+   utilities for its own recognized token namespaces (--color-*, --font-*, --radius-*, ...)
+   and silently drops any --z-* custom property declared in @theme, so these would
+   otherwise resolve to z-index: auto (a real bug this project shipped with — see
+   docs/audits/AUDIT-web-2026-07-03.md). Declaring them here, as plain :root custom
+   properties, is what actually makes them exist at runtime. */
+:root {
+  --z-dropdown: 20;
+  --z-sticky: 30;
+  --z-modal-backdrop: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+  --z-tooltip: 70;
+
+  /* Fixed corner header controls (ThemeToggle, AppHeader's sign-in pill / account chip)
+     sit at this vertical offset. Kept as a token, not repeated inline, so the two
+     controls and anything reserving clearance below them (see --header-clearance)
+     can't drift out of sync. */
+  --header-inset-top: calc(env(safe-area-inset-top, 0px) + 12px);
+
+  /* Bottom edge of those 44px-tall pill controls, plus 12px breathing room. Floating
+     page content sharing --z-sticky (e.g. SeekPage's near-full-width search bar) must
+     start at or below this — same z-tier plus later DOM order would otherwise let it
+     paint straight over the corner controls regardless of z-index. */
+  --header-clearance: calc(var(--header-inset-top) + 44px + 12px);
 }
 
 @keyframes slide-up {
@@ -38,7 +81,8 @@
   }
 }
 
-/* Modal/bottom-sheet scrim fade-in — pairs with slide-up. */
+/* Modal/bottom-sheet scrim fade-in — pairs with slide-up so the dimming and the sheet
+   arrive together instead of the backdrop just snapping to full opacity. */
 @keyframes backdrop-in {
   from {
     opacity: 0;
@@ -59,18 +103,49 @@
   }
 }
 
+/* Shared soft entrance for the neutral/calm icon badges (empty state, error boundary) —
+   one restrained animation reused by both rather than two near-identical bespoke ones. */
+@keyframes badge-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Reserved for the one true celebration moment (report-success) — the circle settles in,
+   then the checkmark draws itself via stroke-dashoffset once the circle has landed. */
+@keyframes success-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes check-draw {
+  from {
+    stroke-dashoffset: 20;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 @theme {
   --animate-slide-up: slide-up 0.25s ease-out;
   --animate-backdrop-in: backdrop-in 0.2s ease-out;
   --animate-toast-in: toast-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-badge-in: badge-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-success-pop: success-pop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-check-draw: check-draw 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
   --color-error: #dc2626;
-}
-
-/* z-index scale for stacked overlay content (bottom sheets, their backdrop, toasts). */
-:root {
-  --z-modal-backdrop: 40;
-  --z-modal: 50;
-  --z-toast: 60;
 }
 
 html,
@@ -78,4 +153,34 @@ body,
 #root {
   height: 100%;
   margin: 0;
+}
+
+/* Dark theme — toggled via the `dark` class on <html> (see shared/model/use-theme-sync.ts).
+   Values are overridden as plain CSS custom properties, not a second @theme block, so every
+   existing utility (bg-surface, text-text, text-fresh, ring-accent, ...) picks the new value
+   automatically — no dark: variants needed anywhere in component code. Each value below is
+   verified at >=4.5:1 body-text contrast against --color-surface except --color-brand, which
+   is intentionally unchanged (it's only ever used as a fill under white text, a contrast pair
+   that doesn't depend on page theme). */
+.dark {
+  --color-surface: #12160f;
+  --color-surface-alt: #1b201a;
+  --color-border: #616f63;
+  --color-text: #f1f3ef;
+  --color-text-muted: #a3ac9f;
+  --color-accent: #3ea873;
+  --color-aging: #d97b2e;
+  --color-error: #ef5350;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-up,
+  .animate-backdrop-in,
+  .animate-toast-in,
+  .animate-badge-in,
+  .animate-success-pop,
+  .animate-check-draw {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+  }
 }

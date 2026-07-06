@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { haversineMeters } from "@/shared/model/geo.js";
 
 interface GeoCoords {
   lat: number;
@@ -13,6 +14,11 @@ interface GeolocationState {
   denied: boolean;
 }
 
+// Below this, a new GPS fix is treated as sensor noise, not real movement — a standard
+// "distance filter" (cf. iOS CLLocationManager.distanceFilter) that keeps watchPosition's
+// per-second ticks from re-rendering the map and marker on every micro-jitter.
+const MOVEMENT_THRESHOLD_METERS = 20;
+
 export function useGeolocation(): GeolocationState {
   const [state, setState] = useState<GeolocationState>({
     coords: null,
@@ -20,21 +26,31 @@ export function useGeolocation(): GeolocationState {
     loading: true,
     denied: false,
   });
+  const lastAcceptedRef = useRef<GeoCoords | null>(null);
 
   useEffect(() => {
     if (!("geolocation" in navigator)) {
-      setState({ coords: null, error: "Localização não disponível neste dispositivo", loading: false, denied: false });
+      setState({
+        coords: null,
+        error: "Localização não disponível neste dispositivo",
+        loading: false,
+        denied: false,
+      });
       return;
     }
 
     const watchId = navigator.geolocation.watchPosition(
       (pos) => {
-        setState({
-          coords: { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy },
-          error: null,
-          loading: false,
-          denied: false,
-        });
+        const next = {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracy: pos.coords.accuracy,
+        };
+        const last = lastAcceptedRef.current;
+        if (last && haversineMeters(last, next) < MOVEMENT_THRESHOLD_METERS) return;
+
+        lastAcceptedRef.current = next;
+        setState({ coords: next, error: null, loading: false, denied: false });
       },
       (err) => {
         const denied = err.code === err.PERMISSION_DENIED;

@@ -8,7 +8,7 @@ import {
   type LoginDto,
   type CompleteRegistrationDto,
 } from "@aonde-tem/contracts";
-import { http } from "../../../shared/api/http.js";
+import { http } from "@/shared/api/http.js";
 
 export async function sendMagicCode(dto: SendMagicCodeDto): Promise<void> {
   const res = await fetch(`${import.meta.env.VITE_API_URL ?? ""}/api/auth/send-code`, {

@@ -91,11 +91,13 @@ export function SignUpPage() {
                 inputMode="email"
                 autoComplete="email"
                 placeholder="seu@email.com"
-                className="w-full border border-border rounded-xl px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-brand mb-4"
+                className="w-full border border-border rounded-control px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-accent mb-4"
+                aria-invalid={!!emailForm.formState.errors.email}
+                aria-describedby={emailForm.formState.errors.email ? "email-error" : undefined}
                 {...emailForm.register("email")}
               />
               {emailForm.formState.errors.email && (
-                <p className="text-error text-sm mb-3">
+                <p id="email-error" role="alert" className="text-error text-sm mb-3">
                   {emailForm.formState.errors.email.message}
                 </p>
               )}
@@ -107,7 +109,7 @@ export function SignUpPage() {
               <button
                 type="submit"
                 disabled={sendCode.isPending}
-                className="w-full bg-brand text-white font-semibold py-3 rounded-xl disabled:opacity-60"
+                className="w-full bg-brand text-white font-semibold py-3 rounded-control disabled:opacity-60"
               >
                 {sendCode.isPending ? "Enviando…" : "Receber código"}
               </button>
@@ -117,7 +119,7 @@ export function SignUpPage() {
               <button
                 type="button"
                 onClick={() => navigate("/signin")}
-                className="text-brand font-medium"
+                className="text-accent font-medium"
               >
                 Entrar
               </button>
@@ -142,7 +144,7 @@ export function SignUpPage() {
                 autoComplete="one-time-code"
                 maxLength={6}
                 placeholder="000000"
-                className="w-full border border-border rounded-xl px-4 py-3 text-text text-center text-2xl tracking-widest outline-none focus:ring-2 focus:ring-brand mb-4"
+                className="w-full border border-border rounded-control px-4 py-3 text-text text-center text-2xl tracking-widest outline-none focus:ring-2 focus:ring-accent mb-4"
                 {...codeForm.register("code")}
               />
               {verifyCode.isError && (
@@ -153,7 +155,7 @@ export function SignUpPage() {
               <button
                 type="submit"
                 disabled={verifyCode.isPending}
-                className="w-full bg-brand text-white font-semibold py-3 rounded-xl disabled:opacity-60"
+                className="w-full bg-brand text-white font-semibold py-3 rounded-control disabled:opacity-60"
               >
                 {verifyCode.isPending ? "Verificando…" : "Confirmar"}
               </button>
@@ -183,11 +185,15 @@ export function SignUpPage() {
                 type="text"
                 autoComplete="name"
                 placeholder="Seu nome"
-                className="w-full border border-border rounded-xl px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-brand mb-3"
+                className="w-full border border-border rounded-control px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-accent mb-3"
+                aria-invalid={!!profileForm.formState.errors.displayName}
+                aria-describedby={
+                  profileForm.formState.errors.displayName ? "displayName-error" : undefined
+                }
                 {...profileForm.register("displayName")}
               />
               {profileForm.formState.errors.displayName && (
-                <p className="text-error text-sm mb-2">
+                <p id="displayName-error" role="alert" className="text-error text-sm mb-2">
                   {profileForm.formState.errors.displayName.message}
                 </p>
               )}
@@ -200,11 +206,15 @@ export function SignUpPage() {
                 type="password"
                 autoComplete="new-password"
                 placeholder="Mínimo 8 caracteres"
-                className="w-full border border-border rounded-xl px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-brand mb-3"
+                className="w-full border border-border rounded-control px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-accent mb-3"
+                aria-invalid={!!profileForm.formState.errors.password}
+                aria-describedby={
+                  profileForm.formState.errors.password ? "password-error" : undefined
+                }
                 {...profileForm.register("password")}
               />
               {profileForm.formState.errors.password && (
-                <p className="text-error text-sm mb-2">
+                <p id="password-error" role="alert" className="text-error text-sm mb-2">
                   {profileForm.formState.errors.password.message}
                 </p>
               )}
@@ -217,11 +227,15 @@ export function SignUpPage() {
                 type="password"
                 autoComplete="new-password"
                 placeholder="Repita a senha"
-                className="w-full border border-border rounded-xl px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-brand mb-3"
+                className="w-full border border-border rounded-control px-4 py-3 text-text text-base outline-none focus:ring-2 focus:ring-accent mb-3"
+                aria-invalid={!!profileForm.formState.errors.confirm}
+                aria-describedby={
+                  profileForm.formState.errors.confirm ? "confirm-error" : undefined
+                }
                 {...profileForm.register("confirm")}
               />
               {profileForm.formState.errors.confirm && (
-                <p className="text-error text-sm mb-2">
+                <p id="confirm-error" role="alert" className="text-error text-sm mb-2">
                   {profileForm.formState.errors.confirm.message}
                 </p>
               )}
@@ -235,7 +249,7 @@ export function SignUpPage() {
               <button
                 type="submit"
                 disabled={completeReg.isPending}
-                className="w-full bg-brand text-white font-semibold py-3 rounded-xl disabled:opacity-60"
+                className="w-full bg-brand text-white font-semibold py-3 rounded-control disabled:opacity-60"
               >
                 {completeReg.isPending ? "Criando conta…" : "Criar conta"}
               </button>

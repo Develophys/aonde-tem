@@ -2,7 +2,10 @@ import { lazy, Suspense, useEffect, type ReactNode } from "react";
 import { createBrowserRouter, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "../features/auth/ui/ProtectedRoute.js";
 import { AppHeader } from "../features/auth/ui/AppHeader.js";
+import { OfflineBanner } from "../shared/ui/OfflineBanner.js";
 import { ToastViewport } from "../shared/ui/ToastViewport.js";
+import { ThemeToggle } from "../shared/ui/ThemeToggle.js";
+import { useThemeSync } from "../shared/model/use-theme-sync.js";
 import { useAppStore } from "./store/index.js";
 
 const SeekPage = lazy(() =>
@@ -67,9 +70,12 @@ function GoogleTokenCapture() {
 }
 
 function RootLayout() {
+  useThemeSync();
   return (
     <>
       <GoogleTokenCapture />
+      <OfflineBanner />
+      <ThemeToggle />
       <AppHeader />
       <Outlet />
       <ToastViewport />

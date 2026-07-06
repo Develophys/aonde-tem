@@ -1,4 +1,4 @@
-import type { SliceCreator } from "../../../app/store/types.js";
+import type { SliceCreator } from "@/app/store/types.js";
 
 export interface MapSlice {
   selectedPlaceId: string | null;

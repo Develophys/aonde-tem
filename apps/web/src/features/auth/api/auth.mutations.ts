@@ -5,7 +5,7 @@ import {
   loginWithPassword,
   completeRegistration,
 } from "./auth.api.js";
-import { useAppStore } from "../../../app/store/index.js";
+import { useAppStore } from "@/app/store/index.js";
 import type { JwtResponse, RegistrationTokenResponse } from "@aonde-tem/contracts";
 
 export function useSendMagicCode() {

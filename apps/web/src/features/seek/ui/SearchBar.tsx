@@ -21,6 +21,7 @@ export function SearchBar({ onSearch, placeholder = "Buscar produto…" }: Props
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
+        aria-hidden="true"
       >
         <path
           strokeLinecap="round"
@@ -40,6 +41,7 @@ export function SearchBar({ onSearch, placeholder = "Buscar produto…" }: Props
       />
       {value && (
         <button
+          type="button"
           onClick={() => setValue("")}
           className="p-3 text-text-muted text-xl leading-none flex items-center justify-center"
           aria-label="Limpar busca"

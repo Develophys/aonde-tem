@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useCreateFlag } from "../api/flag.api.js";
+import { BottomSheet } from "@/shared/ui/BottomSheet.js";
+import { GhostButton } from "@/shared/ui/GhostButton.js";
 import type { CreateFlagDto } from "@aonde-tem/contracts";
 
 type FlagReason = CreateFlagDto["reason"];
@@ -25,49 +27,69 @@ export function FlagSheet({ targetType, targetId, onClose }: Props) {
 
   async function submit() {
     if (!reason) return;
-    await createFlag.mutateAsync({ targetType, targetId, reason });
+    try {
+      await createFlag.mutateAsync({ targetType, targetId, reason });
+    } catch {
+      // surfaced via createFlag.isError below
+    }
   }
 
   if (createFlag.isSuccess) {
     return (
-      <div className="absolute bottom-0 left-0 right-0 bg-surface rounded-t-2xl shadow-xl p-6 pb-10 z-20 flex flex-col items-center gap-4">
+      <BottomSheet
+        key="success"
+        label="Denúncia enviada"
+        onClose={onClose}
+        className="p-6 pb-10 flex flex-col items-center gap-4"
+      >
         <p className="text-text font-semibold">Denúncia enviada</p>
         <p className="text-text-muted text-sm text-center">Nossa equipe revisará em breve.</p>
-        <button type="button" onClick={onClose} className="text-brand font-medium min-h-11 px-4">
+        <button type="button" onClick={onClose} className="text-accent font-medium min-h-11 px-4">
           Fechar
         </button>
-      </div>
+      </BottomSheet>
     );
   }
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 bg-surface rounded-t-2xl shadow-xl p-6 pb-10 z-20">
+    <BottomSheet key="form" label="Denunciar" onClose={onClose} className="p-6 pb-10">
       <h2 className="text-lg font-bold text-text mb-4">Denunciar</h2>
-      <div className="flex flex-col gap-2 mb-6">
+      <div className="flex flex-col gap-2 mb-6" role="radiogroup" aria-label="Motivo da denúncia">
         {REASONS.map((r) => (
           <button
             type="button"
             key={r.value}
+            role="radio"
+            aria-checked={reason === r.value}
             onClick={() => setReason(r.value)}
-            className={`text-left px-4 py-3 rounded-xl border text-sm font-medium min-h-11 ${
-              reason === r.value ? "border-brand bg-brand/10 text-brand" : "border-border text-text"
+            className={`text-left px-4 py-3 rounded-control border text-sm font-medium min-h-11 ${
+              reason === r.value
+                ? "border-accent bg-accent/10 text-accent"
+                : "border-border text-text"
             }`}
           >
             {r.label}
           </button>
         ))}
       </div>
+
+      {createFlag.isError && (
+        <p className="text-error text-sm text-center mb-4" role="alert">
+          Não foi possível enviar a denúncia. Tente novamente.
+        </p>
+      )}
+
       <button
         type="button"
         onClick={submit}
         disabled={!reason || createFlag.isPending}
-        className="w-full bg-brand text-white font-semibold py-3 rounded-xl min-h-11 disabled:opacity-50"
+        className="w-full bg-brand text-white font-semibold py-3 rounded-control min-h-11 disabled:opacity-50"
       >
         {createFlag.isPending ? "Enviando…" : "Enviar denúncia"}
       </button>
-      <button type="button" onClick={onClose} className="w-full text-text-muted py-2 mt-2 min-h-11">
+      <GhostButton fullWidth onClick={onClose} className="mt-2">
         Cancelar
-      </button>
-    </div>
+      </GhostButton>
+    </BottomSheet>
   );
 }

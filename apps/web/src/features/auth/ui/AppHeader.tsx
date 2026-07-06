@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAppStore } from "../../../app/store/index.js";
+import { useAppStore } from "@/app/store/index.js";
 
 export function AppHeader() {
   const navigate = useNavigate();
@@ -9,6 +9,8 @@ export function AppHeader() {
   const clearSession = useAppStore((s) => s.clearSession);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const firstItemRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!dropdownOpen) return;
@@ -23,8 +25,16 @@ export function AppHeader() {
 
   useEffect(() => {
     if (!dropdownOpen) return;
+
+    // ARIA menu-button pattern: move focus into the menu on open, and back to the
+    // trigger on Escape — matches the focus discipline already used by BottomSheet.
+    firstItemRef.current?.focus();
+
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setDropdownOpen(false);
+      if (e.key === "Escape") {
+        setDropdownOpen(false);
+        triggerRef.current?.focus();
+      }
     }
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
@@ -39,8 +49,8 @@ export function AppHeader() {
     return (
       <button
         type="button"
-        className="fixed right-3 z-50 bg-brand text-white rounded-full px-4 py-2 text-sm font-medium shadow-md"
-        style={{ top: "calc(env(safe-area-inset-top, 0px) + 12px)" }}
+        className="fixed right-3 z-(--z-sticky) bg-brand text-white rounded-full px-4 py-2 text-sm font-medium shadow-md min-h-11 flex items-center justify-center"
+        style={{ top: "var(--header-inset-top)" }}
         onClick={() => navigate("/signin")}
       >
         Entrar
@@ -61,10 +71,13 @@ export function AppHeader() {
       style={{ top: "calc(env(safe-area-inset-top, 0px) + 12px)" }}
     >
       <button
+        ref={triggerRef}
         type="button"
+        id="account-menu-trigger"
         className="flex items-center gap-2 bg-brand text-white rounded-full px-3 py-1.5 shadow-md"
         onClick={() => setDropdownOpen((o) => !o)}
-        // aria-expanded={dropdownOpen}
+        aria-haspopup="menu"
+        aria-expanded={dropdownOpen}
       >
         <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold shrink-0">
           {initials}
@@ -82,10 +95,16 @@ export function AppHeader() {
       </button>
 
       {dropdownOpen && (
-        <div className="absolute right-0 mt-2 bg-white border border-border rounded-xl shadow-lg py-1 min-w-30">
+        <div
+          role="menu"
+          aria-labelledby="account-menu-trigger"
+          className="absolute right-0 mt-2 bg-surface border border-border rounded-control shadow-lg py-1 min-w-30"
+        >
           <button
+            ref={firstItemRef}
             type="button"
-            className="w-full px-4 py-2 text-sm text-left text-error hover:bg-surface-alt"
+            role="menuitem"
+            className="w-full px-4 py-2 text-sm text-left text-error hover:bg-surface-alt min-h-11 flex items-center"
             onClick={() => {
               clearSession();
               setDropdownOpen(false);

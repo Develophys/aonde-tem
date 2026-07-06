@@ -2,8 +2,9 @@ import { render, screen } from "@testing-library/react";
 import { SeekPage } from "./SeekPage.js";
 import { useGeolocation, DEFAULT_COORDS } from "../../map/model/use-geolocation.js";
 import { useNearbyDiscoveries } from "../api/discovery.queries.js";
-import { useAppStore } from "../../../app/store/index.js";
-import type { AppStore } from "../../../app/store/types.js";
+import { useAppStore } from "@/app/store/index.js";
+import { useSaveData } from "@/shared/model/use-save-data.js";
+import type { AppStore } from "@/app/store/types.js";
 
 // Explicit factories (not bare automocks) — matches ProductPicker.test.tsx / AppHeader.test.tsx.
 jest.mock("../../map/model/use-geolocation.js", () => ({
@@ -24,8 +25,13 @@ const mockUseNearbyDiscoveries = useNearbyDiscoveries as jest.MockedFunction<
   typeof useNearbyDiscoveries
 >;
 
-jest.mock("../../../app/store/index.js");
+jest.mock("@/app/store/index.js");
 const mockUseAppStore = useAppStore as jest.MockedFunction<typeof useAppStore>;
+
+jest.mock("@/shared/model/use-save-data.js", () => ({
+  useSaveData: jest.fn(),
+}));
+const mockUseSaveData = useSaveData as jest.MockedFunction<typeof useSaveData>;
 
 const mockNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
@@ -45,12 +51,16 @@ function setup() {
   mockUseNearbyDiscoveries.mockReturnValue({
     data: { results: [] },
     isLoading: false,
+    isError: false,
+    refetch: jest.fn(),
   } as unknown as ReturnType<typeof useNearbyDiscoveries>);
 
   const store = { mapRadius: 5_000, setRadius: jest.fn(), selectedPlaceId: null };
   mockUseAppStore.mockImplementation((selector: (s: AppStore) => unknown) =>
     selector(store as unknown as AppStore),
   );
+
+  mockUseSaveData.mockReturnValue(false);
 
   return render(<SeekPage />);
 }

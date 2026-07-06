@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute.js";
-import { useAppStore } from "../../../app/store/index.js";
-import type { AppStore } from "../../../app/store/types.js";
+import { useAppStore } from "@/app/store/index.js";
+import type { AppStore } from "@/app/store/types.js";
 
 jest.mock("../../../app/store/index.js");
 const mockUseAppStore = useAppStore as jest.MockedFunction<typeof useAppStore>;
