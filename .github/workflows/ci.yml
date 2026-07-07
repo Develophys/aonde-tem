@@ -99,6 +99,16 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm --filter @aonde-tem/web exec playwright install chromium --with-deps
 
+      # The web e2e suite proxies /api to localhost:3000 (see apps/web/vite.config.ts) —
+      # nothing else in this job starts the API, so it must be launched here first.
+      - name: Start API server
+        run: pnpm --filter @aonde-tem/api start &
+        env:
+          PORT: 3000
+
+      - name: Wait for API
+        run: npx wait-on http://localhost:3000/api/health --timeout 30000
+
       - name: E2E smoke tests
         run: pnpm --filter @aonde-tem/web e2e
 

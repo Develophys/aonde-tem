@@ -56,8 +56,8 @@ export function MapView({ center, userPin, discoveries }: MapViewProps) {
         {userPin && (
           <Marker longitude={userPin.lng} latitude={userPin.lat} anchor="center">
             <div
-              className="bg-user-location rounded-full border-2 border-white"
-              style={{ width: 14, height: 14, boxShadow: "0 1px 4px rgba(0,0,0,0.35)" }}
+              className="bg-user-location rounded-full border-2 border-white shadow-sm"
+              style={{ width: 14, height: 14 }}
               aria-label="Sua localização"
             />
           </Marker>
