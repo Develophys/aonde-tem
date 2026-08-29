@@ -76,8 +76,8 @@
   --header-inset-top: calc(env(safe-area-inset-top, 0px) + 12px);
 
   /* The bottom tab bar's own height, and the offset anything floating above it must
-     clear. Same discipline as --header-inset-top/--header-clearance at the top of the
-     screen: the bar and the chrome sitting above it read from one token, so they can't
+     clear. Same discipline as --header-inset-top at the top of the screen: the bar and
+     the chrome sitting above it read from one token, so they can't
      drift apart when the bar's height changes. env() covers the iOS home indicator. */
   --bottom-nav-height: 56px;
   --bottom-nav-clearance: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 12px);

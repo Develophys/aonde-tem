@@ -1,9 +1,8 @@
 interface Props {
   readonly query?: string;
-  readonly onReport?: () => void;
 }
 
-export function EmptyState({ query, onReport }: Props) {
+export function EmptyState({ query }: Props) {
   return (
     <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
       <div className="w-20 h-20 rounded-full bg-surface-alt flex items-center justify-center mb-4 animate-badge-in">
@@ -26,16 +25,9 @@ export function EmptyState({ query, onReport }: Props) {
           ? `Ninguém relatou "${query}" por aqui ainda`
           : "Ninguém relatou nada por aqui ainda"}
       </p>
-      <p className="text-text-muted text-sm mb-6">Seja o primeiro a ajudar sua comunidade!</p>
-      {onReport && (
-        <button
-          type="button"
-          onClick={onReport}
-          className="bg-brand text-white font-semibold px-6 py-3 rounded-full min-h-11"
-        >
-          Relatar agora
-        </button>
-      )}
+      {/* No CTA here any more: the FAB that used to pass `onReport` is gone, and the
+          Relatar tab in the bottom bar is the one route into reporting. */}
+      <p className="text-text-muted text-sm">Seja o primeiro a ajudar sua comunidade!</p>
     </div>
   );
 }

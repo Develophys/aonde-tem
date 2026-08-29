@@ -79,7 +79,7 @@ export function PerfilPage() {
       className="w-full min-h-screen bg-surface"
       style={{ paddingBottom: "var(--bottom-nav-clearance)" }}
     >
-      <header className="px-4 pt-4 pb-2" style={{ paddingTop: "var(--header-inset-top)" }}>
+      <header className="px-4 pb-2" style={{ paddingTop: "var(--header-inset-top)" }}>
         <h1 className="text-text text-lg font-semibold">Perfil</h1>
       </header>
 
