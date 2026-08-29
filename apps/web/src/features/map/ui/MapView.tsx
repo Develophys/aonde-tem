@@ -64,12 +64,17 @@ export function MapView({ center, userPin, discoveries }: MapViewProps) {
         )}
       </Map>
 
+      {/* Recenter control. bottom-(--bottom-nav-clearance), not the hardcoded bottom-24
+          it used to carry: that 96px was sized to clear the report FAB this branch
+          deleted, and left the button floating 40px above the tab bar while every other
+          piece of map chrome sat 12px above it (measured in e2e/mobile-shell.spec.ts).
+          Reading the token is what keeps them level if the bar's height changes. */}
       {userPin && (
         <button
           type="button"
           onClick={recenter}
           aria-label="Centralizar em minha localização"
-          className="absolute bottom-24 right-4 z-(--z-sticky) bg-surface shadow-md rounded-full w-11 h-11 flex items-center justify-center border border-border"
+          className="absolute bottom-(--bottom-nav-clearance) right-4 z-(--z-sticky) bg-surface shadow-md rounded-full w-11 h-11 flex items-center justify-center border border-border"
         >
           <svg
             width="20"

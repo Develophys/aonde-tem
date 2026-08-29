@@ -52,8 +52,15 @@ export function SeekPage() {
       {/* Search bar — floats on top of the map. pointer-events-none because the wrapper
           still spans the full width for the expanded bar's right-4 edge, but its resting
           state is a 44px button — without this, the rest of the strip is an invisible
-          hit target that steals pans/taps from the map underneath. */}
-      <div className="absolute top-4 left-4 right-4 z-10 pointer-events-none">
+          hit target that steals pans/taps from the map underneath.
+
+          Sits at the dropdown tier, not with the rest of the map chrome at z-10: a
+          positioned+z-indexed wrapper is a stacking context, so the suggestion list's own
+          z-(--z-dropdown) only ever ordered it against its siblings *inside* here, never
+          against the "Buscando…" pill below, which is also z-10 and opens right where the
+          list does. At equal z the later element in DOM order wins, so the pill painted
+          over the first suggestion (measured in e2e/mobile-shell.spec.ts). */}
+      <div className="absolute top-4 left-4 right-4 z-(--z-dropdown) pointer-events-none">
         {denied && (
           <p className="text-xs text-aging bg-surface/90 rounded-lg px-3 py-1.5 mb-2 pointer-events-auto">
             Localização negada — mostrando São Paulo. Pan para sua área.
