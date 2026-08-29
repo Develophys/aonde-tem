@@ -16,15 +16,19 @@ function ThemeRow() {
         aria-checked={isDark}
         aria-label="Modo escuro"
         onClick={() => setTheme(isDark ? "light" : "dark")}
-        className={`relative w-12 h-7 rounded-full transition-colors ${
-          isDark ? "bg-brand" : "bg-surface-alt border border-border"
-        }`}
+        className="flex items-center justify-center min-h-11"
       >
         <span
-          className={`absolute top-1 w-5 h-5 rounded-full bg-surface shadow-sm transition-transform ${
-            isDark ? "translate-x-6" : "translate-x-1"
+          className={`relative w-12 h-7 rounded-full transition-colors ${
+            isDark ? "bg-brand" : "bg-surface-alt border border-border"
           }`}
-        />
+        >
+          <span
+            className={`absolute top-1 w-5 h-5 rounded-full bg-surface shadow-sm transition-transform ${
+              isDark ? "translate-x-6" : "translate-x-1"
+            }`}
+          />
+        </span>
       </button>
     </div>
   );
