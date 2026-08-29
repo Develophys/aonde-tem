@@ -87,6 +87,43 @@ async function hitTest(
   );
 }
 
+interface FixedEntry {
+  tag: string;
+  label: string;
+  role: string;
+  top: number;
+  height: number;
+  pointerEvents: string;
+}
+
+/**
+ * Every `position: fixed` element intersecting the top 120px of the current route.
+ *
+ * Reports `pointerEvents` as well as geometry: the first version of this probe only ran
+ * online, where OfflineBanner returns null, and asserted the list was empty. That missed
+ * the banner entirely — offline it is fixed at top:0 and ~44px tall, right over
+ * ReportPage's back button. So the invariant is not "nothing is fixed up there" but
+ * "nothing fixed up there is tappable".
+ */
+async function fixedElementsAtTop(page: Page): Promise<FixedEntry[]> {
+  return page.evaluate(() =>
+    Array.from(document.querySelectorAll<HTMLElement>("body *"))
+      .filter((el) => getComputedStyle(el).position === "fixed")
+      .map((el) => {
+        const r = el.getBoundingClientRect();
+        return {
+          tag: el.tagName,
+          label: el.getAttribute("aria-label") ?? "",
+          role: el.getAttribute("role") ?? "",
+          top: Math.round(r.top),
+          height: Math.round(r.height),
+          pointerEvents: getComputedStyle(el).pointerEvents,
+        };
+      })
+      .filter((entry) => entry.top < 120 && entry.height > 0),
+  );
+}
+
 test.describe("Bottom navigation", () => {
   for (const theme of ["light", "dark"] as const) {
     test(`renders the four controls and marks the active tab (${theme})`, async ({ page }) => {
@@ -195,6 +232,9 @@ test.describe("Map chrome clears the tab bar", () => {
   }
 
   test("the fetch-error card sits above the bar", async ({ page }) => {
+    // Waits up to 20s for the query client's retry/backoff chain, inside a 30s default.
+    // CI renders with swiftshader on a shared runner, so give this one room.
+    test.setTimeout(60_000);
     await seedAppState(page);
     await stubMapStyle(page);
     await stubNearby(page, { fail: true });
@@ -210,6 +250,13 @@ test.describe("Map chrome clears the tab bar", () => {
     // Its retry control is a real touch target, and also clear of the bar.
     const retry = page.getByRole("button", { name: "Tentar novamente" });
     await expectTouchTarget(retry, "retry");
+
+    // A bounding box only proves the button is drawn somewhere sensible; it says nothing
+    // about whether the radius pill (same z-10, later in DOM) is sitting on top of it and
+    // eating the tap. click() runs Playwright's actionability check, which hit-tests the
+    // click point and fails if another element intercepts — so this is the assertion that
+    // keeps the two off each other's baseline.
+    await retry.click();
   });
 
   test("the recenter control sits above the bar", async ({ page }) => {
@@ -234,6 +281,9 @@ test.describe("Map chrome clears the tab bar", () => {
 
 test.describe("Place sheet", () => {
   test("covers the tab bar and closes on Escape", async ({ page }) => {
+    // Retries clicking a WebGL-rendered marker for up to 20s inside a 30s default. CI has
+    // no GPU, so style load is slower there than the ~2s it takes locally.
+    test.setTimeout(60_000);
     await seedAppState(page);
     await stubMapStyle(page);
     await stubNearby(page, { results: [discoveryFixture()] });
@@ -317,6 +367,9 @@ test.describe("Collapsed search", () => {
   });
 
   test("the loading pill never paints over the first suggestion", async ({ page }) => {
+    // Holds the nearby request open for 15s inside a 30s default; teardown of the pending
+    // route handler eats into that too. Give it room on a shared CI runner.
+    test.setTimeout(60_000);
     await seedAppState(page);
     await stubMapStyle(page);
     // Hold the nearby request open so "Buscando…" is on screen at the same time as the
@@ -350,17 +403,19 @@ test.describe("Collapsed search", () => {
     const overlaps = overlap.right > overlap.left && overlap.bottom > overlap.top;
     record("pill/suggestion overlap", { ...overlap, overlaps });
 
-    if (overlaps) {
-      const point = {
-        x: (overlap.left + overlap.right) / 2,
-        y: (overlap.top + overlap.bottom) / 2,
-      };
-      const hit = await hitTest(page, point, "[role='listbox']");
-      record("hit test inside the overlap", { point, ...hit });
-      expect(hit.insideSelector, "the suggestion list must paint above the loading pill").toBe(
-        true,
-      );
-    }
+    // The overlap is the premise of this regression test, not an incidental detail: if a
+    // layout change ever separates the two, every assertion below would be skipped and
+    // the test would pass green while guarding nothing. Fail loudly instead, so whoever
+    // moves them has to decide whether the z-order fix is still needed.
+    expect(overlaps, "the pill and the first suggestion must still overlap").toBe(true);
+
+    const point = {
+      x: (overlap.left + overlap.right) / 2,
+      y: (overlap.top + overlap.bottom) / 2,
+    };
+    const hit = await hitTest(page, point, "[role='listbox']");
+    record("hit test inside the overlap", { point, ...hit });
+    expect(hit.insideSelector, "the suggestion list must paint above the loading pill").toBe(true);
   });
 });
 
@@ -458,6 +513,13 @@ test.describe("Report screen", () => {
     );
     record("report header padding-top", reportHeaderPadding);
 
+    // Probed on /report as well as /perfil: the report screen is the one whose root
+    // padding was removed, so it is the one that has to be measured, not just its
+    // reference screen.
+    const fixedOnReport = await fixedElementsAtTop(page);
+    record("fixed elements in the top 120px (/report, online)", fixedOnReport);
+    expect(fixedOnReport).toEqual([]);
+
     await page.goto("/perfil");
     const perfilTitle = page.getByRole("heading", { name: "Perfil" });
     await expect(perfilTitle).toBeVisible();
@@ -479,21 +541,60 @@ test.describe("Report screen", () => {
     expect(Math.abs(titleBox.y - perfilBox.y)).toBeLessThanOrEqual(10);
 
     // Nothing floating at the top of any screen: no fixed element overlaps the title.
-    const fixedAtTop = await page.evaluate(() =>
-      Array.from(document.querySelectorAll<HTMLElement>("body *"))
-        .filter((el) => getComputedStyle(el).position === "fixed")
-        .map((el) => {
-          const r = el.getBoundingClientRect();
-          return {
-            tag: el.tagName,
-            label: el.getAttribute("aria-label") ?? "",
-            top: Math.round(r.top),
-            height: Math.round(r.height),
-          };
-        })
-        .filter((entry) => entry.top < 120 && entry.height > 0),
-    );
-    record("fixed elements in the top 120px", fixedAtTop);
+    const fixedAtTop = await fixedElementsAtTop(page);
+    record("fixed elements in the top 120px (/perfil, online)", fixedAtTop);
     expect(fixedAtTop).toEqual([]);
+  });
+
+  test("offline, the banner does not steal taps at the top of the screen", async ({ page }) => {
+    await seedAppState(page, {
+      accessToken: "e2e-token",
+      sessionUser: { id: PLACE_ID, email: "teste@exemplo.com", displayName: null, role: "user" },
+    });
+    // Reached through the tab bar, not page.goto(), so "Voltar" has a client-side history
+    // entry to pop — no network round trip once the context goes offline.
+    await page.goto("/perfil");
+    await nav(page).getByRole("link", { name: "Relatar produto" }).click();
+    await expect(page).toHaveURL(/\/report$/);
+
+    // The online probe above can never see OfflineBanner: it renders null when the tab is
+    // online, which is how a fixed 44px strip over ReportPage's back button got through
+    // the first measurement pass.
+    await page.context().setOffline(true);
+    await page.evaluate(() => window.dispatchEvent(new Event("offline")));
+
+    const banner = page.getByRole("status").filter({ hasText: "Sem conexão" });
+    await expect(banner).toBeVisible();
+    const bannerBox = await boxOf(banner, "offline banner");
+
+    const back = page.getByRole("button", { name: "Voltar" });
+    const backBox = await boxOf(back, "report back button");
+    record("banner vs back button", {
+      bannerBottom: bannerBox.y + bannerBox.height,
+      backTop: backBox.y,
+      overlaps: bannerBox.y + bannerBox.height > backBox.y,
+    });
+
+    // Everything fixed over the top of the screen while offline must be untappable.
+    const fixedOffline = await fixedElementsAtTop(page);
+    record("fixed elements in the top 120px (/report, offline)", fixedOffline);
+    expect(fixedOffline.length, "the offline banner should be fixed at the top").toBeGreaterThan(0);
+    for (const entry of fixedOffline) {
+      expect(entry.pointerEvents, `${entry.tag}[${entry.role}] must not intercept taps`).toBe(
+        "none",
+      );
+    }
+
+    // And the back button is genuinely reachable at its own centre, banner or not.
+    const centre = { x: backBox.x + backBox.width / 2, y: backBox.y + backBox.height / 2 };
+    const hit = await hitTest(page, centre, "button[aria-label='Voltar']");
+    record("hit test at the back button's centre while offline", { centre, ...hit });
+    expect(hit.insideSelector, "the back button must receive its own taps while offline").toBe(
+      true,
+    );
+    // click() re-runs the same hit test as an actionability check before dispatching, so
+    // a future overlay that does intercept fails here rather than silently in the field.
+    await back.click();
+    await expect(page).toHaveURL(/\/perfil$/);
   });
 });
