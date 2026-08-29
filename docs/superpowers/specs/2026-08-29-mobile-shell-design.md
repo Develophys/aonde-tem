@@ -65,7 +65,7 @@ RootLayout  (theme sync, offline banner, toasts, Google token capture)
 ├── /onboarding         OnboardingPage
 ├── /signin  /signup    auth pages
 └── /report             ReportPage (ProtectedRoute)
-```text
+```
 
 `RootLayout` stops rendering `<ThemeToggle/>` and `<AppHeader/>`. Those two components hold
 nothing but the theme pill, the account pill and its "Sair" menu, and the "Entrar" pill — all
@@ -95,7 +95,7 @@ only auto-generates utilities for its recognized namespaces):
 ```css
 --bottom-nav-height: 56px;
 --bottom-nav-clearance: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 12px);
-```text
+```
 
 Everything floating above the map references `--bottom-nav-clearance` instead of hardcoded
 offsets, so the bar and the chrome above it cannot drift apart.
