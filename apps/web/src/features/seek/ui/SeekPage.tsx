@@ -59,8 +59,13 @@ export function SeekPage() {
           z-(--z-dropdown) only ever ordered it against its siblings *inside* here, never
           against the "Buscando…" pill below, which is also z-10 and opens right where the
           list does. At equal z the later element in DOM order wins, so the pill painted
-          over the first suggestion (measured in e2e/mobile-shell.spec.ts). */}
-      <div className="absolute top-4 left-4 right-4 z-(--z-dropdown) pointer-events-none">
+          over the first suggestion (measured in e2e/mobile-shell.spec.ts).
+
+          Top offset is --header-inset-top, not a flat 4: index.html ships
+          `viewport-fit=cover` and the PWA runs standalone, so on a notched device a bare
+          16px would put the app's only search affordance behind the status bar. The
+          `denied` banner rides the same inset. */}
+      <div className="absolute top-(--header-inset-top) left-4 right-4 z-(--z-dropdown) pointer-events-none">
         {denied && (
           <p className="text-xs text-aging bg-surface/90 rounded-lg px-3 py-1.5 mb-2 pointer-events-auto">
             Localização negada — mostrando São Paulo. Pan para sua área.
@@ -69,9 +74,13 @@ export function SeekPage() {
         <SearchBar onSearch={handleSearch} />
       </div>
 
-      {/* Fetch error — distinct from a true empty result, so patchy connections don't read as "nobody reported this" */}
+      {/* Fetch error — distinct from a true empty result, so patchy connections don't read as "nobody reported this".
+          Stacked 3.5rem above the nav clearance, not on it: the radius pill sits on the
+          clearance line itself and, being later in DOM at the same z-10, wins the hit test
+          wherever the two overlap — which used to swallow taps on "Tentar novamente" in
+          exactly the flaky-connection case this card exists for. */}
       {!isLoading && isError && (
-        <div className="absolute bottom-(--bottom-nav-clearance) left-0 right-0 z-10 px-6">
+        <div className="absolute bottom-[calc(var(--bottom-nav-clearance)+3.5rem)] left-0 right-0 z-10 px-6">
           <div className="bg-surface rounded-sheet shadow px-4 py-4 text-center">
             <p className="text-text text-sm font-medium mb-2">Não foi possível buscar relatos.</p>
             <button
