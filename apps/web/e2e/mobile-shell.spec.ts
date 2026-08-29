@@ -315,6 +315,38 @@ test.describe("Map chrome clears the tab bar", () => {
     expectClearOfNav(recenterBox, navBox.y, "recenter button");
     await expectTouchTarget(recenter, "recenter");
   });
+
+  test("returning to Mapa does not blank the map to re-acquire a fix", async ({ page }) => {
+    await seedAppState(page);
+    await stubMapStyle(page);
+    await stubNearby(page);
+    await page.context().grantPermissions(["geolocation"]);
+    await page.context().setGeolocation({
+      latitude: DEFAULT_COORDS.lat,
+      longitude: DEFAULT_COORDS.lng,
+    });
+    await page.goto("/");
+    await expect(page.locator("canvas")).toBeVisible({ timeout: 10_000 });
+
+    // Mapa -> Perfil -> Mapa unmounts and remounts SeekPage. useGeolocation used to start
+    // every mount at loading:true, which swaps the whole map for "Localizando voce..."
+    // until a fresh high-accuracy fix lands — 1-3s indoors on a real device, and now on
+    // the app's most ordinary navigation rather than once a session.
+    await nav(page).getByRole("link", { name: "Perfil" }).click();
+    await expect(page).toHaveURL(/\/perfil$/);
+    await nav(page).getByRole("link", { name: "Mapa" }).click();
+
+    // Polled rather than sampled once: a single read right after the click can land before
+    // React has even committed the new route, which would pass for the wrong reason. Watch
+    // the whole re-acquire window instead and require the placeholder never to appear.
+    const placeholder = page.getByText("Localizando você…");
+    let seen = 0;
+    const deadline = Date.now() + 1_500;
+    while (Date.now() < deadline) seen = Math.max(seen, await placeholder.count());
+    record("locating placeholder sightings on return to Mapa", seen);
+    expect(seen, "the map must not blank while re-acquiring a fix").toBe(0);
+    await expect(page.locator("canvas")).toBeVisible();
+  });
 });
 
 test.describe("Place sheet", () => {
