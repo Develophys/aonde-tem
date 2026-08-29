@@ -31,6 +31,13 @@ the two separate.)
 4. **Mobile-native, one-handed.** Primary actions reachable by thumb; generous targets; bottom-sheet patterns.
 5. **Fast & calm — performance is a pillar.** Built for low-end Android on slow/intermittent connections. Minimal chrome, lazy-loaded map, tiny payloads, restraint. See `PERFORMANCE.md` for the budgets every screen must meet.
 
+## Navigation
+- **A bottom tab bar is the app's global navigation**: **Mapa · Avisos · [+] · Perfil**, fixed to the bottom edge and present on every tabbed screen. Thumb-reachable, one-handed, always the same four destinations.
+- The **report action is the raised centre control** (`+`), lifted above the bar's top edge — the one place in the app that earns a shadow, because it is the one control that floats over the map.
+- **Search is collapsed on the map**: a single magnifier in the top-left corner that expands into the search field with product suggestions, and collapses again with `×`. The map keeps its full canvas by default; nothing permanent covers it.
+- **Theme and account controls live in Perfil**, not as floating pills over the map. Nothing is fixed to the top of the screen any more.
+- **Onboarding is shown once per device**, before the map, and never again. Deep links (a shared place, `/perfil`, `/report`) stay reachable directly — the intro intercepts the front door, not every door.
+
 ## Anti-references (slop to avoid)
 - ❌ Purple/indigo gradients, glassmorphism, neon-on-black "dashboard" looks.
 - ❌ Generic SaaS hero sections, "Boost your productivity" energy, fake metric dashboards.
