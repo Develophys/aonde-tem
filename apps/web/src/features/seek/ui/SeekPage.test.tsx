@@ -6,7 +6,7 @@ import { useAppStore } from "@/app/store/index.js";
 import { useSaveData } from "@/shared/model/use-save-data.js";
 import type { AppStore } from "@/app/store/types.js";
 
-// Explicit factories (not bare automocks) — matches ProductPicker.test.tsx / AppHeader.test.tsx.
+// Explicit factories (not bare automocks) — matches ProductPicker.test.tsx.
 jest.mock("../../map/model/use-geolocation.js", () => ({
   ...jest.requireActual("../../map/model/use-geolocation.js"),
   useGeolocation: jest.fn(),

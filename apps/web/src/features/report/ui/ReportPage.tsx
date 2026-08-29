@@ -123,9 +123,8 @@ export function ReportPage() {
           promising pacing the structure doesn't deliver (see prior review rounds).
           The title change (Relatar produto -> Confirmar) signals the transition
           instead. pt-(--header-clearance) on the page root keeps this in-flow bar
-          clear of the fixed ThemeToggle/AppHeader corner controls: those are
-          `position: fixed` so they paint above ordinary static content regardless of
-          z-index or DOM order, and would otherwise cover the back button. */}
+          clear of the safe-area top inset reserved by --header-inset-top, matching
+          the clearance every other in-flow page header uses. */}
       <div className="px-4 py-4 border-b border-border flex items-center gap-3">
         <button
           type="button"

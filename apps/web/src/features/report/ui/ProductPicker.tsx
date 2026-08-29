@@ -30,10 +30,10 @@ export function ProductPicker({ value, onChange, errorId }: Props) {
 
   // Touch users have no Escape key — without this, tapping away from the input (not
   // onto an option) left the dropdown open indefinitely, since selecting an option
-  // was the only other path that closed it. Mirrors AppHeader's account-menu
-  // outside-click pattern: a document-level mousedown listener, not onBlur, since
-  // blur fires before an option's own onMouseDown can register the selection
-  // (that race is exactly why selectProduct below uses onMouseDown, not onClick).
+  // was the only other path that closed it. A document-level mousedown listener,
+  // not onBlur, since blur fires before an option's own onMouseDown can register
+  // the selection (that race is exactly why selectProduct below uses onMouseDown,
+  // not onClick).
   useEffect(() => {
     if (!expanded) return;
     function handleClickOutside(e: MouseEvent) {

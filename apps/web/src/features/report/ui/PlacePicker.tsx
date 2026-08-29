@@ -111,7 +111,7 @@ export function PlacePicker({ value, onChange, errorId }: Props) {
           (0, 0) coords (see hasRealCoords), and showing this for that would falsely
           reassure the user their location was captured. Stroke-SVG check, not a bare
           "✓" glyph, to match the hand-authored icon vocabulary used everywhere else
-          (the location pin above, ConfirmStep's shield-check, ThemeToggle, ...). */}
+          (the location pin above, ConfirmStep's shield-check, ...). */}
       {value?.name && hasRealCoords(value) && (
         <p className="text-xs text-fresh mt-1 flex items-center gap-1">
           <svg

@@ -59,16 +59,16 @@
   --z-toast: 60;
   --z-tooltip: 70;
 
-  /* Fixed corner header controls (ThemeToggle, AppHeader's sign-in pill / account chip)
-     sit at this vertical offset. Kept as a token, not repeated inline, so the two
-     controls and anything reserving clearance below them (see --header-clearance)
-     can't drift out of sync. */
+  /* Page header content (see AvisosPage, PerfilPage, ReportPage) pins its top padding
+     to this offset, clear of the status-bar/notch safe area. Kept as a token, not
+     repeated inline, so header padding and anything reserving clearance below it
+     (see --header-clearance) can't drift out of sync. */
   --header-inset-top: calc(env(safe-area-inset-top, 0px) + 12px);
 
-  /* Bottom edge of those 44px-tall pill controls, plus 12px breathing room. Floating
-     page content sharing --z-sticky (e.g. SeekPage's near-full-width search bar) must
-     start at or below this — same z-tier plus later DOM order would otherwise let it
-     paint straight over the corner controls regardless of z-index. */
+  /* Bottom edge of a 44px-tall in-flow header, plus 12px breathing room. Floating
+     page content sharing --z-sticky must start at or below this — same z-tier plus
+     later DOM order would otherwise let it paint straight over the header regardless
+     of z-index. */
   --header-clearance: calc(var(--header-inset-top) + 44px + 12px);
 
   /* The bottom tab bar's own height, and the offset anything floating above it must

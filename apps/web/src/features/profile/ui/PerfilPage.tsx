@@ -71,8 +71,8 @@ function SessionRow() {
 }
 
 // New home for the theme toggle and the account controls, which used to live as fixed
-// pills in the map's top corners (ThemeToggle / AppHeader). The avatar header, the stat
-// columns and the real "meus relatos" list belong to the separate Watchlist/Profile spec.
+// pills in the map's top corners. The avatar header, the stat columns and the real
+// "meus relatos" list belong to the separate Watchlist/Profile spec.
 export function PerfilPage() {
   return (
     <div

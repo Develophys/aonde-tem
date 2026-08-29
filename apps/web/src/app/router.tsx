@@ -1,10 +1,9 @@
 import { lazy, Suspense, useEffect, type ReactNode } from "react";
 import { createBrowserRouter, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "../features/auth/ui/ProtectedRoute.js";
-import { AppHeader } from "../features/auth/ui/AppHeader.js";
+import { AppShell } from "../features/shell/ui/AppShell.js";
 import { OfflineBanner } from "../shared/ui/OfflineBanner.js";
 import { ToastViewport } from "../shared/ui/ToastViewport.js";
-import { ThemeToggle } from "../shared/ui/ThemeToggle.js";
 import { useThemeSync } from "../shared/model/use-theme-sync.js";
 import { useAppStore } from "./store/index.js";
 
@@ -19,6 +18,12 @@ const SignInPage = lazy(() =>
 );
 const SignUpPage = lazy(() =>
   import("../features/auth/ui/SignUpPage.js").then((m) => ({ default: m.SignUpPage })),
+);
+const AvisosPage = lazy(() =>
+  import("../features/notifications/ui/AvisosPage.js").then((m) => ({ default: m.AvisosPage })),
+);
+const PerfilPage = lazy(() =>
+  import("../features/profile/ui/PerfilPage.js").then((m) => ({ default: m.PerfilPage })),
 );
 
 function PageSuspense({ children }: { readonly children: ReactNode }) {
@@ -75,8 +80,6 @@ function RootLayout() {
     <>
       <GoogleTokenCapture />
       <OfflineBanner />
-      <ThemeToggle />
-      <AppHeader />
       <Outlet />
       <ToastViewport />
     </>
@@ -88,12 +91,35 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       {
-        path: "/",
-        element: (
-          <PageSuspense>
-            <SeekPage />
-          </PageSuspense>
-        ),
+        element: <AppShell />,
+        children: [
+          {
+            path: "/",
+            element: (
+              <PageSuspense>
+                <SeekPage />
+              </PageSuspense>
+            ),
+          },
+          {
+            path: "/avisos",
+            element: (
+              <ProtectedRoute>
+                <PageSuspense>
+                  <AvisosPage />
+                </PageSuspense>
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: "/perfil",
+            element: (
+              <PageSuspense>
+                <PerfilPage />
+              </PageSuspense>
+            ),
+          },
+        ],
       },
       {
         path: "/signin",
