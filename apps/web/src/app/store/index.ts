@@ -7,6 +7,7 @@ import { createToastSlice } from "./toast.slice";
 import { createMapSlice } from "../../features/map/model/map.slice";
 import { createSessionSlice } from "../../features/auth/model/session.slice.js";
 import { createReportDraftSlice } from "../../features/report/model/report-draft.slice.js";
+import { createOnboardingSlice } from "../../features/onboarding/model/onboarding.slice.js";
 
 export const useAppStore = create<AppStore>()(
   devtools(
@@ -17,6 +18,7 @@ export const useAppStore = create<AppStore>()(
         ...createMapSlice(...a),
         ...createSessionSlice(...a),
         ...createReportDraftSlice(...a),
+        ...createOnboardingSlice(...a),
       })),
       {
         name: "aonde-tem",
@@ -29,6 +31,7 @@ export const useAppStore = create<AppStore>()(
           accessToken: s.accessToken,
           sessionUser: s.sessionUser,
           reportDraft: s.reportDraft,
+          hasSeenOnboarding: s.hasSeenOnboarding,
         }),
       },
     ),

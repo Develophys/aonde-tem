@@ -25,6 +25,11 @@ const AvisosPage = lazy(() =>
 const PerfilPage = lazy(() =>
   import("../features/profile/ui/PerfilPage.js").then((m) => ({ default: m.PerfilPage })),
 );
+const OnboardingPage = lazy(() =>
+  import("../features/onboarding/ui/OnboardingPage.js").then((m) => ({
+    default: m.OnboardingPage,
+  })),
+);
 
 function PageSuspense({ children }: { readonly children: ReactNode }) {
   return (
@@ -120,6 +125,14 @@ export const router = createBrowserRouter([
             ),
           },
         ],
+      },
+      {
+        path: "/onboarding",
+        element: (
+          <PageSuspense>
+            <OnboardingPage />
+          </PageSuspense>
+        ),
       },
       {
         path: "/signin",
