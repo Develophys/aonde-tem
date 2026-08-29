@@ -5,6 +5,8 @@ import type {
   DiscoveryRepository,
   NearbyDiscoveriesQuery,
   NearbyDiscoveryRow,
+  ReporterAccountReader,
+  ReporterDiscoveryRow,
 } from "@aonde-tem/domain";
 import { Discovery, Price, Coordinates, NotFoundError } from "@aonde-tem/domain";
 import type { PlaceUpsertService } from "../application/create-discovery.js";
@@ -22,6 +24,19 @@ interface RawDiscoveryRow {
   lat: number;
   lng: number;
   distanceMeters: number;
+  createdAt: Date;
+  expiresAt: Date;
+}
+
+interface RawReporterRow {
+  id: string;
+  productId: string;
+  productName: string;
+  placeId: string;
+  placeName: string;
+  price: string; // Decimal comes back as string from raw query
+  quantity: number;
+  note: string | null;
   createdAt: Date;
   expiresAt: Date;
 }
@@ -178,6 +193,46 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
     }));
   }
 
+  async findByReporter(reporterId: string, limit = 50): Promise<ReporterDiscoveryRow[]> {
+    // No expiry filter — the profile is a history, so expired rows still show
+    // (de-emphasised in the UI). `hiddenAt` rows stay out either way: that column
+    // is set both by admin moderation and by the reporter's own delete().
+    const rows = await this.prisma.$queryRaw<RawReporterRow[]>`
+      SELECT
+        d.id,
+        d."productId",
+        p.name  AS "productName",
+        d."placeId",
+        pl.name AS "placeName",
+        d.price,
+        d.quantity,
+        d.note,
+        d."createdAt",
+        d."expiresAt"
+      FROM discoveries d
+        JOIN products p  ON p.id = d."productId"
+        JOIN places   pl ON pl.id = d."placeId"
+      WHERE
+        d."reporterId" = ${reporterId}
+        AND d."hiddenAt" IS NULL
+      ORDER BY d."createdAt" DESC
+      LIMIT ${limit}
+    `;
+
+    return rows.map((r) => ({
+      id: r.id,
+      productId: r.productId,
+      productName: r.productName,
+      placeId: r.placeId,
+      placeName: r.placeName,
+      priceBrl: Number.parseFloat(r.price),
+      quantity: r.quantity,
+      note: r.note,
+      createdAt: r.createdAt,
+      expiresAt: r.expiresAt,
+    }));
+  }
+
   async save(discovery: Discovery): Promise<void> {
     await this.prisma.$executeRaw`
       INSERT INTO discoveries (id, "productId", "placeId", price, quantity, "reporterId", note, location, "expiresAt")
@@ -294,6 +349,23 @@ export class PrismaDiscoveryRepository implements DiscoveryRepository {
       where: { id },
       data: { hiddenAt: new Date() },
     });
+  }
+}
+
+/**
+ * Reads the one account fact a profile needs — the join date — which no discovery
+ * row carries and which the JWT payload (id/email/displayName/role) does not include.
+ */
+@Injectable()
+export class PrismaReporterAccountReader implements ReporterAccountReader {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async findCreatedAt(userId: string): Promise<Date | null> {
+    const row = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { createdAt: true },
+    });
+    return row?.createdAt ?? null;
   }
 }
 

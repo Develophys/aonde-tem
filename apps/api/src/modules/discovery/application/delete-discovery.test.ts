@@ -39,6 +39,7 @@ function makeRepo(discovery: Discovery | null) {
     findNearby: async () => [],
     findNearbyWithDetails: async () => [],
     findByPlace: async () => [],
+    findByReporter: async () => [],
     save: async () => {},
     update: async () => {},
     delete: async (id) => {

@@ -23,9 +23,11 @@ import {
   type CreateDiscoveryResponse,
   updateDiscoverySchema,
   type UpdateDiscoveryResponse,
+  type MyDiscoveriesResponse,
 } from "@aonde-tem/contracts";
 import { Coordinates } from "@aonde-tem/domain";
 import { FindNearbyDiscoveries } from "../application/find-nearby-discoveries.js";
+import { FindMyDiscoveries } from "../application/find-my-discoveries.js";
 import { CreateDiscovery } from "../application/create-discovery.js";
 import { UpdateDiscovery } from "../application/update-discovery.js";
 import { DeleteDiscovery } from "../application/delete-discovery.js";
@@ -36,6 +38,7 @@ import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard.js";
 export class DiscoveryController {
   constructor(
     @Inject(FindNearbyDiscoveries) private readonly findNearby: FindNearbyDiscoveries,
+    @Inject(FindMyDiscoveries) private readonly findMyDiscoveries: FindMyDiscoveries,
     @Inject(CreateDiscovery) private readonly createDiscovery: CreateDiscovery,
     @Inject(CreateProduct) private readonly createProduct: CreateProduct,
     @Inject(UpdateDiscovery) private readonly updateDiscovery: UpdateDiscovery,
@@ -106,6 +109,40 @@ export class DiscoveryController {
       productId: discovery.productId,
       placeId: discovery.placeId,
       createdAt: discovery.createdAt.toISOString(),
+    };
+  }
+
+  /**
+   * The reporter's own history. Declared with a literal path segment and no
+   * competing `@Get(":id")` on this controller, so there is no route ambiguity.
+   */
+  @Get("mine")
+  @UseGuards(JwtAuthGuard)
+  async mine(@Req() req: Request & { user: { sub: string } }): Promise<MyDiscoveriesResponse> {
+    const { results, stats } = await this.findMyDiscoveries.execute({
+      reporterId: req.user.sub,
+      now: new Date(),
+    });
+
+    return {
+      results: results.map((r) => ({
+        id: r.id,
+        productId: r.productId,
+        productName: r.productName,
+        placeId: r.placeId,
+        placeName: r.placeName,
+        priceBrl: r.priceBrl,
+        quantity: r.quantity,
+        note: r.note,
+        createdAt: r.createdAt.toISOString(),
+        expiresAt: r.expiresAt.toISOString(),
+        isExpired: r.isExpired,
+      })),
+      stats: {
+        total: stats.total,
+        active: stats.active,
+        memberSince: stats.memberSince.toISOString(),
+      },
     };
   }
 
