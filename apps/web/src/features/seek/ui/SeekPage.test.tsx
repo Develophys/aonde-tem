@@ -4,6 +4,7 @@ import { useGeolocation, DEFAULT_COORDS } from "../../map/model/use-geolocation.
 import { useNearbyDiscoveries } from "../api/discovery.queries.js";
 import { useAppStore } from "@/app/store/index.js";
 import { useSaveData } from "@/shared/model/use-save-data.js";
+import { useProductSearch } from "@/features/product/api/product-autocomplete.api.js";
 import type { AppStore } from "@/app/store/types.js";
 
 // Explicit factories (not bare automocks) — matches ProductPicker.test.tsx.
@@ -33,6 +34,14 @@ jest.mock("@/shared/model/use-save-data.js", () => ({
 }));
 const mockUseSaveData = useSaveData as jest.MockedFunction<typeof useSaveData>;
 
+// SearchBar (rendered inside SeekPage) now depends on this hook. Mocked with an explicit
+// factory — same reason as ProductPicker.test.tsx: the real module uses `import.meta.env`,
+// which ts-jest's CommonJS target can't parse.
+jest.mock("@/features/product/api/product-autocomplete.api.js", () => ({
+  useProductSearch: jest.fn(),
+}));
+const mockUseProductSearch = useProductSearch as jest.MockedFunction<typeof useProductSearch>;
+
 const mockNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -61,6 +70,10 @@ function setup() {
   );
 
   mockUseSaveData.mockReturnValue(false);
+
+  mockUseProductSearch.mockReturnValue({ data: { results: [] } } as unknown as ReturnType<
+    typeof useProductSearch
+  >);
 
   return render(<SeekPage />);
 }

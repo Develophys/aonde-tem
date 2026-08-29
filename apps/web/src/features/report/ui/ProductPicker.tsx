@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useProductSearch } from "../api/product-autocomplete.api.js";
+import { useProductSearch } from "@/features/product/api/product-autocomplete.api.js";
 
 interface SelectedProduct {
   id?: string;

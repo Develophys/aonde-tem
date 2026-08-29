@@ -1,10 +1,10 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { ProductPicker } from "./ProductPicker.js";
-import { useProductSearch } from "../api/product-autocomplete.api.js";
+import { useProductSearch } from "@/features/product/api/product-autocomplete.api.js";
 
 // Explicit factory (not bare automock) so Jest never has to load/transpile the real
 // module — it uses `import.meta.env`, which ts-jest's CommonJS target can't parse.
-jest.mock("../api/product-autocomplete.api.js", () => ({
+jest.mock("@/features/product/api/product-autocomplete.api.js", () => ({
   useProductSearch: jest.fn(),
 }));
 const mockUseProductSearch = useProductSearch as jest.MockedFunction<typeof useProductSearch>;
