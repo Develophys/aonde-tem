@@ -122,9 +122,13 @@ export function ReportPage() {
           a review screen, not a real multi-step sequence, and a "1 de 2" cue was
           promising pacing the structure doesn't deliver (see prior review rounds).
           The title change (Relatar produto -> Confirmar) signals the transition
-          instead. pt-(--header-clearance) on the page root keeps this in-flow bar
-          clear of the safe-area top inset reserved by --header-inset-top, matching
-          the clearance every other in-flow page header uses. */}
+          instead. pt-(--header-clearance) on the page root was originally sized to
+          clear the fixed-position AppHeader/ThemeToggle overlay that used to float
+          over every page; that overlay is deleted, so this padding is likely larger
+          than this bar now needs — unlike AvisosPage/PerfilPage, which pad only
+          their own <header> row with the smaller --header-inset-top. Left as-is
+          here (comment/behavior split: no layout change in this pass) and deferred
+          to Task 8's phone-viewport parity pass. */}
       <div className="px-4 py-4 border-b border-border flex items-center gap-3">
         <button
           type="button"
