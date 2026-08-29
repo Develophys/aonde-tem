@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<style>
+  body{margin:0;background:#eceae5;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;}
+</style>
+</helmet>
+
+<div style="padding:40px 48px 16px;max-width:900px">
+  <p style="font:600 11px/1.4 ui-monospace,Menlo,monospace;color:#6b7280;letter-spacing:.04em;text-transform:uppercase;margin:0 0 8px">Aonde Tem — Mobile App</p>
+  <h1 style="font:700 26px/1.3 system-ui,sans-serif;color:#1a1a1a;margin:0 0 10px">Full flow: faithful port + native upgrades + new screens</h1>
+  <p style="font:400 14px/1.6 system-ui,sans-serif;color:#4b5563;margin:0;max-width:720px">Built from the existing DESIGN.md tokens (Trust Green, the two-radius rule, freshness colors) and the current web PWA's exact component structure — map-first, glanceable price/distance/freshness, one-handed thumb reach. The Seeker and Reporter loops sit side by side as one connected flow; new screens (onboarding, watchlist, profile, price history, moderation) extend the same system rather than introducing new patterns.</p>
+</div>
+
+<!-- HERO: real device bezels, both platforms -->
+<div style="padding:24px 48px;display:flex;gap:56px;flex-wrap:wrap;align-items:flex-start">
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">iOS · Home (Seek + Map)</p>
+    <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390,844">
+      <div style="width:100%;height:100%;position:relative;background:#f7f7f5;overflow:hidden">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,#e2e6dc 0 12px,#dbe0d3 12px 24px)">
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font:12px ui-monospace,Menlo,monospace;color:#7a8570;background:rgba(255,255,255,.7);padding:4px 10px;border-radius:6px">mapa (MapLibre)</div>
+        </div>
+        <div style="position:absolute;left:38%;top:34%;width:14px;height:14px;border-radius:50%;background:#2563eb;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3)"></div>
+        <div style="position:absolute;left:52%;top:28%;background:#fff;border-radius:999px;padding:4px 9px;font:700 11px system-ui;color:#1a5c3a;box-shadow:0 2px 6px rgba(0,0,0,.15)">R$ 8,50</div>
+        <div style="position:absolute;left:64%;top:52%;background:#fff;border-radius:999px;padding:4px 9px;font:700 11px system-ui;color:#b45309;box-shadow:0 2px 6px rgba(0,0,0,.15)">R$ 12,00</div>
+        <div style="position:absolute;left:28%;top:60%;background:#fff;border-radius:999px;padding:4px 9px;font:700 11px system-ui;color:#9ca3af;box-shadow:0 2px 6px rgba(0,0,0,.15)">R$ 9,90</div>
+        <div style="position:absolute;top:70px;left:14px;z-index:5;width:44px;height:44px;border-radius:50%;background:#fff;border:1px solid #e5e5e0;box-shadow:0 1px 3px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>
+        </div>
+        <div style="position:absolute;top:70px;right:14px;z-index:5;background:#1a5c3a;color:#fff;border-radius:999px;padding:6px 12px;font:600 13px system-ui;box-shadow:0 1px 3px rgba(0,0,0,.2)">Entrar</div>
+        <div style="position:absolute;top:126px;left:14px;right:14px">
+          <div style="display:flex;align-items:center;gap:8px;background:#fff;border-radius:999px;box-shadow:0 1px 3px rgba(0,0,0,.12);padding:12px 16px;border:1px solid #e5e5e0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/></svg>
+            <span style="font:16px system-ui;color:#6b7280">Buscar produto…</span>
+          </div>
+        </div>
+        <div style="position:absolute;bottom:24px;left:16px;background:rgba(255,255,255,.95);border:1px solid #e5e5e0;border-radius:999px;padding:8px 14px;display:flex;align-items:center;gap:8px;box-shadow:0 1px 3px rgba(0,0,0,.1)">
+          <span style="font:11px system-ui;color:#6b7280">Raio</span>
+          <div style="width:64px;height:4px;border-radius:2px;background:#e5e5e0;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:40%;background:#1a5c3a;border-radius:2px"></div></div>
+          <span style="font:600 11px system-ui;color:#1a1a1a">2.0 km</span>
+        </div>
+        <div style="position:absolute;bottom:24px;right:16px;width:56px;height:56px;border-radius:50%;background:#1a5c3a;box-shadow:0 4px 12px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;color:#fff;font:300 28px system-ui">+</div>
+      </div>
+    </x-import>
+  </div>
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Android · Home (Seek + Map)</p>
+    <x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" hint-size="390,844">
+      <div style="width:100%;height:100%;position:relative;background:#f7f7f5;overflow:hidden">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,#e2e6dc 0 12px,#dbe0d3 12px 24px)">
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font:12px ui-monospace,Menlo,monospace;color:#7a8570;background:rgba(255,255,255,.7);padding:4px 10px;border-radius:6px">mapa (MapLibre)</div>
+        </div>
+        <div style="position:absolute;left:44%;top:44%;width:14px;height:14px;border-radius:50%;background:#2563eb;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3)"></div>
+        <div style="position:absolute;left:30%;top:30%;background:#fff;border-radius:999px;padding:4px 9px;font:700 11px system-ui;color:#1a5c3a;box-shadow:0 2px 6px rgba(0,0,0,.15)">R$ 6,00</div>
+        <div style="position:absolute;left:60%;top:60%;background:#fff;border-radius:999px;padding:4px 9px;font:700 11px system-ui;color:#1a5c3a;box-shadow:0 2px 6px rgba(0,0,0,.15)">R$ 7,20</div>
+        <div style="position:absolute;top:16px;left:14px;z-index:5;width:44px;height:44px;border-radius:50%;background:#fff;border:1px solid #e5e5e0;box-shadow:0 1px 3px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>
+        </div>
+        <div style="position:absolute;top:16px;right:14px;z-index:5;background:#1a5c3a;color:#fff;border-radius:999px;padding:6px 12px;font:600 13px system-ui;box-shadow:0 1px 3px rgba(0,0,0,.2)">Entrar</div>
+        <div style="position:absolute;top:72px;left:14px;right:14px">
+          <div style="display:flex;align-items:center;gap:8px;background:#fff;border-radius:999px;box-shadow:0 1px 3px rgba(0,0,0,.12);padding:12px 16px;border:1px solid #e5e5e0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/></svg>
+            <span style="font:16px system-ui;color:#6b7280">Buscar produto…</span>
+          </div>
+        </div>
+        <div style="position:absolute;bottom:24px;left:16px;background:rgba(255,255,255,.95);border:1px solid #e5e5e0;border-radius:999px;padding:8px 14px;display:flex;align-items:center;gap:8px;box-shadow:0 1px 3px rgba(0,0,0,.1)">
+          <span style="font:11px system-ui;color:#6b7280">Raio</span>
+          <div style="width:64px;height:4px;border-radius:2px;background:#e5e5e0;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:65%;background:#1a5c3a;border-radius:2px"></div></div>
+          <span style="font:600 11px system-ui;color:#1a1a1a">4.5 km</span>
+        </div>
+        <div style="position:absolute;bottom:24px;right:16px;width:56px;height:56px;border-radius:50%;background:#1a5c3a;box-shadow:0 4px 12px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;color:#fff;font:300 28px system-ui">+</div>
+      </div>
+    </x-import>
+  </div>
+</div>
+
+<!-- SECTION 1: ONBOARDING -->
+<div style="padding:32px 48px 8px"><h2 style="font:700 16px system-ui;color:#1a1a1a;margin:0">1 · Onboarding (new)</h2></div>
+<div style="padding:8px 48px 32px;display:flex;gap:32px;flex-wrap:wrap">
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Welcome</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#fff;display:flex;flex-direction:column">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;background:#1a5c3a">
+        <div style="width:72px;height:72px;border-radius:20px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;margin-bottom:20px">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        </div>
+        <h2 style="font:700 24px system-ui;color:#fff;margin:0 0 8px">Aonde Tem</h2>
+        <p style="font:400 15px/1.5 system-ui;color:rgba(255,255,255,.85);margin:0;max-width:220px">Ache onde um produto está disponível agora, e por quanto.</p>
+      </div>
+      <div style="padding:20px 24px 32px;display:flex;flex-direction:column;gap:10px">
+        <div style="background:#1a1a1a;color:#fff;text-align:center;font:600 15px system-ui;padding:13px;border-radius:999px">Começar</div>
+        <div style="text-align:center;font:500 14px system-ui;color:#6b7280;padding:8px">Já tenho conta</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Value prop 2/3</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#fff;display:flex;flex-direction:column">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center">
+        <div style="width:88px;height:88px;border-radius:50%;background:#f7f7f5;display:flex;align-items:center;justify-content:center;margin-bottom:24px">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 3l7 3v5c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/></svg>
+        </div>
+        <h2 style="font:700 20px system-ui;color:#1a1a1a;margin:0 0 10px">Relatos da comunidade</h2>
+        <p style="font:400 15px/1.5 system-ui;color:#6b7280;margin:0;max-width:220px">Quem viu, reporta em segundos. Relatos antigos somem — você só vê o que está fresco.</p>
+      </div>
+      <div style="padding:0 24px 32px">
+        <div style="display:flex;justify-content:center;gap:6px;margin-bottom:20px">
+          <div style="width:6px;height:6px;border-radius:50%;background:#e5e5e0"></div>
+          <div style="width:20px;height:6px;border-radius:3px;background:#1a5c3a"></div>
+          <div style="width:6px;height:6px;border-radius:50%;background:#e5e5e0"></div>
+        </div>
+        <div style="background:#1a5c3a;color:#fff;text-align:center;font:600 15px system-ui;padding:13px;border-radius:999px">Continuar</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Location permission</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#fff;display:flex;flex-direction:column">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center">
+        <div style="width:88px;height:88px;border-radius:50%;background:#f7f7f5;display:flex;align-items:center;justify-content:center;margin-bottom:24px">
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        </div>
+        <h2 style="font:700 20px system-ui;color:#1a1a1a;margin:0 0 10px">Ative sua localização</h2>
+        <p style="font:400 15px/1.5 system-ui;color:#6b7280;margin:0;max-width:230px">Para mostrar relatos perto de você e preencher o local automaticamente ao relatar.</p>
+      </div>
+      <div style="padding:0 24px 32px;display:flex;flex-direction:column;gap:10px">
+        <div style="background:#1a5c3a;color:#fff;text-align:center;font:600 15px system-ui;padding:13px;border-radius:999px">Permitir localização</div>
+        <div style="text-align:center;font:500 14px system-ui;color:#6b7280;padding:8px">Agora não</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 2: SEEK -->
+<div style="padding:32px 48px 8px"><h2 style="font:700 16px system-ui;color:#1a1a1a;margin:0">2 · Seek — map & search (light)</h2></div>
+<div style="padding:8px 48px 32px;display:flex;gap:32px;flex-wrap:wrap">
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Empty state (no reports yet)</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#f7f7f5;position:relative">
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,#e2e6dc 0 12px,#dbe0d3 12px 24px)"></div>
+      <div style="position:absolute;top:14px;left:14px;right:14px">
+        <div style="display:flex;align-items:center;gap:8px;background:#fff;border-radius:999px;box-shadow:0 1px 3px rgba(0,0,0,.12);padding:11px 14px;border:1px solid #e5e5e0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/></svg>
+          <span style="font:15px system-ui;color:#6b7280">Buscar produto…</span>
+        </div>
+      </div>
+      <div style="position:absolute;left:16px;right:16px;bottom:110px;background:#fff;border-radius:16px;box-shadow:0 6px 16px rgba(0,0,0,.12);padding:28px 20px;text-align:center">
+        <div style="width:64px;height:64px;border-radius:50%;background:#f7f7f5;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        </div>
+        <p style="font:600 15px system-ui;color:#1a1a1a;margin:0 0 4px">Ninguém relatou nada por aqui ainda</p>
+        <p style="font:400 13px system-ui;color:#6b7280;margin:0 0 16px">Seja o primeiro a ajudar sua comunidade!</p>
+        <div style="display:inline-block;background:#1a5c3a;color:#fff;font:600 14px system-ui;padding:11px 22px;border-radius:999px">Relatar agora</div>
+      </div>
+      <div style="position:absolute;bottom:24px;right:16px;width:52px;height:52px;border-radius:50%;background:#1a5c3a;box-shadow:0 4px 12px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;color:#fff;font:300 26px system-ui">+</div>
+    </div>
+  </div>
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Search typing</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#f7f7f5;position:relative">
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,#e2e6dc 0 12px,#dbe0d3 12px 24px);opacity:.4"></div>
+      <div style="position:absolute;top:14px;left:14px;right:14px;z-index:2">
+        <div style="display:flex;align-items:center;gap:8px;background:#fff;border-radius:999px;box-shadow:0 1px 3px rgba(0,0,0,.12);padding:11px 14px;border:1px solid #1a5c3a">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/></svg>
+          <span style="font:15px system-ui;color:#1a1a1a;flex:1">arroz</span>
+          <span style="color:#6b7280;font:20px system-ui;line-height:1">×</span>
+        </div>
+        <div style="background:#fff;border-radius:16px;margin-top:8px;box-shadow:0 6px 16px rgba(0,0,0,.12);overflow:hidden">
+          <div style="padding:13px 16px;border-bottom:1px solid #e5e5e0;font:15px system-ui;color:#1a1a1a">Arroz 5kg</div>
+          <div style="padding:13px 16px;border-bottom:1px solid #e5e5e0;font:15px system-ui;color:#1a1a1a">Arroz integral 1kg</div>
+          <div style="padding:13px 16px;font:15px system-ui;color:#1a1a1a">Arroz parboilizado</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Fetch error state</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#f7f7f5;position:relative">
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,#e2e6dc 0 12px,#dbe0d3 12px 24px)"></div>
+      <div style="position:absolute;top:14px;left:14px;right:14px">
+        <div style="display:flex;align-items:center;gap:8px;background:#fff;border-radius:999px;box-shadow:0 1px 3px rgba(0,0,0,.12);padding:11px 14px;border:1px solid #e5e5e0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/></svg>
+          <span style="font:15px system-ui;color:#6b7280">Buscar produto…</span>
+        </div>
+      </div>
+      <div style="position:absolute;left:16px;right:16px;bottom:110px;background:#fff;border-radius:16px;box-shadow:0 6px 16px rgba(0,0,0,.12);padding:24px 20px;text-align:center">
+        <p style="font:600 14px system-ui;color:#1a1a1a;margin:0 0 10px">Não foi possível buscar relatos.</p>
+        <span style="font:600 14px system-ui;color:#1a5c3a">Tentar novamente</span>
+      </div>
+      <div style="position:absolute;bottom:24px;right:16px;width:52px;height:52px;border-radius:50%;background:#1a5c3a;box-shadow:0 4px 12px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;color:#fff;font:300 26px system-ui">+</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 3: PLACE DETAIL SHEET -->
+<div style="padding:32px 48px 8px"><h2 style="font:700 16px system-ui;color:#1a1a1a;margin:0">3 · Place detail (bottom sheet, light)</h2></div>
+<div style="padding:8px 48px 32px;display:flex;gap:32px;flex-wrap:wrap">
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Mercadinho do Zé — 2 items</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#f7f7f5;position:relative">
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,#e2e6dc 0 12px,#dbe0d3 12px 24px)"></div>
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,.4)"></div>
+      <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:16px 16px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,.2);max-height:78%;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:16px 16px 8px">
+          <div>
+            <h3 style="font:600 18px system-ui;color:#1a1a1a;margin:0">Mercadinho do Zé</h3>
+            <p style="font:400 13px system-ui;color:#6b7280;margin:2px 0 0">Rua das Flores, 120 · 320 m</p>
+          </div>
+          <span style="font:24px system-ui;color:#6b7280;line-height:1">×</span>
+        </div>
+        <div style="padding:0 16px;overflow-y:auto">
+          <div style="padding:12px 0;border-bottom:1px solid #e5e5e0">
+            <div style="display:flex;justify-content:space-between;gap:8px">
+              <span style="font:500 15px system-ui;color:#1a1a1a">Arroz 5kg</span>
+              <span style="font:700 15px system-ui;color:#1a1a1a">R$ 24,90</span>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:4px">
+              <span style="font:13px system-ui;color:#6b7280">8 unid.</span>
+              <span style="font:13px system-ui;color:#1a5c3a">18min atrás</span>
+            </div>
+          </div>
+          <div style="padding:12px 0">
+            <div style="display:flex;justify-content:space-between;gap:8px">
+              <span style="font:500 15px system-ui;color:#1a1a1a">Óleo de soja 900ml</span>
+              <span style="font:700 15px system-ui;color:#1a1a1a">R$ 7,49</span>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:4px">
+              <span style="font:13px system-ui;color:#6b7280">15 unid.</span>
+              <span style="font:13px system-ui;color:#b45309">6h atrás</span>
+            </div>
+          </div>
+        </div>
+        <div style="padding:14px 16px 22px">
+          <div style="background:#1a5c3a;color:#fff;text-align:center;font:600 15px system-ui;padding:13px;border-radius:12px">Ver no mapa</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Own report — edit/delete + flag</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#f7f7f5;position:relative">
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,#e2e6dc 0 12px,#dbe0d3 12px 24px)"></div>
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,.4)"></div>
+      <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:16px 16px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,.2);max-height:78%;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:16px 16px 8px">
+          <div>
+            <h3 style="font:600 18px system-ui;color:#1a1a1a;margin:0">Feira do Bairro</h3>
+            <p style="font:400 13px system-ui;color:#6b7280;margin:2px 0 0">870 m</p>
+          </div>
+          <span style="font:24px system-ui;color:#6b7280;line-height:1">×</span>
+        </div>
+        <div style="padding:0 16px 4px">
+          <div style="padding:12px 0;border-bottom:1px solid #e5e5e0">
+            <div style="display:flex;justify-content:space-between;gap:8px">
+              <span style="font:500 15px system-ui;color:#1a1a1a">Banana prata (kg)</span>
+              <span style="font:700 15px system-ui;color:#1a1a1a">R$ 4,50</span>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:4px">
+              <span style="font:13px system-ui;color:#6b7280">20 unid.</span>
+              <span style="font:13px system-ui;color:#1a5c3a">4min atrás</span>
+            </div>
+            <p style="font:italic 13px system-ui;color:#6b7280;margin:4px 0 0">"Bem madura, boa pra vitamina"</p>
+            <div style="display:flex;gap:16px;margin-top:6px">
+              <span style="font:600 13px system-ui;color:#1a5c3a">Editar</span>
+              <span style="font:600 13px system-ui;color:#dc2626">Excluir</span>
+            </div>
+          </div>
+        </div>
+        <div style="padding:14px 16px 22px">
+          <div style="background:#1a5c3a;color:#fff;text-align:center;font:600 15px system-ui;padding:13px;border-radius:12px">Ver no mapa</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 4: REPORT FLOW -->
+<div style="padding:32px 48px 8px"><h2 style="font:700 16px system-ui;color:#1a1a1a;margin:0">4 · Report a discovery (light)</h2></div>
+<div style="padding:8px 48px 32px;display:flex;gap:32px;flex-wrap:wrap">
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Form — primary tier only</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#fff;display:flex;flex-direction:column">
+      <div style="padding:16px;border-bottom:1px solid #e5e5e0;display:flex;align-items:center;gap:12px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <h1 style="font:600 17px system-ui;color:#1a1a1a;margin:0">Relatar produto</h1>
+      </div>
+      <div style="padding:20px 16px;flex:1;display:flex;flex-direction:column;gap:20px">
+        <div>
+          <label style="display:block;font:500 13px system-ui;color:#1a1a1a;margin-bottom:5px">Produto</label>
+          <div style="border:1px solid #e5e5e0;border-radius:12px;padding:12px 14px;font:15px system-ui;color:#6b7280">Ex: Arroz 5kg, Leite 1L…</div>
+        </div>
+        <div>
+          <label style="display:block;font:500 13px system-ui;color:#1a1a1a;margin-bottom:5px">Local</label>
+          <div style="border:1px solid #e5e5e0;border-radius:12px;padding:12px 14px;font:15px system-ui;color:#6b7280;margin-bottom:8px">Nome do mercado / estabelecimento</div>
+          <div style="display:flex;align-items:center;gap:6px;color:#1a5c3a;font:500 13px system-ui">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+            Usar minha localização atual
+          </div>
+        </div>
+        <p style="font:14px system-ui;color:#6b7280;text-align:center;margin-top:8px">Informe produto e local para continuar</p>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Form — filled, secondary revealed</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#fff;display:flex;flex-direction:column">
+      <div style="padding:16px;border-bottom:1px solid #e5e5e0;display:flex;align-items:center;gap:12px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <h1 style="font:600 17px system-ui;color:#1a1a1a;margin:0">Relatar produto</h1>
+      </div>
+      <div style="padding:20px 16px;flex:1;display:flex;flex-direction:column;gap:18px;overflow-y:auto">
+        <div>
+          <label style="display:block;font:500 13px system-ui;color:#1a1a1a;margin-bottom:5px">Produto</label>
+          <div style="border:1px solid #e5e5e0;border-radius:12px;padding:12px 14px;font:15px system-ui;color:#1a1a1a">Arroz 5kg</div>
+        </div>
+        <div>
+          <label style="display:block;font:500 13px system-ui;color:#1a1a1a;margin-bottom:5px">Local</label>
+          <div style="border:1px solid #1a5c3a;background:rgba(26,92,58,.08);border-radius:12px;padding:10px 14px;font:500 14px system-ui;color:#1a5c3a">Mercadinho do Zé</div>
+          <p style="font:13px system-ui;color:#1a5c3a;display:flex;align-items:center;gap:4px;margin:6px 0 0">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            Mercadinho do Zé
+          </p>
+        </div>
+        <div>
+          <label style="display:block;font:500 13px system-ui;color:#1a1a1a;margin-bottom:5px">Preço relatado</label>
+          <div style="display:flex;align-items:center;border:1px solid #e5e5e0;border-radius:12px;padding:12px 14px">
+            <span style="color:#6b7280;font:15px system-ui;margin-right:6px">R$</span>
+            <span style="font:15px system-ui;color:#1a1a1a">24,90</span>
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font:500 13px system-ui;color:#1a1a1a;margin-bottom:5px">Quantidade</label>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:44px;height:44px;border:1px solid #e5e5e0;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#1a1a1a">−</div>
+            <div style="width:56px;text-align:center;font:15px system-ui;color:#1a1a1a;border:1px solid #e5e5e0;border-radius:12px;padding:12px 0">8</div>
+            <div style="width:44px;height:44px;border:1px solid #e5e5e0;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#1a1a1a">+</div>
+          </div>
+        </div>
+        <div style="background:#1a5c3a;color:#fff;text-align:center;font:600 15px system-ui;padding:13px;border-radius:12px">Continuar</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Confirm step</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#fff;display:flex;flex-direction:column">
+      <div style="padding:16px;border-bottom:1px solid #e5e5e0;display:flex;align-items:center;gap:12px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <h1 style="font:600 17px system-ui;color:#1a1a1a;margin:0">Confirmar</h1>
+      </div>
+      <div style="padding:20px 16px;flex:1;display:flex;flex-direction:column;gap:16px">
+        <h2 style="font:700 17px system-ui;color:#1a1a1a;margin:0">Confirmar relato</h2>
+        <div style="background:#f7f7f5;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between"><span style="font:13px system-ui;color:#6b7280">Produto</span><span style="font:500 13px system-ui;color:#1a1a1a">Arroz 5kg</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font:13px system-ui;color:#6b7280">Local</span><span style="font:500 13px system-ui;color:#1a1a1a">Mercadinho do Zé</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font:13px system-ui;color:#6b7280">Preço</span><span style="font:500 13px system-ui;color:#1a1a1a">R$ 24,90</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="font:13px system-ui;color:#6b7280">Quantidade</span><span style="font:500 13px system-ui;color:#1a1a1a">8 unidade(s)</span></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><path d="M9 12l2 2 4-4"/><path d="M12 3l7 3v5c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/></svg>
+          <p style="font:14px system-ui;color:#1a1a1a;margin:0">Ao confirmar, você declara que este preço é real e viu o produto hoje.</p>
+        </div>
+        <div style="background:#1a5c3a;color:#fff;text-align:center;font:600 15px system-ui;padding:13px;border-radius:12px">Confirmar relato</div>
+        <div style="text-align:center;font:500 14px system-ui;color:#6b7280">Editar</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Success</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center">
+      <div style="width:80px;height:80px;border-radius:50%;background:#1a5c3a;display:flex;align-items:center;justify-content:center;margin-bottom:18px">
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <h2 style="font:700 20px system-ui;color:#1a1a1a;margin:0 0 8px">Relato enviado!</h2>
+      <p style="font:14px system-ui;color:#6b7280;margin:0 0 28px;max-width:220px">Você ajudou alguém a encontrar esse produto.</p>
+      <div style="background:#1a5c3a;color:#fff;font:600 15px system-ui;padding:13px 32px;border-radius:999px">Ver no mapa</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 5: AUTH -->
+<div style="padding:32px 48px 8px"><h2 style="font:700 16px system-ui;color:#1a1a1a;margin:0">5 · Auth</h2></div>
+<div style="padding:8px 48px 32px;display:flex;gap:32px;flex-wrap:wrap">
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Sign in</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px">
+      <div style="width:100%;max-width:240px">
+        <h1 style="font:700 22px system-ui;color:#1a1a1a;margin:0 0 24px">Entrar</h1>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid #e5e5e0;border-radius:12px;padding:12px;font:500 14px system-ui;color:#1a1a1a;margin-bottom:16px">
+          <svg width="16" height="16" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Entrar com Google
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+          <div style="flex:1;height:1px;background:#e5e5e0"></div><span style="font:12px system-ui;color:#6b7280">ou</span><div style="flex:1;height:1px;background:#e5e5e0"></div>
+        </div>
+        <label style="display:block;font:500 13px system-ui;color:#1a1a1a;margin-bottom:5px">E-mail</label>
+        <div style="border:1px solid #e5e5e0;border-radius:12px;padding:12px 14px;font:15px system-ui;color:#6b7280;margin-bottom:12px">seu@email.com</div>
+        <label style="display:block;font:500 13px system-ui;color:#1a1a1a;margin-bottom:5px">Senha</label>
+        <div style="border:1px solid #e5e5e0;border-radius:12px;padding:12px 14px;font:15px system-ui;color:#6b7280;margin-bottom:16px">••••••••</div>
+        <div style="background:#1a5c3a;color:#fff;text-align:center;font:600 15px system-ui;padding:13px;border-radius:12px;margin-bottom:16px">Entrar</div>
+        <p style="text-align:center;font:14px system-ui;color:#6b7280;margin:0">Não tem conta? <span style="color:#1a5c3a;font:500 14px system-ui">Criar conta</span></p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 6: DARK -->
+<div style="padding:32px 48px 8px"><h2 style="font:700 16px system-ui;color:#1a1a1a;margin:0">6 · Dark theme</h2></div>
+<div style="padding:8px 48px 32px;display:flex;gap:32px;flex-wrap:wrap">
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Home — dark</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#12160f;position:relative">
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,#e2e6dc 0 12px,#dbe0d3 12px 24px);opacity:.9"></div>
+      <div style="position:absolute;left:38%;top:34%;width:14px;height:14px;border-radius:50%;background:#2563eb;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3)"></div>
+      <div style="position:absolute;left:55%;top:30%;background:#1b201a;border:1px solid #616f63;border-radius:999px;padding:4px 9px;font:700 11px system-ui;color:#3ea873">R$ 8,50</div>
+      <div style="position:absolute;left:64%;top:56%;background:#1b201a;border:1px solid #616f63;border-radius:999px;padding:4px 9px;font:700 11px system-ui;color:#d97b2e">R$ 12,00</div>
+      <div style="position:absolute;top:14px;left:14px;right:14px">
+        <div style="display:flex;align-items:center;gap:8px;background:#1b201a;border-radius:999px;box-shadow:0 1px 3px rgba(0,0,0,.3);padding:11px 14px;border:1px solid #616f63">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a3ac9f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/></svg>
+          <span style="font:15px system-ui;color:#a3ac9f">Buscar produto…</span>
+        </div>
+      </div>
+      <div style="position:absolute;bottom:24px;left:16px;background:rgba(18,22,15,.9);border:1px solid #616f63;border-radius:999px;padding:8px 14px;display:flex;align-items:center;gap:8px">
+        <span style="font:11px system-ui;color:#a3ac9f">Raio</span>
+        <div style="width:64px;height:4px;border-radius:2px;background:#616f63;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:40%;background:#3ea873;border-radius:2px"></div></div>
+        <span style="font:600 11px system-ui;color:#f1f3ef">2.0 km</span>
+      </div>
+      <div style="position:absolute;bottom:24px;right:16px;width:52px;height:52px;border-radius:50%;background:#1a5c3a;box-shadow:0 4px 12px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;color:#fff;font:300 26px system-ui">+</div>
+    </div>
+  </div>
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Place detail — dark</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#12160f;position:relative">
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,#e2e6dc 0 12px,#dbe0d3 12px 24px);opacity:.5"></div>
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,.55)"></div>
+      <div style="position:absolute;left:0;right:0;bottom:0;background:#12160f;border-radius:16px 16px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,.4);max-height:78%;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:16px 16px 8px">
+          <div>
+            <h3 style="font:600 18px system-ui;color:#f1f3ef;margin:0">Mercadinho do Zé</h3>
+            <p style="font:400 13px system-ui;color:#a3ac9f;margin:2px 0 0">320 m</p>
+          </div>
+          <span style="font:24px system-ui;color:#a3ac9f;line-height:1">×</span>
+        </div>
+        <div style="padding:0 16px">
+          <div style="padding:12px 0;border-bottom:1px solid #616f63">
+            <div style="display:flex;justify-content:space-between;gap:8px">
+              <span style="font:500 15px system-ui;color:#f1f3ef">Arroz 5kg</span>
+              <span style="font:700 15px system-ui;color:#f1f3ef">R$ 24,90</span>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:4px">
+              <span style="font:13px system-ui;color:#a3ac9f">8 unid.</span>
+              <span style="font:13px system-ui;color:#3ea873">18min atrás</span>
+            </div>
+          </div>
+        </div>
+        <div style="padding:14px 16px 22px">
+          <div style="background:#1a5c3a;color:#fff;text-align:center;font:600 15px system-ui;padding:13px;border-radius:12px">Ver no mapa</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SECTION 7: NEW SCREENS -->
+<div style="padding:32px 48px 8px"><h2 style="font:700 16px system-ui;color:#1a1a1a;margin:0">7 · New screens</h2></div>
+<div style="padding:8px 48px 56px;display:flex;gap:32px;flex-wrap:wrap">
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Watchlist & notifications inbox</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#fff;display:flex;flex-direction:column">
+      <div style="padding:16px;border-bottom:1px solid #e5e5e0;display:flex;align-items:center;justify-content:space-between">
+        <h1 style="font:600 17px system-ui;color:#1a1a1a;margin:0">Avisos</h1>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      </div>
+      <div style="padding:12px 16px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0">
+        <div style="padding:12px 0;border-bottom:1px solid #e5e5e0;display:flex;gap:10px;align-items:flex-start">
+          <div style="width:8px;height:8px;border-radius:50%;background:#1a5c3a;margin-top:6px;flex-shrink:0"></div>
+          <div>
+            <p style="font:500 14px system-ui;color:#1a1a1a;margin:0">Fone de ouvido Bluetooth apareceu a R$ 39,90</p>
+            <p style="font:13px system-ui;color:#6b7280;margin:2px 0 0">Loja Central · 1,2 km · 6min atrás</p>
+          </div>
+        </div>
+        <div style="padding:12px 0;border-bottom:1px solid #e5e5e0;display:flex;gap:10px;align-items:flex-start;opacity:.6">
+          <div style="width:8px;height:8px;border-radius:50%;background:#e5e5e0;margin-top:6px;flex-shrink:0"></div>
+          <div>
+            <p style="font:500 14px system-ui;color:#1a1a1a;margin:0">Leite em pó 400g abaixo de R$ 15</p>
+            <p style="font:13px system-ui;color:#6b7280;margin:2px 0 0">Mercadinho do Zé · 3h atrás</p>
+          </div>
+        </div>
+        <p style="font:600 12px ui-monospace,Menlo,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:18px 0 8px">Meus itens em observação</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <div style="border:1px solid #e5e5e0;border-radius:12px;padding:8px 12px;font:500 13px system-ui;color:#1a1a1a">Fone Bluetooth</div>
+          <div style="border:1px solid #e5e5e0;border-radius:12px;padding:8px 12px;font:500 13px system-ui;color:#1a1a1a">Leite em pó 400g</div>
+          <div style="border:1px dashed #e5e5e0;border-radius:12px;padding:8px 12px;font:500 13px system-ui;color:#6b7280">+ Adicionar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Profile / my reports</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#fff;display:flex;flex-direction:column">
+      <div style="padding:24px 16px 16px;display:flex;flex-direction:column;align-items:center;border-bottom:1px solid #e5e5e0">
+        <div style="width:64px;height:64px;border-radius:50%;background:#1a5c3a;display:flex;align-items:center;justify-content:center;color:#fff;font:700 20px system-ui;margin-bottom:10px">MC</div>
+        <p style="font:700 16px system-ui;color:#1a1a1a;margin:0">Mauricio Costa</p>
+        <p style="font:13px system-ui;color:#6b7280;margin:2px 0 0">Reportando desde jun. 2026</p>
+        <div style="display:flex;gap:20px;margin-top:14px">
+          <div style="text-align:center"><p style="font:700 17px system-ui;color:#1a1a1a;margin:0">27</p><p style="font:12px system-ui;color:#6b7280;margin:0">relatos</p></div>
+          <div style="text-align:center"><p style="font:700 17px system-ui;color:#1a1a1a;margin:0">92%</p><p style="font:12px system-ui;color:#6b7280;margin:0">confirmados</p></div>
+        </div>
+      </div>
+      <div style="padding:12px 16px;flex:1;overflow-y:auto">
+        <p style="font:600 12px ui-monospace,Menlo,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:6px 0 8px">Meus relatos ativos</p>
+        <div style="padding:11px 0;border-bottom:1px solid #e5e5e0;display:flex;justify-content:space-between">
+          <div><p style="font:500 14px system-ui;color:#1a1a1a;margin:0">Arroz 5kg</p><p style="font:12px system-ui;color:#6b7280;margin:2px 0 0">Mercadinho do Zé</p></div>
+          <span style="font:600 13px system-ui;color:#1a1a1a">R$ 24,90</span>
+        </div>
+        <div style="padding:11px 0;border-bottom:1px solid #e5e5e0;display:flex;justify-content:space-between">
+          <div><p style="font:500 14px system-ui;color:#1a1a1a;margin:0">Banana prata (kg)</p><p style="font:12px system-ui;color:#6b7280;margin:2px 0 0">Feira do Bairro</p></div>
+          <span style="font:600 13px system-ui;color:#1a1a1a">R$ 4,50</span>
+        </div>
+        <div style="padding:11px 0;display:flex;justify-content:space-between">
+          <div><p style="font:500 14px system-ui;color:#9ca3af;margin:0">Óleo de soja 900ml</p><p style="font:12px system-ui;color:#9ca3af;margin:2px 0 0">expirado</p></div>
+          <span style="font:600 13px system-ui;color:#9ca3af">R$ 7,49</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Item detail — price history (future)</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#fff;display:flex;flex-direction:column">
+      <div style="padding:16px;border-bottom:1px solid #e5e5e0;display:flex;align-items:center;gap:12px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <h1 style="font:600 17px system-ui;color:#1a1a1a;margin:0">Arroz 5kg</h1>
+      </div>
+      <div style="padding:16px;flex:1;overflow-y:auto">
+        <p style="font:600 12px ui-monospace,Menlo,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:0 0 10px">Preço na região (30 dias)</p>
+        <div style="background:#f7f7f5;border-radius:16px;padding:16px;margin-bottom:20px">
+          <svg width="100%" height="80" viewBox="0 0 260 80" preserveAspectRatio="none">
+            <polyline points="0,55 40,50 80,58 120,40 160,45 200,25 240,30 260,20" fill="none" stroke="#1a5c3a" stroke-width="2.5"/>
+          </svg>
+          <div style="display:flex;justify-content:space-between;margin-top:8px">
+            <span style="font:12px system-ui;color:#6b7280">R$ 22,90 min</span>
+            <span style="font:700 13px system-ui;color:#1a5c3a">R$ 24,90 hoje</span>
+            <span style="font:12px system-ui;color:#6b7280">R$ 28,50 máx</span>
+          </div>
+        </div>
+        <p style="font:600 12px ui-monospace,Menlo,monospace;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px">Disponível agora em</p>
+        <div style="padding:11px 0;border-bottom:1px solid #e5e5e0;display:flex;justify-content:space-between">
+          <div><p style="font:500 14px system-ui;color:#1a1a1a;margin:0">Mercadinho do Zé</p><p style="font:12px system-ui;color:#1a5c3a;margin:2px 0 0">18min atrás · 320m</p></div>
+          <span style="font:600 13px system-ui;color:#1a1a1a">R$ 24,90</span>
+        </div>
+        <div style="padding:11px 0;display:flex;justify-content:space-between">
+          <div><p style="font:500 14px system-ui;color:#1a1a1a;margin:0">Supermercado Bela Vista</p><p style="font:12px system-ui;color:#b45309;margin:2px 0 0">5h atrás · 1,4 km</p></div>
+          <span style="font:600 13px system-ui;color:#1a1a1a">R$ 26,00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p style="font:600 11px ui-monospace,Menlo,monospace;color:#9ca3af;margin:0 0 10px">Admin moderation queue (internal)</p>
+    <div style="width:300px;height:640px;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px -10px rgba(0,0,0,.25);background:#fff;display:flex;flex-direction:column">
+      <div style="padding:16px;border-bottom:1px solid #e5e5e0">
+        <h1 style="font:600 17px system-ui;color:#1a1a1a;margin:0">Denúncias</h1>
+        <p style="font:13px system-ui;color:#6b7280;margin:2px 0 0">3 abertas</p>
+      </div>
+      <div style="padding:12px 16px;flex:1;overflow-y:auto">
+        <div style="border:1px solid #e5e5e0;border-radius:12px;padding:12px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font:500 14px system-ui;color:#1a1a1a">Faca de caça 20cm</span>
+            <span style="font:600 11px system-ui;color:#dc2626;background:rgba(220,38,38,.1);padding:2px 8px;border-radius:999px">ilegal</span>
+          </div>
+          <p style="font:12px system-ui;color:#6b7280;margin:4px 0 10px">Denunciado por 2 usuários · há 40min</p>
+          <div style="display:flex;gap:10px">
+            <div style="flex:1;text-align:center;background:#dc2626;color:#fff;font:600 13px system-ui;padding:9px;border-radius:10px">Remover</div>
+            <div style="flex:1;text-align:center;border:1px solid #e5e5e0;color:#6b7280;font:600 13px system-ui;padding:9px;border-radius:10px">Ignorar</div>
+          </div>
+        </div>
+        <div style="border:1px solid #e5e5e0;border-radius:12px;padding:12px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font:500 14px system-ui;color:#1a1a1a">Camiseta time X (spam)</span>
+            <span style="font:600 11px system-ui;color:#b45309;background:rgba(180,83,9,.1);padding:2px 8px;border-radius:999px">spam</span>
+          </div>
+          <p style="font:12px system-ui;color:#6b7280;margin:4px 0 10px">Denunciado por 1 usuário · há 2h</p>
+          <div style="display:flex;gap:10px">
+            <div style="flex:1;text-align:center;background:#dc2626;color:#fff;font:600 13px system-ui;padding:9px;border-radius:10px">Remover</div>
+            <div style="flex:1;text-align:center;border:1px solid #e5e5e0;color:#6b7280;font:600 13px system-ui;padding:9px;border-radius:10px">Ignorar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+</body>
+</html>
