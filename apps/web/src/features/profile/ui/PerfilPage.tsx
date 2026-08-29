@@ -72,8 +72,6 @@ function SessionRow() {
   );
 }
 
-// New home for the theme toggle and the account controls, which used to live as fixed
-// pills in the map's top corners. The avatar header, the stat columns and the real
 const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 // Month and year are formatted separately and joined by hand: asking Intl for both at
 // once yields "jun. de 2026" in pt-BR, while the design specifies the compact "jun. 2026".
