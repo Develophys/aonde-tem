@@ -626,6 +626,11 @@ test.describe("Report screen", () => {
     await page.goto("/perfil");
     await nav(page).getByRole("link", { name: "Relatar produto" }).click();
     await expect(page).toHaveURL(/\/report$/);
+    // Wait for the route's lazy chunk to actually render, not just for the URL to change:
+    // /report is code-split and service workers are blocked here, so going offline while
+    // the import is still in flight fails it and React Router replaces the whole app —
+    // OfflineBanner included — with its default error element.
+    await expect(page.getByRole("heading", { name: "Relatar produto" })).toBeVisible();
 
     // The online probe above can never see OfflineBanner: it renders null when the tab is
     // online, which is how a fixed 44px strip over ReportPage's back button got through
