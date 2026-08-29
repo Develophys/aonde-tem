@@ -53,7 +53,13 @@ interface InfoScreenProps {
 // thing and the app's only full-color screen.
 function InfoScreen({ step, icon, title, body, children }: InfoScreenProps) {
   return (
-    <div className="flex-1 flex flex-col bg-surface px-6 pt-16 pb-8">
+    <div
+      className="flex-1 flex flex-col bg-surface px-6 pt-16"
+      // Android Chrome draws installed PWAs edge-to-edge with a 24–48px system-nav inset;
+      // the CTA stack sits at the very bottom of this screen, so a bare pb-8 would put it
+      // under the gesture bar.
+      style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 2rem)" }}
+    >
       <div className="flex-1 flex flex-col items-center justify-center text-center">
         <BadgeIcon>{icon}</BadgeIcon>
         <h1 className="text-text text-xl font-bold mb-2">{title}</h1>
@@ -97,7 +103,10 @@ export function OnboardingPage() {
       <p className="sr-only" aria-live="polite">{`Passo ${step + 1} de ${TOTAL_STEPS}`}</p>
 
       {step === 0 && (
-        <div className="flex-1 flex flex-col bg-brand text-white px-6 pt-16 pb-8">
+        <div
+          className="flex-1 flex flex-col bg-brand text-white px-6 pt-16"
+          style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 2rem)" }}
+        >
           <div className="flex-1 flex flex-col items-center justify-center text-center">
             <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mb-6 animate-badge-in">
               <svg

@@ -55,7 +55,11 @@ export function PlaceModal({ placeId, onFlyTo }: Props) {
     <BottomSheet
       label={data?.name ? `Detalhes de ${data.name}` : "Detalhes do local"}
       onClose={clearSelected}
-      className="pb-8 animate-slide-up max-h-[80vh] flex flex-col"
+      className="animate-slide-up max-h-[80vh] flex flex-col"
+      // The panel's bottom padding is what keeps the pinned "Ver no mapa" footer off the
+      // gesture area: Android Chrome draws installed PWAs edge-to-edge with a 24–48px
+      // inset, so a bare pb-8 puts the primary CTA under the system nav bar.
+      style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 2rem)" }}
     >
       {/* Header */}
       <div className="flex items-start justify-between px-4 pt-4 pb-2 shrink-0">

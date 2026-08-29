@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import { useEffect, useId, useRef, type CSSProperties, type ReactNode } from "react";
 import { pushDialog, popDialog, isTopDialog } from "../model/dialog-stack.js";
 
 const FOCUSABLE_SELECTOR =
@@ -8,12 +8,14 @@ interface Props {
   readonly label: string;
   readonly onClose: () => void;
   readonly className?: string;
+  /** Inline styles for the sheet panel — for values Tailwind can't express, e.g. env() safe-area insets. */
+  readonly style?: CSSProperties;
   readonly children: ReactNode;
 }
 
 // Stacks below other bottom sheets (e.g. FlagSheet opened from PlaceModal) rely on
 // the shared dialog stack, not DOM nesting, to know which one should trap Tab/Escape.
-export function BottomSheet({ label, onClose, className = "", children }: Props) {
+export function BottomSheet({ label, onClose, className = "", style, children }: Props) {
   const id = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
@@ -85,6 +87,7 @@ export function BottomSheet({ label, onClose, className = "", children }: Props)
         aria-modal="true"
         aria-label={label}
         className={`absolute bottom-0 left-0 right-0 bg-surface rounded-t-sheet shadow-xl z-(--z-modal) ${className}`}
+        style={style}
       >
         {children}
       </div>
