@@ -1,6 +1,21 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
+import { seedAppState } from "./support/app-state.js";
+
+// The search bar rests as a 44x44 magnifier (see features/seek/ui/SearchBar.tsx); the
+// input only exists once it is expanded. Every test that types has to go through here.
+async function openSearch(page: Page) {
+  await page.getByRole("button", { name: "Buscar produto" }).click();
+  return page.getByPlaceholder("Buscar produto…");
+}
 
 test.describe("Seek smoke", () => {
+  // OnboardingGate redirects a profile that has never seen the intro to /onboarding, so a
+  // fresh Playwright context would never reach the map. Seed the same flag the app itself
+  // persists rather than bypassing the gate.
+  test.beforeEach(async ({ page }) => {
+    await seedAppState(page);
+  });
+
   test("map canvas renders on load", async ({ page }) => {
     await page.context().setGeolocation({ latitude: -23.55, longitude: -46.63 });
     await page.context().grantPermissions(["geolocation"]);
@@ -15,7 +30,7 @@ test.describe("Seek smoke", () => {
     await page.goto("/");
     await expect(page.locator("canvas")).toBeVisible({ timeout: 10_000 });
     // Type in the search box — it should not throw
-    const searchInput = page.getByPlaceholder("Buscar produto…");
+    const searchInput = await openSearch(page);
     await searchInput.fill("arroz");
     await expect(searchInput).toHaveValue("arroz");
     // Wait briefly for any query to resolve; no error banner should appear
@@ -28,7 +43,8 @@ test.describe("Seek smoke", () => {
     await page.context().grantPermissions(["geolocation"]);
     await page.goto("/");
     await expect(page.locator("canvas")).toBeVisible({ timeout: 10_000 });
-    await page.getByPlaceholder("Buscar produto…").fill("produto-inexistente-xyz-123");
+    const searchInput = await openSearch(page);
+    await searchInput.fill("produto-inexistente-xyz-123");
     await page.waitForTimeout(1_500);
     await expect(page.getByText("Ninguém relatou")).toBeVisible();
   });
