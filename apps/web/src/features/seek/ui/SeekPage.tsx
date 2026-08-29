@@ -1,5 +1,4 @@
 import { useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { MapShell } from "../../map/ui/MapShell.js";
 import { SearchBar } from "./SearchBar.js";
 import { EmptyState } from "./EmptyState.js";
@@ -13,7 +12,6 @@ import { useDebounce } from "use-debounce";
 const SAVE_DATA_RESULT_LIMIT = 20;
 
 export function SeekPage() {
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const { coords, denied, loading } = useGeolocation();
   const radius = useAppStore((s) => s.mapRadius);
@@ -63,7 +61,7 @@ export function SeekPage() {
 
       {/* Fetch error — distinct from a true empty result, so patchy connections don't read as "nobody reported this" */}
       {!isLoading && isError && (
-        <div className="absolute bottom-20 left-0 right-0 z-10 px-6">
+        <div className="absolute bottom-(--bottom-nav-clearance) left-0 right-0 z-10 px-6">
           <div className="bg-surface rounded-sheet shadow px-4 py-4 text-center">
             <p className="text-text text-sm font-medium mb-2">Não foi possível buscar relatos.</p>
             <button
@@ -79,7 +77,7 @@ export function SeekPage() {
 
       {/* Empty state — shown when search has results=0 and not loading, and the fetch actually succeeded */}
       {!isLoading && !isError && discoveries.length === 0 && (
-        <div className="absolute bottom-20 left-0 right-0 z-10">
+        <div className="absolute bottom-(--bottom-nav-clearance) left-0 right-0 z-10">
           <EmptyState query={searchQuery || undefined} />
         </div>
       )}
@@ -91,9 +89,9 @@ export function SeekPage() {
         </div>
       )}
 
-      {/* Radius slider — bottom-left, above FAB */}
+      {/* Radius slider — bottom-left, clearing the bottom nav */}
       {!selectedPlaceId && (
-        <div className="absolute bottom-6 left-4 z-10 bg-surface/95 rounded-full px-4 py-2 shadow-sm border border-border flex items-center gap-2.5">
+        <div className="absolute bottom-(--bottom-nav-clearance) left-4 z-10 bg-surface/95 rounded-full px-4 py-2 shadow-sm border border-border flex items-center gap-2.5">
           <span className="text-xs text-text-muted">Raio</span>
           <input
             type="range"
@@ -110,16 +108,6 @@ export function SeekPage() {
           </span>
         </div>
       )}
-
-      {/* FAB — report discovery */}
-      <button
-        type="button"
-        className="absolute bottom-6 right-4 z-10 bg-brand text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-2xl"
-        aria-label="Relatar produto"
-        onClick={() => navigate("/report")}
-      >
-        +
-      </button>
     </div>
   );
 }

@@ -96,3 +96,16 @@ describe("SeekPage — map mount gating", () => {
     expect(screen.getByText(/Localização negada/)).toBeInTheDocument();
   });
 });
+
+describe("SeekPage — report action", () => {
+  it("no longer renders its own report FAB, since BottomNav owns that action", () => {
+    setupGeolocation({
+      coords: { lat: -23.5, lng: -46.6, accuracy: 10 },
+      denied: false,
+      loading: false,
+    });
+    setup();
+
+    expect(screen.queryByRole("button", { name: "Relatar produto" })).not.toBeInTheDocument();
+  });
+});
