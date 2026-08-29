@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-04T00:00:00Z",
+  "generatedAt": "2026-08-29T00:00:00Z",
   "title": "Design System: Aonde Tem",
   "extensions": {
     "colorMeta": {
@@ -156,9 +156,12 @@
     "typographyMeta": {
       "headline": {
         "displayName": "Headline",
-        "purpose": "Page-level titles (auth screens, report flow steps)."
+        "purpose": "Full-screen page titles (auth screens, onboarding welcome). A 1.25rem step of the same role is used on centered full-screen moments below an icon badge."
       },
-      "title": { "displayName": "Title", "purpose": "Section and bottom-sheet titles." },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Screen headers and bottom-sheet titles — the most-used heading in the app."
+      },
       "body": {
         "displayName": "Body",
         "purpose": "Input text, paragraph copy, primary button labels — never below 16px on real inputs."
@@ -169,24 +172,28 @@
       },
       "caption": {
         "displayName": "Caption",
-        "purpose": "Hints, freshness timestamps, helper copy under inputs."
+        "purpose": "Hints, freshness timestamps, helper copy, the offline banner; at 600 weight uppercase it is the Perfil settings overline. Smallest size in page content."
+      },
+      "nav-label": {
+        "displayName": "Nav Label",
+        "purpose": "The bottom tab bar's four labels only — the one deliberate step below Caption, always paired with a 24px icon inside a 44px target."
       }
     },
     "shadows": [
       {
         "name": "ambient",
         "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
-        "purpose": "Search bar, radius pill, fetch-error card — a light lift to read as 'on top of the map.'"
+        "purpose": "Expanded search bar, radius pill, fetch-error card, theme-switch knob — a light lift to read as 'on top of.'"
       },
       {
         "name": "menu",
         "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
-        "purpose": "Account avatar chip, account dropdown, toast stack."
+        "purpose": "Collapsed search magnifier, recenter control, suggestion listboxes, the raised + report control, toast stack."
       },
       {
         "name": "sheet",
         "value": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
-        "purpose": "The two bottom sheets — strongest shadow in the system."
+        "purpose": "The BottomSheet primitive — strongest shadow in the system. The edge-anchored bottom tab bar takes border-t instead, never a shadow."
       }
     ],
     "motion": [
@@ -196,18 +203,82 @@
         "purpose": "Bottom sheet entrance (translateY 100% → 0)."
       },
       {
+        "name": "backdrop-in",
+        "value": "opacity 0.2s ease-out",
+        "purpose": "Sheet scrim fade-in, paired with slide-up so dimming and panel arrive together."
+      },
+      {
         "name": "toast-in",
         "value": "0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "Toast entrance (opacity + translateY fade-up)."
+        "purpose": "Toast entrance (opacity + translateY fade-up); reused for the report form's secondary-tier reveal."
+      },
+      {
+        "name": "badge-in",
+        "value": "0.25s cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Soft entrance for the shared 80px icon badge (empty state, ComingSoon, onboarding, error boundary)."
+      },
+      {
+        "name": "success-pop",
+        "value": "0.35s cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Reserved for the one celebration moment — the report-success badge settling in."
+      },
+      {
+        "name": "check-draw",
+        "value": "0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards",
+        "purpose": "The success checkmark drawing itself via stroke-dashoffset once the circle has landed."
       }
     ],
     "zIndex": [
-      { "name": "dropdown", "value": 20 },
-      { "name": "sticky", "value": 30 },
-      { "name": "modal-backdrop", "value": 40 },
-      { "name": "modal", "value": 50 },
-      { "name": "toast", "value": 60 },
-      { "name": "tooltip", "value": 70 }
+      {
+        "name": "map-chrome",
+        "value": 10
+      },
+      {
+        "name": "dropdown",
+        "value": 20
+      },
+      {
+        "name": "sticky",
+        "value": 30
+      },
+      {
+        "name": "modal-backdrop",
+        "value": 40
+      },
+      {
+        "name": "modal",
+        "value": 50
+      },
+      {
+        "name": "toast",
+        "value": 60
+      },
+      {
+        "name": "tooltip",
+        "value": 70
+      }
+    ],
+    "layout": [
+      {
+        "name": "header-inset-top",
+        "value": "calc(env(safe-area-inset-top, 0px) + 12px)",
+        "purpose": "Top padding for an in-flow page header row. The only top-edge token; nothing is position:fixed at the top of any route."
+      },
+      {
+        "name": "bottom-nav-height",
+        "value": "56px",
+        "purpose": "The bottom tab bar's own height, before the safe-area inset."
+      },
+      {
+        "name": "bottom-nav-clearance",
+        "value": "calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 12px)",
+        "purpose": "The offset every element floating above the bar anchors to, and the bottom padding of every scrollable tabbed page."
+      },
+      {
+        "name": "full-screen-bottom-pad",
+        "value": "calc(env(safe-area-inset-bottom, 0px) + 2rem)",
+        "purpose": "Bottom padding for full-screen routes and sheet panels that pin a CTA to the bottom edge, clearing the Android gesture bar."
+      }
     ]
   },
   "components": [
@@ -223,7 +294,7 @@
       "name": "Pill CTA",
       "kind": "button",
       "refersTo": "button-pill",
-      "description": "Standalone high-commitment CTA — report FAB, empty-state and success-screen actions.",
+      "description": "Standalone high-commitment CTA — onboarding actions, Perfil sign-in/out, report-success and error-boundary actions.",
       "html": "<button class=\"ds-btn-pill\">Relatar agora</button>",
       "css": ".ds-btn-pill { background: #1a5c3a; color: #ffffff; font: 600 0.875rem/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif; border: none; border-radius: 9999px; padding: 12px 32px; cursor: pointer; transition: opacity 0.15s ease-out; } .ds-btn-pill:focus-visible { outline: 2px solid #1a5c3a; outline-offset: 2px; } .ds-btn-pill:active { opacity: 0.85; }"
     },
@@ -252,10 +323,34 @@
       "css": ".ds-chip { display: block; width: 100%; text-align: left; background: #ffffff; color: #1a1a1a; border: 1px solid #e5e5e0; border-radius: 0.75rem; padding: 12px 16px; min-height: 44px; font: 500 0.875rem/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif; cursor: pointer; } .ds-chip:hover { background: #f7f7f5; } .ds-chip:focus-visible { outline: 2px solid #1a5c3a; outline-offset: 2px; } .ds-chip-selected { border-color: #1a5c3a; background: rgba(26, 92, 58, 0.1); color: #1a5c3a; } /* light-mode snapshot — selected state uses the accent token, which brightens to #3ea873 in dark mode */"
     },
     {
+      "name": "Bottom Tab Bar",
+      "kind": "nav",
+      "refersTo": "bottom-nav",
+      "description": "The app's global navigation: Mapa / Avisos / [+] / Perfil, fixed to the bottom edge by the AppShell layout route. Edge-anchored, so it takes border-t and never a shadow.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Navegação principal\"><a class=\"ds-nav-tab\" href=\"#\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polygon points=\"1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6\"/><line x1=\"8\" y1=\"2\" x2=\"8\" y2=\"18\"/><line x1=\"16\" y1=\"6\" x2=\"16\" y2=\"22\"/></svg><span>Mapa</span></a><a class=\"ds-nav-tab\" href=\"#\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9\"/><path d=\"M13.73 21a2 2 0 0 1-3.46 0\"/></svg><span>Avisos</span></a><div class=\"ds-nav-center\"><a class=\"ds-nav-report\" href=\"#\" aria-label=\"Relatar produto\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><line x1=\"12\" y1=\"5\" x2=\"12\" y2=\"19\"/><line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\"/></svg></a></div><a class=\"ds-nav-tab ds-nav-tab-active\" href=\"#\" aria-current=\"page\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2\"/><circle cx=\"12\" cy=\"7\" r=\"4\"/></svg><span>Perfil</span></a></nav>",
+      "css": ".ds-nav { display: grid; grid-template-columns: repeat(4, 1fr); align-items: center; height: 56px; background: #ffffff; border-top: 1px solid #e5e5e0; } .ds-nav-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 44px; text-decoration: none; color: #6b7280; font: 500 0.6875rem/1.2 system-ui, -apple-system, 'Segoe UI', sans-serif; } .ds-nav-tab svg { width: 24px; height: 24px; } .ds-nav-tab-active { color: #1a5c3a; } .ds-nav-center { display: flex; align-items: center; justify-content: center; } .ds-nav-report { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 9999px; background: #1a5c3a; color: #ffffff; transform: translateY(-20px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); } .ds-nav-report svg { width: 28px; height: 28px; } .ds-nav-report:focus-visible, .ds-nav-tab:focus-visible { outline: 2px solid #1a5c3a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Raised Report Action",
+      "kind": "button",
+      "refersTo": "bottom-nav-report",
+      "description": "The tab bar's centre control: a 56px Trust Green circle lifted 20px above the bar's top edge, navigating to /report. The one element in the bar that floats over live map content, and therefore the one that earns a shadow.",
+      "html": "<a class=\"ds-report-action\" href=\"#\" aria-label=\"Relatar produto\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><line x1=\"12\" y1=\"5\" x2=\"12\" y2=\"19\"/><line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\"/></svg></a>",
+      "css": ".ds-report-action { display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 9999px; background: #1a5c3a; color: #ffffff; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); } .ds-report-action svg { width: 28px; height: 28px; } .ds-report-action:active { opacity: 0.9; } .ds-report-action:focus-visible { outline: 2px solid #1a5c3a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Collapsed Search",
+      "kind": "custom",
+      "refersTo": "search-collapsed",
+      "description": "The map's resting search affordance: a 44px magnifier in the top-left that expands into the full field with a product-suggestion dropdown, and collapses again with the ×.",
+      "html": "<div class=\"ds-search-demo\"><button class=\"ds-search-collapsed\" aria-label=\"Buscar produto\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"6\"/><line x1=\"21\" y1=\"21\" x2=\"16.65\" y2=\"16.65\"/></svg></button><div class=\"ds-search-expanded\"><span class=\"ds-search-glyph\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"6\"/><line x1=\"21\" y1=\"21\" x2=\"16.65\" y2=\"16.65\"/></svg></span><input class=\"ds-search-input\" type=\"text\" placeholder=\"Buscar produto…\" aria-label=\"Buscar produto\" /><button class=\"ds-search-close\" aria-label=\"Fechar busca\">×</button></div></div>",
+      "css": ".ds-search-demo { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; } .ds-search-collapsed { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 9999px; background: #ffffff; color: #6b7280; border: 1px solid #e5e5e0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); cursor: pointer; } .ds-search-collapsed svg { width: 20px; height: 20px; } .ds-search-expanded { display: flex; align-self: stretch; align-items: center; gap: 8px; background: #ffffff; border: 1px solid #e5e5e0; border-radius: 9999px; padding: 12px 16px; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); } .ds-search-glyph { display: flex; color: #6b7280; flex-shrink: 0; } .ds-search-glyph svg { width: 20px; height: 20px; } .ds-search-input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font: 400 1rem/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; color: #1a1a1a; } .ds-search-input::placeholder { color: #6b7280; } .ds-search-close { display: flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; margin: -12px -16px -12px 0; border: none; background: none; color: #6b7280; font-size: 1.25rem; line-height: 1; cursor: pointer; }"
+    },
+    {
       "name": "Bottom Sheet",
       "kind": "custom",
       "refersTo": "bottom-sheet",
-      "description": "Shared dialog primitive for 'sheet over the map' surfaces — place details, flag/report.",
+      "description": "Shared dialog primitive for 'sheet over the map' surfaces — place details, flag, edit, delete confirmation.",
       "html": "<div class=\"ds-sheet\" role=\"dialog\" aria-modal=\"true\" aria-label=\"Denunciar\"><h2 class=\"ds-sheet-title\">Denunciar</h2><p class=\"ds-sheet-body\">Conteúdo do sheet…</p></div>",
       "css": ".ds-sheet { position: relative; background: #ffffff; border-radius: 1rem 1rem 0 0; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1); padding: 24px; } .ds-sheet-title { font: 700 1.125rem/1.375 system-ui, -apple-system, 'Segoe UI', sans-serif; color: #1a1a1a; margin: 0 0 16px; } .ds-sheet-body { font: 400 1rem/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; color: #1a1a1a; margin: 0; }"
     },
@@ -278,66 +373,98 @@
   ],
   "narrative": {
     "northStar": "The Neighborhood Scout",
-    "overview": "Aonde Tem is built to feel like a trusted local who already checked the shelves for you — plain, quick, and reliable rather than clever or performative. Every screen exists to answer one of two questions fast: where is it, and how fresh is that answer — so the interface stays out of the way of the map, the price, and the timestamp. The voice is Brazilian-Portuguese-first, friendly and practical, the way a helpful neighbor talks, never markety or hype-driven.\n\nThis system explicitly rejects the generic AI-tool look: no purple/indigo gradients, no glassmorphism, no neon-on-black dashboards, no fake-metric hero sections, no gradient text, no side-stripe card borders, no emoji standing in for real iconography, and no over-rounded 'friendly SaaS' everything. It is a single-brand-green, mostly-flat, map-first tool, not a marketing surface.",
+    "overview": "Aonde Tem is built to feel like a trusted local who already checked the shelves for you — plain, quick, and reliable rather than clever or performative. Every screen exists to answer one of two questions fast: *where is it, and how fresh is that answer* — so the interface stays out of the way of the map, the price, and the timestamp. The voice is Brazilian-Portuguese-first, friendly and practical, the way a helpful neighbor talks, never markety or hype-driven.\n\nThe shell is a **phone app shape, not a web page shape**: a fixed bottom tab bar carries global navigation, the map owns the whole canvas above it, and nothing is pinned to the top of the screen. Chrome that used to hover in the top corners has been pushed either into the tab bar or into a real destination screen, so the map's most valuable real estate — the middle and the top — stays uncovered. The one control that still floats is the raised `+` in the centre of the bar, because reporting is the one action a user must be able to reach with a thumb from anywhere.\n\nThis system explicitly rejects the generic AI-tool look: no purple/indigo gradients, no glassmorphism, no neon-on-black dashboards, no fake-metric hero sections, no gradient text, no side-stripe card borders, no emoji standing in for real iconography, and no over-rounded \"friendly SaaS\" everything. It is a single-brand-green, mostly-flat, map-first tool, not a marketing surface.",
     "keyCharacteristics": [
       "Map-first: the interface is a thin, legible layer of cards and sheets floating over MapLibre, never burying it.",
-      "One accent color doing double duty: Trust Green is both the brand identity and the 'fresh Report' state color.",
-      "Flat at rest, shadowed only when floating above the map (search bar, FAB, bottom sheets, toasts).",
-      "One type family, fixed rem scale, five weight/size roles — no display face, no fluid clamp() sizing.",
+      "Bottom-anchored: **Mapa · Avisos · [+] · Perfil** is the app's one persistent piece of chrome, and it lives in thumb reach.",
+      "One accent color doing double duty: Trust Green is both the brand identity and the \"fresh Report\" state color.",
+      "Flat at rest, shadowed only when floating above the map (the raised `+`, the collapsed/expanded search, the radius pill, the recenter control, dropdowns, toasts, bottom sheets).",
+      "One type family, fixed rem scale, six weight/size roles — no display face, no fluid `clamp()` sizing.",
       "44px minimum touch targets as a near-universal, deliberate discipline (mobile, one-handed, on the move).",
-      "Light and dark themes, user-toggled — every token pair is contrast-verified independently in each theme."
+      "Light and dark themes, user-toggled from Perfil (not just OS-preference-driven) — every token pair is contrast-verified independently in each theme."
     ],
     "rules": [
       {
         "name": "The Trust Green Rule",
-        "body": "The 'fresh' state color and the on-surface accent color are the same CSS variable on purpose (--color-fresh: var(--color-accent)). A user should feel the same 'this is good, act on it' signal whether green appears on a Report's timestamp or a link. The fill token (--color-brand, buttons) is allowed to diverge from the accent token across themes — a button's contrast pair is against white text, not the page.",
+        "body": "The \"fresh\" state color and the on-surface accent color are the *same CSS variable* on purpose (`--color-fresh: var(--color-accent)`), not just a matching hex copy-paste — a user should feel the same \"this is good, act on it\" signal whether green appears on a Report's timestamp, on the active tab label, or on a link. This holds in both themes even though the accent value itself shifts between them. The fill token (`--color-brand`) is intentionally allowed to diverge from the accent token across themes — a fill's contrast pair is against white text, not the page, so it doesn't need to move.",
         "section": "colors"
       },
       {
         "name": "The One Accent Rule",
-        "body": "Trust Green (fill or accent) is the only saturated color on any given screen. Aging Amber and Stale Gray are muted, functional, and only ever apply to freshness labels.",
+        "body": "Trust Green (as fill or accent) is the only saturated color on any given screen. Aging Amber and Stale Gray are muted, functional, and only ever apply to freshness and degraded-state labels — they are not a second and third accent to decorate with. The single screen that is allowed to be *entirely* Trust Green is the onboarding welcome screen; it is the app's one full-bleed brand moment, and nothing else in the product may claim a second one.",
+        "section": "colors"
+      },
+      {
+        "name": "The MapLibre Escape Hatch Rule",
+        "body": "MapLibre's paint API (`circle-color`, etc.) needs literal color strings — it cannot consume CSS custom properties. `apps/web/src/features/map/model/map-colors.ts` holds the one permitted set of duplicated hex literals (`MAP_COLORS.brand`/`.fresh`/`.aging`/`.stale`), each commented against its `index.css` counterpart. Never inline a fresh hex string directly into a MapLibre paint object or a map-layer JS file — import from `MAP_COLORS` instead, so a palette change has exactly two places to touch, not an unknown number. This does not apply to DOM content rendered on top of the map (markers, popups) — those are ordinary CSS and should reference the real token (e.g. `bg-user-location`).",
         "section": "colors"
       },
       {
         "name": "The Single-Family Rule",
-        "body": "Product UI doesn't need a display/body pairing. One well-tuned system sans carries headings, labels, body, and data.",
+        "body": "Product UI doesn't need a display/body pairing. One well-tuned system sans carries headings, labels, body, and data — a second family would only add load weight and visual noise for zero legibility gain here.",
         "section": "typography"
       },
       {
+        "name": "The Tabular Price Rule",
+        "body": "Anything numeric that a user compares down a column — prices in the place-detail sheet, the radius readout on the map — sets `tabular-nums`, so digits don't shimmy as values update. Prices additionally take Ink at `font-bold` while their product name stays `font-medium`: the price is the thing the eye is hunting for.",
+        "section": "typography"
+      },
+      {
+        "name": "The One-Edge Rule",
+        "body": "Only the bottom edge of the screen is permanently occupied. Nothing may be pinned to the top: a screen's header is an in-flow row that pads with `--header-inset-top`, and any transient top-edge element (the offline banner) is `pointer-events-none` so it cannot swallow taps on the affordances underneath it — the back button, the screen heading, the collapsed magnifier.",
+        "section": "layout"
+      },
+      {
+        "name": "The Clearance-Token Rule",
+        "body": "Anything that floats above the tab bar reads `--bottom-nav-clearance`; anything that pads clear of it reads the same token. Hardcoding a pixel value is how the recenter control ended up 40px out of line with the rest of the map chrome. One token, so a change to the bar's height moves everything together.",
+        "section": "layout"
+      },
+      {
+        "name": "The Search Wrapper Rule",
+        "body": "A positioned, `z-`indexed wrapper is a stacking context: a child's own `z-(--z-dropdown)` only orders it against its siblings *inside* that wrapper. The map's search wrapper therefore carries the dropdown tier itself, rather than sitting at `z-10` with the rest of the map chrome — otherwise the \"Buscando…\" pill, later in DOM order at the same `z-10`, paints over the first suggestion. Any new overlay that opens a list over other map chrome must be promoted the same way.",
+        "section": "layout"
+      },
+      {
         "name": "The Floating-Only Rule",
-        "body": "Shadow means 'this is temporarily covering the map or the page,' never 'this card is fancier than that card.' A shadow on a static content card is a bug, not a style choice.",
-        "section": "elevation"
+        "body": "Shadow means \"this is temporarily covering the map or the page,\" never \"this card is fancier than that card.\" A shadow on a static content card is a bug, not a style choice. The bottom tab bar is the clarifying case: it is anchored to the screen edge and separates itself with `border-t border-border`, **not** a shadow — but the raised `+` inside it is lifted 20px above the bar's top edge and genuinely floats over live map content, so it keeps `shadow-lg`. One component, both sides of the rule.",
+        "section": "elevation-depth"
       },
       {
         "name": "The Two-Radius Rule",
-        "body": "rounded-control (12px) is for anything living inside a form, list, or sheet. rounded-full is reserved for a small, deliberate set of standalone commitment-moment CTAs, the account avatar, and plain circular badges/icons. Both --radius-control and --radius-sheet are real @theme tokens in index.css, backing genuine rounded-control / rounded-sheet / rounded-t-sheet utility classes.",
-        "section": "components"
+        "body": "`rounded-control` (12px) is for anything living inside a form, list, or sheet. `rounded-sheet` (16px) is for the panel that contains them. `rounded-full` is reserved for the Pill CTA tier, circular icon controls, and plain circular badges. Don't introduce a third radius — pick whichever tier matches the element's role. *Known deviation:* the map's \"localização negada\" notice still carries a stray `rounded-lg`; it should be `rounded-control`.",
+        "section": "shapes"
       },
       {
-        "name": "The MapLibre Escape Hatch Rule",
-        "body": "MapLibre's paint API needs literal color strings — it cannot consume CSS custom properties. apps/web/src/features/map/model/map-colors.ts holds the one permitted set of duplicated hex literals (MAP_COLORS.brand/.fresh/.aging/.stale), each commented against its index.css counterpart. Never inline a fresh hex string into a MapLibre paint object — import from MAP_COLORS instead. DOM content over the map (markers, popups) is ordinary CSS and should reference the real token (e.g. bg-user-location), not this module.",
-        "section": "colors"
+        "name": "The Circle-Is-a-Target Rule",
+        "body": "Every circle in the chrome is also a tap target and is sized as one: the collapsed search magnifier and the recenter control are 44×44, the raised report `+` is 56×56. A circle smaller than 44px is decoration (a marker, a progress dot, a badge), never a control.",
+        "section": "shapes"
       }
     ],
     "dos": [
-      "Do keep Trust Green as the only saturated accent color on any screen — Aging Amber and Stale Gray are functional freshness labels only, never decorative.",
-      "Do use the system font stack everywhere; never load a webfont for this product.",
-      "Do give every button, chip, and icon-only control a 44×44px minimum hit target.",
-      "Do reserve shadow for things floating above the map (search bar, FABs, dropdown, toasts, bottom sheets) — flat everywhere else.",
-      "Do build any new 'sheet over content' surface on the shared BottomSheet primitive (dialog role, focus trap, Escape-to-close), not a bespoke position: absolute div.",
-      "Do use text-accent / border-accent / ring-accent / bg-accent/10 when Trust Green appears as text, a border, a focus ring, or a translucent tint directly on a surface. Reserve bg-brand for solid fills under white text.",
-      "Do reference the semantic z-index scale (z-dropdown 20 → z-sticky 30 → z-modal-backdrop 40 → z-modal 50 → z-toast 60 → z-tooltip 70) via the z-(--z-name) syntax for any new stacking-context element.",
-      "Do use rounded-control / rounded-sheet / rounded-t-sheet for any new rectangular control or card — both are real --radius-* tokens in index.css, not raw Tailwind numbers. Reach for bare rounded-full only for the Pill CTA tier or a plain circular badge/icon.",
-      "Do import from map-colors.ts's MAP_COLORS for any MapLibre paint-layer color — never inline a fresh hex literal into a paint object. DOM content drawn over the map should reference the real CSS token instead (e.g. bg-user-location)."
+      "**Do** keep Trust Green as the only saturated accent color on any screen — Aging Amber and Stale Gray are functional freshness labels only, never decorative. The onboarding welcome screen is the single sanctioned full-bleed brand moment; don't create a second one.",
+      "**Do** use the system font stack everywhere; never load a webfont for this product.",
+      "**Do** give every button, chip, and icon-only control a 44×44px minimum hit target — and treat 11px Nav Label as belonging to the tab bar alone.",
+      "**Do** anchor anything that floats above or pads clear of the bottom bar to `--bottom-nav-clearance`, and pad in-flow page headers with `--header-inset-top`. Never hardcode the arithmetic.",
+      "**Do** reserve shadow for things floating above the map or the page (the raised `+`, search, radius pill, recenter, dropdowns, toasts, bottom sheets) — flat everywhere else, and `border-t` rather than a shadow for the edge-anchored tab bar.",
+      "**Do** pad full-screen routes and sheet panels that pin content to the bottom with `calc(env(safe-area-inset-bottom, 0px) + 2rem)`, so a primary CTA never lands under the Android gesture bar.",
+      "**Do** build any new \"sheet over content\" surface on the shared `BottomSheet` primitive (dialog role, scrim, focus trap, Escape-to-close), not a bespoke `position: absolute` div — and use the shared `GhostButton` for secondary actions rather than hand-rolling a fourth variant.",
+      "**Do** use `text-accent` / `border-accent` / `ring-accent` / `bg-accent/10` when Trust Green appears as text, a border, a focus ring, or a translucent tint directly on a surface. Reserve `bg-brand` for solid fills under white text. Using the fill token for an on-surface accent is invisible or badly-contrasted in dark mode.",
+      "**Do** reference the semantic z-index scale (`--z-dropdown` 20 → `--z-sticky` 30 → `--z-modal-backdrop` 40 → `--z-modal` 50 → `--z-toast` 60 → `--z-tooltip` 70) via the `z-(--z-name)` syntax for any new stacking-context element, and promote the *wrapper* — not just the list — when an overlay must open above sibling chrome.",
+      "**Do** use `rounded-control` / `rounded-sheet` / `rounded-t-sheet` for any new rectangular control or card — both are real `--radius-*` tokens in `index.css`, not raw Tailwind numbers. Reach for bare `rounded-full` only for the Pill CTA tier, a circular control, or a plain badge; never introduce a third radius value.",
+      "**Do** give any new route its tab bar by nesting it under `AppShell`, and keep the bar presentational — put auth gating in the router's `ProtectedRoute`, not in the navigation.",
+      "**Do** import from `apps/web/src/features/map/model/map-colors.ts`'s `MAP_COLORS` for any MapLibre paint-layer color — never inline a fresh hex literal into a paint object. DOM content drawn over the map (markers, popups) should reference the real CSS token instead (e.g. `bg-user-location`)."
     ],
     "donts": [
-      "Don't use purple/indigo gradients, glassmorphism, or neon-on-black 'dashboard' looks — explicitly banned by docs/PRODUCT.md.",
-      "Don't write generic SaaS hero sections, 'Boost your productivity' energy, or fake-metric dashboards — this is a utility, not a marketing surface.",
-      "Don't use gradient text, side-stripe card borders, or over-round-everything — a rectangular control gets the Control radius, not a pill, 'for friendliness.'",
-      "Don't clutter the map, ship tap targets under 44px, or put low-contrast text over map imagery.",
-      "Don't use emoji as primary illustration — docs/PRODUCT.md bans emoji-as-UI outright. EmptyState, ReportPage's success screen, and ErrorBoundary (formerly map/checkmark/warning emoji) now use hand-authored stroke icons matching the app's existing Feather-style SVG vocabulary instead.",
-      "Don't write a bare z-dropdown / z-sticky / z-modal / z-toast class (no parens, no var()). Tailwind v4's @theme only recognizes its own token namespaces and silently drops any --z-* custom property declared inside it, so a bare class compiles to nothing and resolves to z-index: auto. Declare the scale as plain :root custom properties and reference them with z-(--z-name).",
-      "Don't introduce a second saturated brand fill hue — --color-brand stays one value in both themes. The accent role is expected to diverge across themes; that's --color-accent's job, not a hue proliferation."
+      "**Don't** pin anything to the top of the screen. The top region belongs to the map and to each screen's own in-flow header; a transient top-edge strip (the offline banner) must be `pointer-events-none` so it can't swallow taps on the back button, the screen heading, or the collapsed magnifier underneath it.",
+      "**Don't** reintroduce floating corner chrome — a header bar, a theme pill, an account pill, or a report FAB. Global actions belong in the tab bar; account and appearance belong in Perfil. (See *Removed from the system*.)",
+      "**Don't** give the bottom tab bar a shadow. It is anchored to the screen edge, not floating; `border-t border-border` is its separation.",
+      "**Don't** use purple/indigo gradients, glassmorphism, or neon-on-black \"dashboard\" looks — explicitly banned by `PRODUCT.md`.",
+      "**Don't** write generic SaaS hero sections, \"Boost your productivity\" energy, or fake-metric dashboards — this is a utility, not a marketing surface.",
+      "**Don't** use gradient text, side-stripe card borders, or over-round-everything — a rectangular control gets the Control radius, not a pill, \"for friendliness.\"",
+      "**Don't** clutter the map, ship tap targets under 44px, or put low-contrast text over map imagery.",
+      "**Don't** use emoji as primary illustration — `PRODUCT.md` bans emoji-as-UI outright. `EmptyState`, `ComingSoon`, the onboarding screens, `ReportPage`'s success screen and `ErrorBoundary` all use the shared 80px icon badge with hand-authored Feather-style stroke SVGs instead.",
+      "**Don't** write a bare `z-dropdown` / `z-sticky` / `z-modal` / `z-toast` class name (no parens, no `var()`). Tailwind v4's `@theme` block only recognizes its own token namespaces (`--color-*`, `--font-*`, `--radius-*`, …) and silently drops any `--z-*` custom property declared inside it — a bare `z-sticky` class compiles to nothing and silently resolves to `z-index: auto`. This is exactly what happened here (see `docs/audits/AUDIT-web-2026-07-03.md`): declare the scale as plain `:root` custom properties (already done in `index.css`), and reference them with the `z-(--z-name)` shorthand.",
+      "**Don't** introduce a second saturated brand *fill* hue — `--color-brand` stays one value in both themes. (The accent role is expected to diverge across themes; that's `--color-accent`'s whole job, not a hue proliferation.)"
     ]
   }
 }
