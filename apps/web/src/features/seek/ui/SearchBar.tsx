@@ -136,7 +136,7 @@ export function SearchBar({ onSearch, placeholder = "Buscar produto…" }: Props
         type="button"
         onClick={() => setExpanded(true)}
         aria-label="Buscar produto"
-        className="bg-surface border border-border text-text-muted rounded-full w-11 h-11 flex items-center justify-center shadow-md"
+        className="pointer-events-auto bg-surface border border-border text-text-muted rounded-full w-11 h-11 flex items-center justify-center shadow-md"
       >
         <MagnifierIcon className="w-5 h-5" />
       </button>
@@ -144,7 +144,7 @@ export function SearchBar({ onSearch, placeholder = "Buscar produto…" }: Props
   }
 
   return (
-    <div className="relative" ref={wrapperRef}>
+    <div className="relative pointer-events-auto" ref={wrapperRef}>
       <div className="flex items-center gap-2 bg-surface rounded-full shadow px-4 py-3 border border-border">
         <MagnifierIcon className="w-5 h-5 text-text-muted shrink-0" />
         <input

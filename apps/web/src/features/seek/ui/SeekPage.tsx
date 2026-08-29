@@ -49,10 +49,13 @@ export function SeekPage() {
         )}
       </div>
 
-      {/* Search bar — floats on top of the map */}
-      <div className="absolute top-4 left-4 right-4 z-10">
+      {/* Search bar — floats on top of the map. pointer-events-none because the wrapper
+          still spans the full width for the expanded bar's right-4 edge, but its resting
+          state is a 44px button — without this, the rest of the strip is an invisible
+          hit target that steals pans/taps from the map underneath. */}
+      <div className="absolute top-4 left-4 right-4 z-10 pointer-events-none">
         {denied && (
-          <p className="text-xs text-aging bg-surface/90 rounded-lg px-3 py-1.5 mb-2">
+          <p className="text-xs text-aging bg-surface/90 rounded-lg px-3 py-1.5 mb-2 pointer-events-auto">
             Localização negada — mostrando São Paulo. Pan para sua área.
           </p>
         )}

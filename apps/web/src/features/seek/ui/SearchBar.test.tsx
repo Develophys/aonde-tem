@@ -66,6 +66,20 @@ describe("SearchBar — collapsing", () => {
     expand();
     expect(screen.getByRole("combobox")).toHaveValue("");
   });
+
+  it("clears the query and collapses in one press of the × button", () => {
+    renderBar();
+    expand();
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: "arroz" } });
+
+    fireEvent.click(screen.getByRole("button", { name: "Fechar busca" }));
+
+    expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Buscar produto" })).toHaveFocus();
+
+    expand();
+    expect(screen.getByRole("combobox")).toHaveValue("");
+  });
 });
 
 describe("SearchBar — suggestions", () => {
