@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, type ReactNode } from "react";
 import { createBrowserRouter, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "../features/auth/ui/ProtectedRoute.js";
+import { OnboardingGate } from "../features/onboarding/ui/OnboardingGate.js";
 import { AppShell } from "../features/shell/ui/AppShell.js";
 import { OfflineBanner } from "../shared/ui/OfflineBanner.js";
 import { ToastViewport } from "../shared/ui/ToastViewport.js";
@@ -101,9 +102,11 @@ export const router = createBrowserRouter([
           {
             path: "/",
             element: (
-              <PageSuspense>
-                <SeekPage />
-              </PageSuspense>
+              <OnboardingGate>
+                <PageSuspense>
+                  <SeekPage />
+                </PageSuspense>
+              </OnboardingGate>
             ),
           },
           {
