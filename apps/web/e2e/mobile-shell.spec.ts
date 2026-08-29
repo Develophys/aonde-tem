@@ -252,10 +252,48 @@ test.describe("Map chrome clears the tab bar", () => {
     await expectTouchTarget(retry, "retry");
 
     // A bounding box only proves the button is drawn somewhere sensible; it says nothing
-    // about whether the radius pill (same z-10, later in DOM) is sitting on top of it and
-    // eating the tap. click() runs Playwright's actionability check, which hit-tests the
-    // click point and fails if another element intercepts — so this is the assertion that
-    // keeps the two off each other's baseline.
+    // about whether the radius pill (same z-10, later in DOM) is on top of it eating taps.
+    //
+    // click() alone is not enough here, and that is worth spelling out: with both boxes on
+    // bottom-(--bottom-nav-clearance) the retry button measured y 599-643 and the pill
+    // y 625-659, so the button's *centre* at y 621 was still clear and click() passed
+    // while the whole lower-left of the control was dead. Hit-test the corners too.
+    const retryBox = await boxOf(retry, "retry");
+    const pillBox = await boxOf(page.getByLabel("Raio de busca").locator(".."), "radius pill");
+    const intersects =
+      retryBox.x < pillBox.x + pillBox.width &&
+      pillBox.x < retryBox.x + retryBox.width &&
+      retryBox.y < pillBox.y + pillBox.height &&
+      pillBox.y < retryBox.y + retryBox.height;
+    record("retry/pill intersection", { retryBox, pillBox, intersects });
+    expect(intersects, "the radius pill must not overlap the retry button").toBe(false);
+
+    const inset = 4;
+    const probes = [
+      { name: "centre", x: retryBox.x + retryBox.width / 2, y: retryBox.y + retryBox.height / 2 },
+      { name: "top-left", x: retryBox.x + inset, y: retryBox.y + inset },
+      { name: "top-right", x: retryBox.x + retryBox.width - inset, y: retryBox.y + inset },
+      { name: "bottom-left", x: retryBox.x + inset, y: retryBox.y + retryBox.height - inset },
+      {
+        name: "bottom-right",
+        x: retryBox.x + retryBox.width - inset,
+        y: retryBox.y + retryBox.height - inset,
+      },
+    ];
+    for (const probe of probes) {
+      const hit = await retry.evaluate((el, p: { x: number; y: number }) => {
+        const top = document.elementFromPoint(p.x, p.y);
+        return {
+          tag: top?.tagName ?? "none",
+          text: (top?.textContent ?? "").trim().slice(0, 40),
+          inside: Boolean(top && (top === el || el.contains(top))),
+        };
+      }, probe);
+      record(`hit test at the retry button's ${probe.name}`, { ...probe, ...hit });
+      expect(hit.inside, `retry ${probe.name} must be tappable`).toBe(true);
+    }
+
+    // And the tap itself lands — actionability check included.
     await retry.click();
   });
 
