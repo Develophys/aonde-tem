@@ -70,6 +70,13 @@
      start at or below this — same z-tier plus later DOM order would otherwise let it
      paint straight over the corner controls regardless of z-index. */
   --header-clearance: calc(var(--header-inset-top) + 44px + 12px);
+
+  /* The bottom tab bar's own height, and the offset anything floating above it must
+     clear. Same discipline as --header-inset-top/--header-clearance at the top of the
+     screen: the bar and the chrome sitting above it read from one token, so they can't
+     drift apart when the bar's height changes. env() covers the iOS home indicator. */
+  --bottom-nav-height: 56px;
+  --bottom-nav-clearance: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 12px);
 }
 
 @keyframes slide-up {
