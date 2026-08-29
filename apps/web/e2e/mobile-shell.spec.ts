@@ -431,3 +431,69 @@ test.describe("Routing and gates", () => {
     expect(bannerBox.y + bannerBox.height).toBeLessThanOrEqual(magnifierBox.y);
   });
 });
+
+test.describe("Report screen", () => {
+  test("its header sits at the same inset as the other screens", async ({ page }) => {
+    await seedAppState(page, {
+      accessToken: "e2e-token",
+      sessionUser: { id: PLACE_ID, email: "teste@exemplo.com", displayName: null, role: "user" },
+    });
+    await page.goto("/report");
+    await expect(page).toHaveURL(/\/report$/);
+
+    const title = page.getByRole("heading", { name: "Relatar produto" });
+    await expect(title).toBeVisible();
+    const titleBox = await boxOf(title, "report title");
+    const root = page.locator("div.min-h-screen").first();
+    const rootPadding = await root.evaluate((el) => getComputedStyle(el).paddingTop);
+    record("report page root padding-top", rootPadding);
+    // The root used to carry --header-clearance (68px) to clear an overlay that no
+    // longer renders; the header row pads itself now.
+    expect(rootPadding).toBe("0px");
+
+    const reportHeader = page.getByRole("button", { name: "Voltar" }).locator("..");
+    const reportHeaderBox = await boxOf(reportHeader, "report header row");
+    const reportHeaderPadding = await reportHeader.evaluate(
+      (el) => getComputedStyle(el).paddingTop,
+    );
+    record("report header padding-top", reportHeaderPadding);
+
+    await page.goto("/perfil");
+    const perfilTitle = page.getByRole("heading", { name: "Perfil" });
+    await expect(perfilTitle).toBeVisible();
+    const perfilBox = await boxOf(perfilTitle, "perfil title");
+    const perfilHeader = page.locator("header");
+    const perfilHeaderBox = await boxOf(perfilHeader, "perfil header row");
+    const perfilHeaderPadding = await perfilHeader.evaluate(
+      (el) => getComputedStyle(el).paddingTop,
+    );
+    record("perfil header padding-top", perfilHeaderPadding);
+
+    // Same inset from the top of the screen, and the same padding token behind it.
+    expect(reportHeaderBox.y).toBe(perfilHeaderBox.y);
+    expect(reportHeaderPadding).toBe(perfilHeaderPadding);
+
+    // The report title itself sits a little lower only because its row centres it
+    // against a 44px back button; the row's own inset is identical.
+    record("report vs perfil title top", { report: titleBox.y, perfil: perfilBox.y });
+    expect(Math.abs(titleBox.y - perfilBox.y)).toBeLessThanOrEqual(10);
+
+    // Nothing floating at the top of any screen: no fixed element overlaps the title.
+    const fixedAtTop = await page.evaluate(() =>
+      Array.from(document.querySelectorAll<HTMLElement>("body *"))
+        .filter((el) => getComputedStyle(el).position === "fixed")
+        .map((el) => {
+          const r = el.getBoundingClientRect();
+          return {
+            tag: el.tagName,
+            label: el.getAttribute("aria-label") ?? "",
+            top: Math.round(r.top),
+            height: Math.round(r.height),
+          };
+        })
+        .filter((entry) => entry.top < 120 && entry.height > 0),
+    );
+    record("fixed elements in the top 120px", fixedAtTop);
+    expect(fixedAtTop).toEqual([]);
+  });
+});

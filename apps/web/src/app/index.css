@@ -59,24 +59,21 @@
   --z-toast: 60;
   --z-tooltip: 70;
 
-  /* Each page's own <header> row pins its top padding to this offset, clear of the
-     status-bar/notch safe area. Current consumers: AvisosPage.tsx and
-     PerfilPage.tsx, both `style={{ paddingTop: "var(--header-inset-top)" }}` on the
-     <header> element. Kept as a token, not repeated inline, so header padding and
-     --header-clearance (derived from it) can't drift out of sync. */
-  --header-inset-top: calc(env(safe-area-inset-top, 0px) + 12px);
+  /* Each page's own header row pins its top padding to this offset, clear of the
+     status-bar/notch safe area. Consumers: AvisosPage.tsx, PerfilPage.tsx and
+     ReportPage.tsx, all `style={{ paddingTop: "var(--header-inset-top)" }}` on their
+     header row. Kept as a token, not repeated inline, so the screens can't drift
+     apart from each other.
 
-  /* --header-inset-top plus a 44px-tall control plus 12px breathing room. This
-     value was sized to clear the fixed-position AppHeader/ThemeToggle overlay that
-     used to sit in the top corners; that overlay is gone (see PerfilPage, which
-     absorbed its controls). Its one remaining consumer is ReportPage.tsx, which
-     applies it as `pt-(--header-clearance)` on its whole page root — not as
-     clearance for z-index-competing floating content, since nothing currently
-     shares --z-sticky near the top of the screen. Whether this value is still the
-     right one for ReportPage, now that the overlay it was sized for no longer
-     exists, is unverified — left for Task 8's phone-viewport parity pass rather
-     than changed here. */
-  --header-clearance: calc(var(--header-inset-top) + 44px + 12px);
+     There is deliberately no larger "--header-clearance" companion any more. It used
+     to exist to clear the fixed AppHeader/ThemeToggle overlay in the top corners, and
+     described itself as "--header-inset-top plus a 44px-tall control plus 12px" — but
+     that 44px control was the overlay's toggle pill, which no longer renders anywhere
+     (PerfilPage absorbed those controls). Task 8 measured every screen at the Pixel 5
+     viewport: nothing is position:fixed in the top 120px of any route, so no page
+     needs to reserve room at the top for floating chrome. Its last consumer,
+     ReportPage's page root, was simply pushing its own header 80px down the screen. */
+  --header-inset-top: calc(env(safe-area-inset-top, 0px) + 12px);
 
   /* The bottom tab bar's own height, and the offset anything floating above it must
      clear. Same discipline as --header-inset-top/--header-clearance at the top of the

@@ -117,19 +117,21 @@ export function ReportPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface flex flex-col pt-(--header-clearance)">
+    <div className="min-h-screen bg-surface flex flex-col">
       {/* Header — no step counter: this is a one-screen progressive form followed by
           a review screen, not a real multi-step sequence, and a "1 de 2" cue was
           promising pacing the structure doesn't deliver (see prior review rounds).
           The title change (Relatar produto -> Confirmar) signals the transition
-          instead. pt-(--header-clearance) on the page root was originally sized to
-          clear the fixed-position AppHeader/ThemeToggle overlay that used to float
-          over every page; that overlay is deleted, so this padding is likely larger
-          than this bar now needs — unlike AvisosPage/PerfilPage, which pad only
-          their own <header> row with the smaller --header-inset-top. Left as-is
-          here (comment/behavior split: no layout change in this pass) and deferred
-          to Task 8's phone-viewport parity pass. */}
-      <div className="px-4 py-4 border-b border-border flex items-center gap-3">
+          instead. The page root used to carry pt-(--header-clearance), sized to clear
+          the fixed AppHeader/ThemeToggle overlay that floated over every page; that
+          overlay is gone, and Task 8 measured what was left: the title sat 92px down
+          against 12px on Avisos/Perfil, i.e. 80px of padding clearing nothing. This
+          row now pads itself with --header-inset-top, exactly like the other screens'
+          <header> rows. */}
+      <div
+        className="px-4 py-4 border-b border-border flex items-center gap-3"
+        style={{ paddingTop: "var(--header-inset-top)" }}
+      >
         <button
           type="button"
           onClick={() => navigate(-1)}

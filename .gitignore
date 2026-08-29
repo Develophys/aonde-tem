@@ -11,3 +11,7 @@ coverage/
 apps/api/prisma/*.db
 .pnpm-store/
 .lighthouseci/
+
+# Playwright run artifacts (traces, screenshots, error context)
+test-results/
+playwright-report/
