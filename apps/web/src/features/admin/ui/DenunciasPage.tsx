@@ -2,12 +2,16 @@ import { useNavigate } from "react-router-dom";
 import type { AdminQueueItem } from "@aonde-tem/contracts";
 import { useAppStore } from "@/app/store/index.js";
 import { ComingSoon } from "@/shared/ui/ComingSoon.js";
+import { ApiError } from "@/shared/api/http.js";
 import { useModerationQueue, useActionTarget } from "../api/moderation.queries.js";
 import { QueueCard } from "./QueueCard.js";
 
 function QueueBody({ items }: { readonly items: AdminQueueItem[] }) {
   const action = useActionTarget();
   const pushToast = useAppStore((s) => s.pushToast);
+  // Only the card whose action is actually in flight gets the "in progress" label —
+  // `isPending` alone would bleed that label onto every other card (see QueueCard).
+  const actingId = action.isPending ? action.variables?.targetId : null;
 
   if (items.length === 0) {
     return (
@@ -29,8 +33,15 @@ function QueueBody({ items }: { readonly items: AdminQueueItem[] }) {
         tone: "success",
         message: kind === "hide" ? "Conteúdo removido." : "Denúncia ignorada.",
       });
-    } catch {
-      pushToast({ tone: "error", message: "Não foi possível concluir a ação." });
+    } catch (err) {
+      // A 409 means another admin resolved this same target first — the content
+      // mutation (if any) already happened, so the generic failure message would be
+      // actively misleading here: this was not a failure to retry, it was a race lost.
+      if (err instanceof ApiError && err.status === 409) {
+        pushToast({ tone: "error", message: "Outro admin já resolveu esta denúncia." });
+      } else {
+        pushToast({ tone: "error", message: "Não foi possível concluir a ação." });
+      }
     }
   }
 
@@ -41,6 +52,7 @@ function QueueBody({ items }: { readonly items: AdminQueueItem[] }) {
           key={`${item.targetType}:${item.targetId}`}
           item={item}
           isPending={action.isPending}
+          isActing={actingId === item.targetId}
           onAction={(kind) => void run(item, kind)}
         />
       ))}
@@ -85,7 +97,7 @@ export function DenunciasPage() {
         <h1 className="text-lg font-semibold text-text truncate">Denúncias</h1>
         {data && data.items.length > 0 && (
           <span className="text-text-muted text-sm tabular-nums shrink-0">
-            {data.items.length} abertas
+            {data.items.length} {data.items.length === 1 ? "aberta" : "abertas"}
           </span>
         )}
       </div>

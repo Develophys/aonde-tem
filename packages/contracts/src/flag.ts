@@ -50,3 +50,10 @@ export const adminActionSchema = z.object({
   action: z.enum(["hide", "dismiss"]),
 });
 export type AdminActionDto = z.infer<typeof adminActionSchema>;
+
+/** Response body of `PATCH /admin/queue/:targetType/:targetId`. */
+export const adminActionResultSchema = z.object({
+  ok: z.boolean(),
+  resolved: z.number().int(),
+});
+export type AdminActionResult = z.infer<typeof adminActionResultSchema>;

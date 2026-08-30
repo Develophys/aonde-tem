@@ -1,4 +1,5 @@
 import {
+  ConflictError,
   NotFoundError,
   type FlagRepository,
   type FlagTargetType,
@@ -49,6 +50,17 @@ export class ActionModerationTarget {
       targetId,
       action === "hide" ? "actioned" : "dismissed",
     );
+
+    // Concurrency guard, not a validation: the open-flag check above can pass and then
+    // lose the race — another admin resolves the same target between our check and this
+    // update, so `updateStatusByTarget`'s `WHERE status = 'open'` matches nothing and
+    // returns 0. There is no audit log, so silently answering `{ resolved: 0 }` here
+    // would let the caller believe they resolved a report that someone else already
+    // did (and, on "hide", that already ran against the content before we got here).
+    // Surfacing this as a conflict is the only way the second admin finds out.
+    if (resolved === 0) {
+      throw new ConflictError(`Lost the race to resolve ${targetType} ${targetId}`);
+    }
 
     this.log.info({ targetType, targetId, action, resolved }, "moderation target actioned");
     return { resolved };

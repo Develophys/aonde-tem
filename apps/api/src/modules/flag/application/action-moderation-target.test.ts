@@ -1,5 +1,5 @@
 import { ActionModerationTarget } from "./action-moderation-target.js";
-import { NotFoundError } from "@aonde-tem/domain";
+import { ConflictError, NotFoundError } from "@aonde-tem/domain";
 import type {
   FlagRepository,
   FlagStatus,
@@ -104,6 +104,42 @@ describe("ActionModerationTarget", () => {
     expect(hidden).toEqual([]);
     expect(blocked).toEqual([]);
     expect(bulkCalls).toEqual([{ targetType: "discovery", targetId: "d1", status: "dismissed" }]);
+  });
+
+  it("loses the race when another admin resolves the target first", async () => {
+    const order: string[] = [];
+    // countOpenByTarget still sees 3 open flags — that check ran before the race was
+    // lost — but by the time updateStatusByTarget runs, another admin's action has
+    // already flipped every one of them out of "open", so the bulk update matches
+    // nothing and reports 0 resolved.
+    const repo = {
+      findById: async () => null,
+      findOpen: async () => [],
+      save: async () => {},
+      updateStatus: async () => {},
+      countOpenByTarget: async () => 3,
+      updateStatusByTarget: async () => {
+        order.push("flags");
+        return 0;
+      },
+    } as unknown as FlagRepository;
+    const { content, hidden } = makeContent(order);
+
+    await expect(
+      new ActionModerationTarget(repo, content, nullLog).execute({
+        targetType: "discovery",
+        targetId: "d1",
+        action: "hide",
+      }),
+    ).rejects.toBeInstanceOf(ConflictError);
+
+    // The race is lost *after* the content call: by the time updateStatusByTarget
+    // discovers the conflict, hideDiscovery has already run against the (now doubly-
+    // actioned) content. That's the point of throwing here rather than swallowing the
+    // 0 — the caller finds out their action landed on content someone else already
+    // handled, instead of being told "ok, resolved: 0" and believing they cleared it.
+    expect(order).toEqual(["content", "flags"]);
+    expect(hidden).toEqual(["d1"]);
   });
 
   it("refuses a target with no open flags instead of hiding content for nothing", async () => {

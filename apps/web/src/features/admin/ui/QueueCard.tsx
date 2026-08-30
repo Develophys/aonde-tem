@@ -31,10 +31,17 @@ function ReasonChip({ reason }: { readonly reason: FlagReasonDto }) {
 interface Props {
   readonly item: AdminQueueItem;
   readonly onAction: (action: "hide" | "dismiss") => void;
+  /** Disables every card while any action is in flight — deliberately shared. */
   readonly isPending: boolean;
+  /**
+   * True only for the card whose own action is in flight. Drives the label text
+   * ("Removendo…" / "Ignorando…") so that an action on card A does not read as an
+   * action on card B, C, … — see DenunciasPage for how this is derived.
+   */
+  readonly isActing: boolean;
 }
 
-export function QueueCard({ item, onAction, isPending }: Props) {
+export function QueueCard({ item, onAction, isPending, isActing }: Props) {
   const [confirming, setConfirming] = useState(false);
 
   // A target whose content is already gone cannot be removed again; dismissing is the
@@ -82,14 +89,16 @@ export function QueueCard({ item, onAction, isPending }: Props) {
               <button
                 type="button"
                 disabled={isPending}
+                aria-label={`Confirmar remoção de ${suffix}`}
                 onClick={() => onAction("hide")}
                 className="flex-1 min-h-11 rounded-control bg-error text-white font-semibold disabled:opacity-50"
               >
-                {isPending ? "Removendo…" : "Sim, remover"}
+                {isActing ? "Removendo…" : "Sim, remover"}
               </button>
               <button
                 type="button"
                 disabled={isPending}
+                aria-label={`Cancelar remoção de ${suffix}`}
                 onClick={() => setConfirming(false)}
                 className="flex-1 min-h-11 rounded-control border border-border text-text font-semibold disabled:opacity-50"
               >
@@ -117,7 +126,7 @@ export function QueueCard({ item, onAction, isPending }: Props) {
               onClick={() => onAction("dismiss")}
               className="flex-1 min-h-11 rounded-control border border-border text-text font-semibold disabled:opacity-50"
             >
-              {isPending ? "Ignorando…" : "Ignorar"}
+              {isActing ? "Ignorando…" : "Ignorar"}
             </button>
           </div>
         )}

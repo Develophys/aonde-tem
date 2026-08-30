@@ -17,9 +17,16 @@ function item(overrides: Partial<AdminQueueItem> = {}): AdminQueueItem {
   } as AdminQueueItem;
 }
 
-function setup(overrides: Partial<AdminQueueItem> = {}, isPending = false) {
+function setup(overrides: Partial<AdminQueueItem> = {}, isPending = false, isActing = isPending) {
   const onAction = jest.fn();
-  render(<QueueCard item={item(overrides)} onAction={onAction} isPending={isPending} />);
+  render(
+    <QueueCard
+      item={item(overrides)}
+      onAction={onAction}
+      isPending={isPending}
+      isActing={isActing}
+    />,
+  );
   return { onAction };
 }
 
@@ -37,7 +44,9 @@ describe("QueueCard", () => {
   });
 
   it("counts the flags only when there is more than one", () => {
-    const { unmount } = render(<QueueCard item={item()} onAction={jest.fn()} isPending={false} />);
+    const { unmount } = render(
+      <QueueCard item={item()} onAction={jest.fn()} isPending={false} isActing={false} />,
+    );
     expect(screen.queryByText(/denúncias/)).not.toBeInTheDocument();
     unmount();
 
@@ -46,6 +55,7 @@ describe("QueueCard", () => {
         item={item({ flagCount: 3, reasons: ["illegal", "spam"] })}
         onAction={jest.fn()}
         isPending={false}
+        isActing={false}
       />,
     );
     expect(screen.getByText("3 denúncias")).toBeInTheDocument();
@@ -79,7 +89,10 @@ describe("QueueCard", () => {
     const { onAction } = setup();
 
     fireEvent.click(screen.getByRole("button", { name: "Remover Arroz 5kg" }));
-    fireEvent.click(screen.getByRole("button", { name: "Sim, remover" }));
+    // The confirm pair carries a target-naming aria-label (WCAG 2.5.3), which overrides
+    // their visible text ("Sim, remover") as the accessible name — so they are queried
+    // by that aria-label, not by the text a sighted user sees.
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar remoção de Arroz 5kg" }));
 
     expect(onAction).toHaveBeenCalledWith("hide");
   });
@@ -88,10 +101,24 @@ describe("QueueCard", () => {
     const { onAction } = setup();
 
     fireEvent.click(screen.getByRole("button", { name: "Remover Arroz 5kg" }));
-    fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar remoção de Arroz 5kg" }));
 
     expect(onAction).not.toHaveBeenCalled();
     expect(screen.getByRole("button", { name: "Remover Arroz 5kg" })).toBeInTheDocument();
+  });
+
+  it("names the target in the confirmation pair's accessible name", () => {
+    setup();
+    fireEvent.click(screen.getByRole("button", { name: "Remover Arroz 5kg" }));
+
+    // Two identical "Sim, remover" buttons across two open confirmations would be
+    // unusable by screen reader rotor or voice control; the aria-label disambiguates.
+    expect(
+      screen.getByRole("button", { name: "Confirmar remoção de Arroz 5kg" }),
+    ).toHaveTextContent("Sim, remover");
+    expect(screen.getByRole("button", { name: "Cancelar remoção de Arroz 5kg" })).toHaveTextContent(
+      "Cancelar",
+    );
   });
 
   it("offers only Ignorar when the flagged content is already gone", () => {
@@ -112,5 +139,41 @@ describe("QueueCard", () => {
 
     expect(screen.getByRole("button", { name: "Remover Arroz 5kg" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Ignorar Arroz 5kg" })).toBeDisabled();
+  });
+
+  it("disables but does not relabel Ignorar when this card is pending but not the one acting", () => {
+    // isPending disables every card (deliberately shared, unchanged); isActing is what
+    // decides whether *this* card's label says "in progress" — a card can be pending
+    // (inert) while another card is the one whose action is actually running.
+    setup({}, true, false);
+
+    const ignorar = screen.getByRole("button", { name: "Ignorar Arroz 5kg" });
+    expect(ignorar).toBeDisabled();
+    expect(ignorar).toHaveTextContent("Ignorar");
+  });
+
+  it("relabels Ignorar to 'Ignorando…' only when this card is the one acting", () => {
+    setup({}, true, true);
+
+    expect(screen.getByRole("button", { name: "Ignorar Arroz 5kg" })).toHaveTextContent(
+      "Ignorando…",
+    );
+  });
+
+  it("relabels the confirm button to 'Removendo…' only when this card is the one acting", () => {
+    const onAction = jest.fn();
+    // Reach the confirming state first (requires an enabled button to click), then
+    // rerender as pending+acting — mirroring what actually happens: the tap that
+    // fires "hide" is what makes this card's own action start.
+    const { rerender } = render(
+      <QueueCard item={item()} onAction={onAction} isPending={false} isActing={false} />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Remover Arroz 5kg" }));
+
+    rerender(<QueueCard item={item()} onAction={onAction} isPending={true} isActing={true} />);
+
+    expect(
+      screen.getByRole("button", { name: "Confirmar remoção de Arroz 5kg" }),
+    ).toHaveTextContent("Removendo…");
   });
 });

@@ -40,6 +40,27 @@ export function toQueueRow(raw: RawQueueRow): ModerationQueueRow {
 export class PrismaModerationQueueReader implements ModerationQueueReader {
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   * COVERAGE GAP: this query has no automated test.
+   *
+   * `toQueueRow` (the pure mapper below) is unit-tested, and `ListModerationQueue`'s
+   * use-case test feeds the reader rows that are already grouped — neither exercises
+   * this SQL. The only way to test the query itself is against a real Postgres with
+   * PostGIS/pg_trgm, and this repo's `DATABASE_URL` points at the production database,
+   * so no such test is written here. Do not add one that runs against it.
+   *
+   * Hand-verified only, not covered by any test:
+   *  - several open flags on one target collapsing to a single queue row
+   *  - de-duplication of `reasons` across those flags (the `ARRAY_AGG(DISTINCT …)`)
+   *  - the `latest` CTE's `DISTINCT ON` actually picking the newest flag's comment/
+   *    reporter rather than some other row for the same target
+   *  - a deleted target's name/context coming back NULL (`COALESCE`/`LEFT JOIN`
+   *    propagation) instead of throwing or silently dropping the row
+   *  - the `limit` ceiling actually bounding the result set
+   *
+   * Once a non-production dev database exists, write an integration test against it
+   * that seeds flags rows directly and asserts each behaviour above.
+   */
   async findOpenGroupedByTarget(limit = 100): Promise<ModerationQueueRow[]> {
     // `flags.targetId` is polymorphic with no foreign key — it addresses either
     // products.id or discoveries.id depending on targetType, which Prisma's relation

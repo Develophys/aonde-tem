@@ -3,6 +3,7 @@ import {
   adminActionSchema,
   flagTargetTypeSchema,
   type AdminQueueResponse,
+  type AdminActionResult,
 } from "@aonde-tem/contracts";
 import { AdminGuard } from "../guards/admin.guard.js";
 import { ListModerationQueue } from "../application/list-moderation-queue.js";
@@ -41,7 +42,7 @@ export class AdminController {
     @Param("targetType") targetType: string,
     @Param("targetId") targetId: string,
     @Body() body: unknown,
-  ): Promise<{ ok: boolean; resolved: number }> {
+  ): Promise<AdminActionResult> {
     const { action } = adminActionSchema.parse(body);
     const { resolved } = await this.actionTarget.execute({
       targetType: flagTargetTypeSchema.parse(targetType),
