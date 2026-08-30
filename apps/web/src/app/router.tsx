@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, type ReactNode } from "react";
 import { createBrowserRouter, Outlet, useNavigate, useLocation } from "react-router-dom";
+import { AdminRoute } from "../features/auth/ui/AdminRoute.js";
 import { ProtectedRoute } from "../features/auth/ui/ProtectedRoute.js";
 import { OnboardingGate } from "../features/onboarding/ui/OnboardingGate.js";
 import { AppShell } from "../features/shell/ui/AppShell.js";
@@ -33,6 +34,9 @@ const OnboardingPage = lazy(() =>
   import("../features/onboarding/ui/OnboardingPage.js").then((m) => ({
     default: m.OnboardingPage,
   })),
+);
+const DenunciasPage = lazy(() =>
+  import("../features/admin/ui/DenunciasPage.js").then((m) => ({ default: m.DenunciasPage })),
 );
 
 function PageSuspense({ children }: { readonly children: ReactNode }) {
@@ -172,6 +176,16 @@ export const router = createBrowserRouter([
               <ReportPage />
             </PageSuspense>
           </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/admin/denuncias",
+        element: (
+          <AdminRoute>
+            <PageSuspense>
+              <DenunciasPage />
+            </PageSuspense>
+          </AdminRoute>
         ),
       },
     ],

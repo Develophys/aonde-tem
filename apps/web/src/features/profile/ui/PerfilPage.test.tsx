@@ -235,3 +235,21 @@ describe("PerfilPage — my reports list", () => {
     expect(screen.getByText("Carregando seus relatos…")).toBeInTheDocument();
   });
 });
+
+describe("PerfilPage — admin entry point", () => {
+  it("offers the moderation queue to an admin", () => {
+    setupStore({ sessionUser: { ...authenticatedUser, role: "admin" } });
+    renderPage();
+
+    fireEvent.click(screen.getByRole("button", { name: "Denúncias" }));
+
+    expect(mockNavigate).toHaveBeenCalledWith("/admin/denuncias");
+  });
+
+  it("hides it from everyone else", () => {
+    setupStore({ sessionUser: authenticatedUser });
+    renderPage();
+
+    expect(screen.queryByRole("button", { name: "Denúncias" })).not.toBeInTheDocument();
+  });
+});
