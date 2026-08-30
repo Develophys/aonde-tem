@@ -90,14 +90,14 @@ SELECT f."targetType", f."targetId",
        -- product name for a product target; the discovery's product name for a discovery target
        COALESCE(tp.name, dp.name)            AS target_name,
        pl.name                               AS place_name,
-       d."priceBrl"                          AS price_brl
+       d.price                               AS price
   FROM flags f
   LEFT JOIN products   tp ON f."targetType" = 'product'   AND tp.id = f."targetId"
   LEFT JOIN discoveries d  ON f."targetType" = 'discovery' AND d.id  = f."targetId"
   LEFT JOIN products   dp ON dp.id = d."productId"
   LEFT JOIN places     pl ON pl.id = d."placeId"
  WHERE f.status = 'open'
- GROUP BY f."targetType", f."targetId", tp.name, dp.name, pl.name, d."priceBrl"
+ GROUP BY f."targetType", f."targetId", tp.name, dp.name, pl.name, d.price
  ORDER BY latest_at DESC
  LIMIT 100
 ```
@@ -222,7 +222,7 @@ Content order, top to bottom:
    `flagCount > 1`.
 3. **Reporter comment**, italic and muted, when present. Only the newest is shown; the count chip
    is what signals there are others.
-4. **Provenance** — "por reporter@exemplo.com · há 2 horas", muted, `text-xs`.
+4. **Provenance** — "por reporter@exemplo.com · 2h atrás", muted, `text-xs`.
 5. **Actions** — a two-column row, both ≥44px: "Remover" (`bg-error text-white`, solid) and
    "Ignorar" (`border border-border text-text`, ghost).
 
@@ -348,7 +348,9 @@ not move it.
 
 - Regenerate `DESIGN.md` with `/impeccable document` once the screen ships.
 - Tick the "minimal admin surface" P0 in `docs/specs/feedback-flags.spec.md`'s backlog mapping.
-- Note in `docs/ROADMAP.md` that E10's moderation queue has a UI.
+- Update the "No rich admin dashboard" non-goal in `docs/specs/MVP-OVERVIEW.md` §32: still a
+  minimal queue, but no longer "direct DB". (`docs/ROADMAP.md` has no moderation entries — E10
+  lives in `MVP-OVERVIEW.md`.)
 
 ## Open items (deliberately not resolved here)
 
