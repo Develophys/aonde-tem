@@ -8,13 +8,8 @@ import { DeleteDiscoveryConfirmSheet } from "../../report/ui/DeleteDiscoveryConf
 import { BottomSheet } from "@/shared/ui/BottomSheet.js";
 import { GhostButton } from "@/shared/ui/GhostButton.js";
 import { haversineMeters, formatMeters } from "@/shared/model/geo.js";
+import { formatAge } from "@/shared/model/time.js";
 import type { PlaceDiscoveryItem } from "@aonde-tem/contracts";
-
-function freshnessLabel(ageMinutes: number): string {
-  if (ageMinutes < 60) return `${ageMinutes}min atrás`;
-  if (ageMinutes < 1440) return `${Math.floor(ageMinutes / 60)}h atrás`;
-  return `${Math.floor(ageMinutes / 1440)}d atrás`;
-}
 
 function freshnessClass(ageMinutes: number): string {
   if (ageMinutes < 120) return "text-fresh";
@@ -121,7 +116,7 @@ export function PlaceModal({ placeId, onFlyTo }: Props) {
             <div className="flex items-center gap-3 mt-1">
               <span className="text-text-muted text-sm">{item.quantity} unid.</span>
               <span className={`text-sm ${freshnessClass(item.ageMinutes)}`}>
-                {freshnessLabel(item.ageMinutes)}
+                {formatAge(item.ageMinutes)}
               </span>
             </div>
             {item.note && <p className="text-text-muted text-sm mt-1 italic">"{item.note}"</p>}
