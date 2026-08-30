@@ -25,7 +25,11 @@ services:
       db: { condition: service_healthy }
 
   web:
-    build: { context: ., dockerfile: docker/web.Dockerfile }
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+      args:
+        VITE_MAP_KEY: ${VITE_MAP_KEY:-}
     ports: ["8080:80"]
     depends_on: [api]
 

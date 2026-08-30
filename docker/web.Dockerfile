@@ -4,7 +4,7 @@ RUN corepack enable
 WORKDIR /repo
 COPY . .
 RUN pnpm install --frozen-lockfile
-ARG VITE_API_URL=/
+ARG VITE_API_URL=
 ARG VITE_MAP_KEY=
 ENV VITE_API_URL=$VITE_API_URL VITE_MAP_KEY=$VITE_MAP_KEY
 RUN pnpm --filter @aonde-tem/web... build

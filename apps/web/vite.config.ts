@@ -5,6 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  envDir: fileURLToPath(new URL("../../", import.meta.url)),
   resolve: {
     alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
   },
