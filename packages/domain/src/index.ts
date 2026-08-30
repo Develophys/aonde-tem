@@ -20,6 +20,7 @@ export * from "./repositories/user-repository";
 export * from "./repositories/product-repository";
 export * from "./repositories/discovery-repository";
 export * from "./repositories/flag-repository";
+export * from "./repositories/moderation-queue-reader";
 
 // Ports
 export * from "./ports/logger";
