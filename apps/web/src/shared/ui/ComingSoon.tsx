@@ -3,10 +3,10 @@ interface Props {
   readonly description: string;
 }
 
-// Placeholder panel for routes whose data layer has not been built yet. Shares
-// EmptyState's badge vocabulary (80px surface-alt circle, muted stroke icon,
-// animate-badge-in) but takes its copy as props — EmptyState's own copy is
-// hardcoded about reports and cannot be reused here.
+// Badge-and-copy panel for any screen with nothing to show — an unbuilt route, or a
+// list that is legitimately empty. Shares EmptyState's badge vocabulary (80px
+// surface-alt circle, muted stroke icon, animate-badge-in) but takes its copy as
+// props — EmptyState's own copy is hardcoded about reports and cannot be reused here.
 export function ComingSoon({ title, description }: Props) {
   return (
     <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
