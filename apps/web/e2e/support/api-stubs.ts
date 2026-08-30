@@ -113,3 +113,25 @@ export async function stubProductSearch(
 export async function stubPlace(page: Page): Promise<void> {
   await page.route(`**/api/places/${PLACE_ID}`, (route) => json(route, placeFixture()));
 }
+
+/**
+ * The profile screen fetches the signed-in reporter's own history. Any test that visits
+ * /perfil with a seeded session must stub it: the seeded token is not a real JWT, so an
+ * unstubbed call reaches the API, comes back 401, and `http` clears the session — which
+ * silently bounces the test to /signin several navigations later.
+ */
+export async function stubMyDiscoveries(
+  page: Page,
+  options: { results?: unknown[]; total?: number; active?: number } = {},
+): Promise<void> {
+  await page.route("**/api/discoveries/mine", (route) =>
+    json(route, {
+      results: options.results ?? [],
+      stats: {
+        total: options.total ?? 0,
+        active: options.active ?? 0,
+        memberSince: "2026-06-14T09:30:00.000Z",
+      },
+    }),
+  );
+}

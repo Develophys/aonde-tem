@@ -31,6 +31,15 @@ function BellIcon() {
   );
 }
 
+function SearchIcon() {
+  return (
+    <svg {...ICON_PROPS}>
+      <circle cx="11" cy="11" r="6" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  );
+}
+
 function UserIcon() {
   return (
     <svg {...ICON_PROPS}>
@@ -70,7 +79,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Navegação principal"
-      className="fixed bottom-0 left-0 right-0 z-(--z-sticky) grid grid-cols-4 items-center bg-surface border-t border-border"
+      className="fixed bottom-0 left-0 right-0 z-(--z-sticky) grid grid-cols-5 items-center bg-surface border-t border-border"
       style={{
         height: "calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px))",
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
@@ -79,12 +88,16 @@ export function BottomNav() {
       <Tab to="/" label="Mapa">
         <MapIcon />
       </Tab>
-      <Tab to="/avisos" label="Avisos">
-        <BellIcon />
+      <Tab to="/buscar" label="Buscar">
+        <SearchIcon />
       </Tab>
       <div className="flex items-center justify-center">
         {/* Replaces SeekPage's old FAB. Raised above the bar's top edge, so it covers the
-            map — the one element here that earns a shadow under the Floating-Only Rule. */}
+            map — the one element here that earns a shadow under the Floating-Only Rule.
+
+            Five slots rather than four so this lands at 50% of the bar: with an even
+            count the raised control sits off-centre, and pulling it to the middle would
+            straddle a tab's label and break its 44px target. */}
         <Link
           to="/report"
           aria-label="Relatar produto"
@@ -96,6 +109,9 @@ export function BottomNav() {
           </svg>
         </Link>
       </div>
+      <Tab to="/avisos" label="Avisos">
+        <BellIcon />
+      </Tab>
       <Tab to="/perfil" label="Perfil">
         <UserIcon />
       </Tab>

@@ -1,6 +1,6 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { MapShell } from "../../map/ui/MapShell.js";
-import { SearchBar } from "./SearchBar.js";
 import { EmptyState } from "./EmptyState.js";
 import { useGeolocation, DEFAULT_COORDS } from "../../map/model/use-geolocation.js";
 import { useNearbyDiscoveries } from "../api/discovery.queries.js";
@@ -12,7 +12,12 @@ import { useDebounce } from "use-debounce";
 const SAVE_DATA_RESULT_LIMIT = 20;
 
 export function SeekPage() {
-  const [searchQuery, setSearchQuery] = useState("");
+  // The active filter lives in the query string rather than in component state: the
+  // Buscar tab is a sibling route now, so a local useState here could not survive the
+  // navigation that sets it. It also makes a filtered map reloadable and shareable.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get("item")?.trim() ?? "";
+
   const { coords, denied, loading } = useGeolocation();
   const radius = useAppStore((s) => s.mapRadius);
   const [useDebouncedRadius] = useDebounce(radius, 300);
@@ -30,9 +35,11 @@ export function SeekPage() {
     limit: saveData ? SAVE_DATA_RESULT_LIMIT : undefined,
   });
 
-  const handleSearch = useCallback((q: string) => {
-    setSearchQuery(q);
-  }, []);
+  const clearFilter = useCallback(() => {
+    // `replace` so backing out of a cleared filter does not land the user on the same
+    // map with the filter silently reapplied.
+    setSearchParams({}, { replace: true });
+  }, [setSearchParams]);
 
   const discoveries = data?.results ?? [];
 
@@ -71,7 +78,21 @@ export function SeekPage() {
             Localização negada — mostrando São Paulo. Pan para sua área.
           </p>
         )}
-        <SearchBar onSearch={handleSearch} />
+        {/* The × keeps a full 44px box even though the chip reads smaller — the target is
+            the control, not the glyph. */}
+        {searchQuery && (
+          <div className="inline-flex items-center gap-1 bg-surface border border-border rounded-full pl-4 pr-0.5 shadow-md pointer-events-auto">
+            <span className="text-text text-sm font-medium truncate max-w-50">{searchQuery}</span>
+            <button
+              type="button"
+              onClick={clearFilter}
+              aria-label={`Remover filtro ${searchQuery}`}
+              className="w-11 h-11 rounded-full flex items-center justify-center text-text-muted text-xl leading-none"
+            >
+              ×
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Fetch error — distinct from a true empty result, so patchy connections don't read as "nobody reported this".

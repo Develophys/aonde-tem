@@ -9,6 +9,7 @@ import {
   stubNearby,
   stubPlace,
   stubProductSearch,
+  stubMyDiscoveries,
 } from "./support/api-stubs.js";
 
 // Replaces the "open the device toolbar and look at it" step of the parity pass with
@@ -63,8 +64,8 @@ function nav(page: Page): Locator {
   return page.getByRole("navigation", { name: "Navegação principal" });
 }
 
-function magnifier(page: Page): Locator {
-  return page.getByRole("button", { name: "Buscar produto", exact: true });
+function searchTab(page: Page): Locator {
+  return nav(page).getByRole("link", { name: "Buscar" });
 }
 
 /** The top-most element at a point, plus whether it lies inside `selector`. */
@@ -126,7 +127,7 @@ async function fixedElementsAtTop(page: Page): Promise<FixedEntry[]> {
 
 test.describe("Bottom navigation", () => {
   for (const theme of ["light", "dark"] as const) {
-    test(`renders the four controls and marks the active tab (${theme})`, async ({ page }) => {
+    test(`renders the five controls and marks the active tab (${theme})`, async ({ page }) => {
       await seedAppState(page, { theme });
       await stubMapStyle(page);
       await stubNearby(page);
@@ -142,17 +143,28 @@ test.describe("Bottom navigation", () => {
       const bar = nav(page);
       await expect(bar).toBeVisible();
       await expect(bar.getByRole("link", { name: "Mapa" })).toBeVisible();
-      await expect(bar.getByRole("link", { name: "Avisos" })).toBeVisible();
+      await expect(bar.getByRole("link", { name: "Buscar" })).toBeVisible();
       await expect(bar.getByRole("link", { name: "Relatar produto" })).toBeVisible();
+      await expect(bar.getByRole("link", { name: "Avisos" })).toBeVisible();
       await expect(bar.getByRole("link", { name: "Perfil" })).toBeVisible();
-      expect(await bar.getByRole("link").count()).toBe(4);
+      expect(await bar.getByRole("link").count()).toBe(5);
+
+      // Five slots is what puts the raised control at the bar's true centre: measure it
+      // rather than trust the grid, since an even count silently pushes it off-centre.
+      const barBox = await boxOf(bar, `nav (${theme})`);
+      const reportBox = await boxOf(
+        bar.getByRole("link", { name: "Relatar produto" }),
+        `report control (${theme})`,
+      );
+      const reportCentre = reportBox.x + reportBox.width / 2;
+      const barCentre = barBox.x + barBox.width / 2;
+      record(`report control offset from centre (${theme})`, reportCentre - barCentre);
+      expect(Math.abs(reportCentre - barCentre)).toBeLessThanOrEqual(1);
 
       record(
         `nav background (${theme})`,
         await bar.evaluate((el) => getComputedStyle(el).backgroundColor),
       );
-      await boxOf(bar, `nav (${theme})`);
-
       // Active tab on the map route, then on Perfil.
       await expect(bar.getByRole("link", { name: "Mapa" })).toHaveAttribute("aria-current", "page");
       await expect(bar.getByRole("link", { name: "Perfil" })).not.toHaveAttribute(
@@ -196,13 +208,9 @@ test.describe("Bottom navigation", () => {
     await page.goto("/");
 
     const bar = nav(page);
-    for (const name of ["Mapa", "Avisos", "Relatar produto", "Perfil"]) {
+    for (const name of ["Mapa", "Buscar", "Avisos", "Relatar produto", "Perfil"]) {
       await expectTouchTarget(bar.getByRole("link", { name }), name);
     }
-
-    await expectTouchTarget(magnifier(page), "magnifier");
-    await magnifier(page).click();
-    await expectTouchTarget(page.getByRole("button", { name: "Fechar busca" }), "search close");
   });
 });
 
@@ -405,18 +413,21 @@ test.describe("Place sheet", () => {
   });
 });
 
-test.describe("Collapsed search", () => {
-  test("expands, suggests, and collapses again", async ({ page }) => {
+test.describe("Search tab", () => {
+  test("suggests products and hands the chosen one to the map as a filter", async ({ page }) => {
     await seedAppState(page);
     await stubMapStyle(page);
     await stubNearby(page);
     await stubProductSearch(page);
     await page.goto("/");
 
-    await expect(magnifier(page)).toBeVisible();
+    // The map's own chrome no longer carries a search affordance — that was the point of
+    // moving it into its own tab.
     await expect(page.getByPlaceholder("Buscar produto…")).toHaveCount(0);
 
-    await magnifier(page).click();
+    await searchTab(page).click();
+    await expect(page).toHaveURL(/\/buscar$/);
+
     const input = page.getByPlaceholder("Buscar produto…");
     await expect(input).toBeVisible();
     await expect(input).toBeFocused();
@@ -428,64 +439,26 @@ test.describe("Collapsed search", () => {
     await expect(listbox.getByRole("option").first()).toHaveText(SUGGESTIONS[0]!.name);
 
     await listbox.getByRole("option").first().click();
-    await expect(input).toHaveValue(SUGGESTIONS[0]!.name);
 
-    await page.getByRole("button", { name: "Fechar busca" }).click();
-    await expect(page.getByPlaceholder("Buscar produto…")).toHaveCount(0);
-    await expect(magnifier(page)).toBeVisible();
-    await expect(magnifier(page)).toBeFocused();
+    // Back on the map, filtered, with the term shown as a removable chip.
+    await expect(page).toHaveURL(/\/\?item=/);
+    const chip = page.getByRole("button", { name: `Remover filtro ${SUGGESTIONS[0]!.name}` });
+    await expect(chip).toBeVisible();
+    await expectTouchTarget(chip, "filter chip dismiss");
+
+    await chip.click();
+    await expect(page).not.toHaveURL(/item=/);
+    await expect(chip).toHaveCount(0);
   });
 
-  test("the loading pill never paints over the first suggestion", async ({ page }) => {
-    // Holds the nearby request open for 15s inside a 30s default; teardown of the pending
-    // route handler eats into that too. Give it room on a shared CI runner.
-    test.setTimeout(60_000);
+  test("a filtered map URL is shareable — it reloads still filtered", async ({ page }) => {
     await seedAppState(page);
     await stubMapStyle(page);
-    // Hold the nearby request open so "Buscando…" is on screen at the same time as the
-    // dropdown — the exact overlap this asserts against.
-    await stubNearby(page, { delayMs: 15_000 });
-    await stubProductSearch(page);
-    await page.context().grantPermissions(["geolocation"]);
-    await page.context().setGeolocation({
-      latitude: DEFAULT_COORDS.lat,
-      longitude: DEFAULT_COORDS.lng,
-    });
-    await page.goto("/");
+    await stubNearby(page, { results: [] });
+    await page.goto("/?item=Arroz%205kg");
 
-    await magnifier(page).click();
-    await page.getByPlaceholder("Buscar produto…").fill("arr");
-
-    const pill = page.getByText("Buscando…");
-    await expect(pill).toBeVisible();
-    const option = page.getByRole("option").first();
-    await expect(option).toBeVisible();
-
-    const pillBox = await boxOf(pill.locator(".."), "loading pill");
-    const optionBox = await boxOf(option, "first suggestion");
-
-    const overlap = {
-      left: Math.max(pillBox.x, optionBox.x),
-      right: Math.min(pillBox.x + pillBox.width, optionBox.x + optionBox.width),
-      top: Math.max(pillBox.y, optionBox.y),
-      bottom: Math.min(pillBox.y + pillBox.height, optionBox.y + optionBox.height),
-    };
-    const overlaps = overlap.right > overlap.left && overlap.bottom > overlap.top;
-    record("pill/suggestion overlap", { ...overlap, overlaps });
-
-    // The overlap is the premise of this regression test, not an incidental detail: if a
-    // layout change ever separates the two, every assertion below would be skipped and
-    // the test would pass green while guarding nothing. Fail loudly instead, so whoever
-    // moves them has to decide whether the z-order fix is still needed.
-    expect(overlaps, "the pill and the first suggestion must still overlap").toBe(true);
-
-    const point = {
-      x: (overlap.left + overlap.right) / 2,
-      y: (overlap.top + overlap.bottom) / 2,
-    };
-    const hit = await hitTest(page, point, "[role='listbox']");
-    record("hit test inside the overlap", { point, ...hit });
-    expect(hit.insideSelector, "the suggestion list must paint above the loading pill").toBe(true);
+    await expect(page.getByRole("button", { name: "Remover filtro Arroz 5kg" })).toBeVisible();
+    await expect(page.getByText(/Ninguém relatou "Arroz 5kg" por aqui ainda/)).toBeVisible();
   });
 });
 
@@ -534,7 +507,7 @@ test.describe("Routing and gates", () => {
     );
   });
 
-  test("the geolocation fallback banner shows above the collapsed magnifier", async ({ page }) => {
+  test("the geolocation fallback banner clears the safe-area inset", async ({ page }) => {
     await seedAppState(page);
     await stubMapStyle(page);
     await stubNearby(page);
@@ -543,17 +516,21 @@ test.describe("Routing and gates", () => {
 
     const banner = page.getByText("Localização negada — mostrando São Paulo. Pan para sua área.");
     await expect(banner).toBeVisible();
-    // Collapsed: the magnifier is on screen and the input does not exist yet.
-    await expect(magnifier(page)).toBeVisible();
-    await expect(page.getByPlaceholder("Buscar produto…")).toHaveCount(0);
 
+    // It shares the map's top wrapper with the filter chip, so it must start below the
+    // status bar rather than at a flat 16px — the reason that wrapper reads
+    // --header-inset-top. Emulated Chromium reports a zero inset, so this is the floor.
     const bannerBox = await boxOf(banner, "geolocation banner");
-    const magnifierBox = await boxOf(magnifier(page), "collapsed magnifier");
-    record("banner bottom vs magnifier top", {
-      bannerBottom: bannerBox.y + bannerBox.height,
-      magnifierTop: magnifierBox.y,
-    });
-    expect(bannerBox.y + bannerBox.height).toBeLessThanOrEqual(magnifierBox.y);
+    record("banner top", bannerBox.y);
+    expect(bannerBox.y).toBeGreaterThanOrEqual(12);
+
+    // And it must be tappable-through: the wrapper is pointer-events-none so the map keeps
+    // its gestures, with only the real controls opting back in.
+    const wrapperEvents = await banner.evaluate(
+      (el) => getComputedStyle(el.parentElement!).pointerEvents,
+    );
+    record("banner wrapper pointer-events", wrapperEvents);
+    expect(wrapperEvents).toBe("none");
   });
 });
 
@@ -621,6 +598,7 @@ test.describe("Report screen", () => {
       accessToken: "e2e-token",
       sessionUser: { id: PLACE_ID, email: "teste@exemplo.com", displayName: null, role: "user" },
     });
+    await stubMyDiscoveries(page);
     // Reached through the tab bar, not page.goto(), so "Voltar" has a client-side history
     // entry to pop — no network round trip once the context goes offline.
     await page.goto("/perfil");

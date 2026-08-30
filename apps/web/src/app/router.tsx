@@ -20,6 +20,9 @@ const SignInPage = lazy(() =>
 const SignUpPage = lazy(() =>
   import("../features/auth/ui/SignUpPage.js").then((m) => ({ default: m.SignUpPage })),
 );
+const SearchPage = lazy(() =>
+  import("../features/seek/ui/SearchPage.js").then((m) => ({ default: m.SearchPage })),
+);
 const AvisosPage = lazy(() =>
   import("../features/notifications/ui/AvisosPage.js").then((m) => ({ default: m.AvisosPage })),
 );
@@ -107,6 +110,14 @@ export const router = createBrowserRouter([
                   <SeekPage />
                 </PageSuspense>
               </OnboardingGate>
+            ),
+          },
+          {
+            path: "/buscar",
+            element: (
+              <PageSuspense>
+                <SearchPage />
+              </PageSuspense>
             ),
           },
           {

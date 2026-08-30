@@ -1,10 +1,10 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { SeekPage } from "./SeekPage.js";
 import { useGeolocation, DEFAULT_COORDS } from "../../map/model/use-geolocation.js";
 import { useNearbyDiscoveries } from "../api/discovery.queries.js";
 import { useAppStore } from "@/app/store/index.js";
 import { useSaveData } from "@/shared/model/use-save-data.js";
-import { useProductSearch } from "@/features/product/api/product-autocomplete.api.js";
 import type { AppStore } from "@/app/store/types.js";
 
 // Explicit factories (not bare automocks) — matches ProductPicker.test.tsx.
@@ -34,14 +34,6 @@ jest.mock("@/shared/model/use-save-data.js", () => ({
 }));
 const mockUseSaveData = useSaveData as jest.MockedFunction<typeof useSaveData>;
 
-// SearchBar (rendered inside SeekPage) now depends on this hook. Mocked with an explicit
-// factory — same reason as ProductPicker.test.tsx: the real module uses `import.meta.env`,
-// which ts-jest's CommonJS target can't parse.
-jest.mock("@/features/product/api/product-autocomplete.api.js", () => ({
-  useProductSearch: jest.fn(),
-}));
-const mockUseProductSearch = useProductSearch as jest.MockedFunction<typeof useProductSearch>;
-
 const mockNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -56,7 +48,7 @@ function setupGeolocation(state: {
   mockUseGeolocation.mockReturnValue({ ...state, error: null });
 }
 
-function setup() {
+function setup(path = "/") {
   mockUseNearbyDiscoveries.mockReturnValue({
     data: { results: [] },
     isLoading: false,
@@ -71,11 +63,11 @@ function setup() {
 
   mockUseSaveData.mockReturnValue(false);
 
-  mockUseProductSearch.mockReturnValue({ data: { results: [] } } as unknown as ReturnType<
-    typeof useProductSearch
-  >);
-
-  return render(<SeekPage />);
+  return render(
+    <MemoryRouter initialEntries={[path]}>
+      <SeekPage />
+    </MemoryRouter>,
+  );
 }
 
 describe("SeekPage — map mount gating", () => {
@@ -120,5 +112,61 @@ describe("SeekPage — report action", () => {
     setup();
 
     expect(screen.queryByRole("button", { name: "Relatar produto" })).not.toBeInTheDocument();
+  });
+});
+
+describe("SeekPage — filter from the Buscar tab", () => {
+  const coords = { lat: -23.5, lng: -46.6, accuracy: 10 };
+
+  it("passes the URL's item parameter to the nearby query", () => {
+    setupGeolocation({ coords, denied: false, loading: false });
+    setup("/?item=Arroz%205kg");
+
+    expect(mockUseNearbyDiscoveries).toHaveBeenCalledWith(
+      expect.objectContaining({ item: "Arroz 5kg" }),
+    );
+  });
+
+  it("sends no item at all when the map is unfiltered", () => {
+    setupGeolocation({ coords, denied: false, loading: false });
+    setup("/");
+
+    expect(mockUseNearbyDiscoveries).toHaveBeenCalledWith(
+      expect.objectContaining({ item: undefined }),
+    );
+  });
+
+  it("shows the active term as a removable chip", () => {
+    setupGeolocation({ coords, denied: false, loading: false });
+    setup("/?item=Arroz%205kg");
+
+    expect(screen.getByText("Arroz 5kg")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Remover filtro Arroz 5kg" })).toBeInTheDocument();
+  });
+
+  it("renders no chip when there is no filter", () => {
+    setupGeolocation({ coords, denied: false, loading: false });
+    setup("/");
+
+    expect(screen.queryByRole("button", { name: /Remover filtro/ })).not.toBeInTheDocument();
+  });
+
+  it("drops the filter from the query when the chip is dismissed", () => {
+    setupGeolocation({ coords, denied: false, loading: false });
+    setup("/?item=Arroz%205kg");
+
+    fireEvent.click(screen.getByRole("button", { name: "Remover filtro Arroz 5kg" }));
+
+    expect(screen.queryByRole("button", { name: /Remover filtro/ })).not.toBeInTheDocument();
+    expect(mockUseNearbyDiscoveries).toHaveBeenLastCalledWith(
+      expect.objectContaining({ item: undefined }),
+    );
+  });
+
+  it("tells the empty state which term came up empty", () => {
+    setupGeolocation({ coords, denied: false, loading: false });
+    setup("/?item=Arroz%205kg");
+
+    expect(screen.getByText(/Ninguém relatou "Arroz 5kg" por aqui ainda/)).toBeInTheDocument();
   });
 });
