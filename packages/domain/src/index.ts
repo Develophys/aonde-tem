@@ -21,6 +21,7 @@ export * from "./repositories/product-repository";
 export * from "./repositories/discovery-repository";
 export * from "./repositories/flag-repository";
 export * from "./repositories/moderation-queue-reader";
+export * from "./repositories/moderatable-content";
 
 // Ports
 export * from "./ports/logger";

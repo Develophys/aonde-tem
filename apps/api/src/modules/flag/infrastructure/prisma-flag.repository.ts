@@ -66,4 +66,20 @@ export class PrismaFlagRepository implements FlagRepository {
   async updateStatus(id: string, status: FlagStatus): Promise<void> {
     await this.prisma.flag.update({ where: { id }, data: { status } });
   }
+
+  async countOpenByTarget(targetType: FlagTargetType, targetId: string): Promise<number> {
+    return this.prisma.flag.count({ where: { targetType, targetId, status: "open" } });
+  }
+
+  async updateStatusByTarget(
+    targetType: FlagTargetType,
+    targetId: string,
+    status: FlagStatus,
+  ): Promise<number> {
+    const { count } = await this.prisma.flag.updateMany({
+      where: { targetType, targetId, status: "open" },
+      data: { status },
+    });
+    return count;
+  }
 }
