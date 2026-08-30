@@ -91,6 +91,7 @@ model Flag {
 
   reporter  User       @relation(fields: [reporterId], references: [id])
 
+  @@index([status, targetType, targetId])
   @@map("flags")
 }
 

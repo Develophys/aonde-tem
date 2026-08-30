@@ -50,10 +50,3 @@ export const adminActionSchema = z.object({
   action: z.enum(["hide", "dismiss"]),
 });
 export type AdminActionDto = z.infer<typeof adminActionSchema>;
-
-// Retired in Task 2 together with the GET /admin/flags endpoint that returns it.
-export const adminFlagResponseSchema = flagResponseSchema.extend({
-  reporterEmail: z.string().email(),
-  comment: z.string().nullable(),
-});
-export type AdminFlagResponse = z.infer<typeof adminFlagResponseSchema>;
