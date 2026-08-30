@@ -29,7 +29,7 @@ moderation signals — while keeping illegal/inappropriate items out cheaply.
 - ❌ **No turn-by-turn navigation.** Hand off to the user's maps app. *(Maps do this well.)*
 - ❌ **No store inventory integrations.** Community data only. *(No supply; premature.)*
 - ❌ **No reputation/trust scores, no price history.** *(Design for later.)*
-- ❌ **No rich admin dashboard.** Minimal queue / direct DB for v1. *(Build tooling once there's volume.)*
+- ❌ **No rich admin dashboard.** A minimal queue at `/admin/denuncias` (list, remove, ignore) is all there is for v1. *(Build tooling once there's volume.)*
 - ❌ **No nationwide push.** One pilot city first. *(Liquidity beats breadth.)*
 
 ## 4. Personas

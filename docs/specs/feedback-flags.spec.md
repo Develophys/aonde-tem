@@ -37,4 +37,5 @@ is the blocklist in [`product-moderation.spec.md`](./product-moderation.spec.md)
 - `Flag` + `Comment` entities & migration (E10). Auth (login gate). Product/Discovery reads must honor hidden status.
 
 ## Backlog mapping
-Flag (denúncia) + admin hide + minimal queue (E10/E6, P0); comments + thresholds (E6, P1).
+Flag (denúncia) + admin hide + minimal queue (E10/E6, P0) — **shipped**, see
+`docs/superpowers/specs/2026-08-30-admin-moderation-queue-design.md`; comments + thresholds (E6, P1).

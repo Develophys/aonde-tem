@@ -298,12 +298,18 @@ Sturdy and reassuring: solid fills (never gradients or outline-only primaries), 
 - **Selected:** `border-accent`, `bg-accent/10` translucent fill, `text-accent`. Uses the Accent (not fill) token deliberately — a `bg-brand/10` tint of the *fill* green would be nearly invisible against the dark surface, since the fill green isn't brightened for dark mode. Used for flag reasons and nearby-place selection in the report flow.
 - **Shape:** Control radius (12px), 44px minimum height.
 
+### Chips (status, read-only)
+- **Style:** A non-interactive sibling of the selectable chip — solid tint instead of an outline, no selected/unselected state to toggle. Control radius (12px), `text-xs font-medium`, tighter padding (`px-2 py-1`) than the 44px-target selectable chip, since these sit inline in a text-dense row rather than standing as their own tap target.
+- **Two-tone by severity, not one-per-reason:** `bg-error/10 text-error` for the harmful reason categories (illegal, inappropriate); `bg-surface-alt text-text-muted` for everything else (spam, wrong info, other) and for the flag-count tally (`tabular-nums`). Five saturated hues for five reasons would break the One Accent Rule — this pattern keeps Error Red as the screen's only accent.
+- **Where used:** the admin moderation queue (`/admin/denuncias`) — each `QueueCard` tags its target's open flag reasons and, when more than one flag landed on the same target, a count chip.
+
 ### Cards / Containers
 - **Corner Style:** Sheet radius (16px, `rounded-sheet`) for summary/error cards; Sheet radius top-only (`rounded-t-sheet`) for bottom sheets.
 - **Background:** Surface Alt for summary content (the report confirm-step card), Surface for sheets and the default page background.
 - **Shadow Strategy:** See Elevation & Depth — cards floating over the map get a shadow; cards embedded in normal page flow (the confirm-step summary) do not.
 - **Border:** None on cards; Border color is reserved for dividers, input outlines and the tab bar's top edge.
 - **Internal Padding:** 16px (`p-4`) for compact summary cards; 24px+ (`p-6`) for bottom sheets.
+- **Known deviation:** the admin moderation queue's `QueueCard` (`/admin/denuncias`, admin-only) is a denser list-row variant — Control radius (12px) with a `border-border` outline on a plain Surface fill, instead of Sheet radius on a borderless Surface Alt fill. It reads as a dense list row stacking a status-chip strip and an inline two-button confirmation ("Remover mesmo? Sim, remover / Cancelar"), not as a summary panel, so it borrows the Inputs/Fields section's outline-on-Surface language instead of this section's fill-only rule.
 
 ### Inputs / Fields
 - **Style:** Border-color outline, Surface background, Control radius, Body-size text (16px — never smaller, to avoid mobile auto-zoom), label always above the field, never as placeholder-only.
